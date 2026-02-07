@@ -1,42 +1,255 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Quiz{% endblock %}
+{% block title %}Dashboard{% endblock %}
+
+{% block stylesheets %}
+<link rel="stylesheet" href="{{ asset('assets/css/styles.css') }}">
+<link rel="stylesheet" href="{{ asset('assets/css/dashboard.css') }}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+{% endblock %}
 
 {% block body %}
-    <h1>Quiz</h1>
+ <div class="dashboard">
+ 
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <div class="logo">
+          <img src="{{ asset('assets/images/logo1.png') }}" alt="Learnflex+ Logo" class="nav-logo">
+          <span>LearnFlex</span><span class="highlight">+</span>
+        </div>
+        <button class="sidebar-toggle">
+          <i class="fas fa-bars"></i>
+        </button>
+      </div>
+      
+      <div class="sidebar-content">
+        <nav class="sidebar-menu">
+          <ul>
+            <li class="active">
+              <a href="#">
+                <i class="fas fa-tachometer-alt"></i>
+                <span>Dashboard</span>
+              </a>
+            </li>
+            <li>
+              <a href="#">
+                <i class="fas fa-users"></i>
+                <span>Utilisateurs</span>
+              </a>
+            </li>
+            <li>
+              <a href="#">
+                <i class="fas fa-book-open"></i>
+                <span>contenu pédagogique</span>
+              </a>
+            </li>
+            <li>
+              <a href="#">
+                <i class="fas fa-graduation-cap"></i>
+                <span>Evaluation</span>
+              </a>
+            </li>
+         <li>
+  <a href="{{ path('app_quiz_index') }}">
+    <i class="fas fa-question-circle"></i>
+    <span>Questionnaire</span>
+  </a>
+</li>
 
-    <table class="table">
+            <li>
+              <a href="#">
+                <i class="fas fa-directions"></i>
+                <span>Orientation</span>
+              </a>
+            </li>
+            <li>
+              <a href="#">
+                <i class="fas fa-comments"></i>
+                <span>Forum</span>
+              </a>
+            </li>
+          </ul>
+        </nav>
+      </div>
+      
+      <div class="sidebar-footer">
+        <a href="#" class="user-profile">
+          <img src="{{ asset('assets/images/placeholder-admin.png') }}" alt="Admin" class="user-img">
+          <div class="user-info">
+            <h4>Admin User</h4>
+            <p>Administrateur</p>
+          </div>
+        </a>
+        <a href="#" class="logout">
+          <i class="fas fa-sign-out-alt"></i>
+          <span>Déconnexion</span>
+        </a>
+      </div>
+    </aside>
+    
+    <main class="main-content">
+      <header class="dashboard-header">
+        <div class="header-left">
+          <h1>Dashboard</h1>
+    <p>Bienvenue sur la plateforme d’apprentissage LearnFlex+</p>
+        </div>
+        <div class="header-right">
+           <div class="search-bar" style="display:flex; align-items:center; gap:5px;">
+    <form method="get" action="{{ path('app_quiz_index') }}" style="display:flex; align-items:center; gap:5px;">
+        <input type="text" 
+               name="search" 
+               placeholder="Rechercher un quiz..." 
+               value="{{ search|default('') }}" 
+               style="padding:6px 10px; border-radius:4px; border:1px solid #ccc; min-width:200px;">
+        <button type="submit" class="btn btn-primary" style="padding:6px 10px;">
+            <i class="fas fa-search"></i>
+        </button>
+    </form>
+</div>
+          <button class="notification-btn">
+            <i class="fas fa-bell"></i>
+            <span class="badge">3</span>
+          </button>
+        </div>
+      </header>
+      
+      <div class="dashboard-content">
+
+    <!-- Header + bouton Retour -->
+    <div class="section-header" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+        <div>
+            <h2>Détails du Quiz</h2>
+            <p style="color:#666; margin-top:5px;">
+                <strong>Titre :</strong> {{ quiz.titre }}
+            </p>
+        </div>
+
+        <div style="display:flex; gap:10px;">
+            <a href="{{ path('app_quiz_index') }}" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i> Retour à la liste
+            </a>
+
+           
+        </div>
+    </div>
+
+    <!-- Tableau du Quiz -->
+    <table class="parcels-table" style="width:100%; border-collapse: collapse; background:white; border-radius:8px; overflow:hidden; box-shadow: var(--shadow);">
+        <thead style="background: #142341; color:#ffffff;">
+            <tr>
+                <th style="padding:12px;color: #faf9f6;">Champ</th>
+                <th style="padding:12px;color: #faf9f6;">Valeur</th>
+            </tr>
+        </thead>
+
         <tbody>
-            <tr>
-                <th>Id</th>
-                <td>{{ quiz.id }}</td>
+
+            <tr style="border-bottom:1px solid var(--border-color);">
+                <td style="padding:12px;">ID</td>
+                <td style="padding:12px;">{{ quiz.id }}</td>
             </tr>
-            <tr>
-                <th>Titre</th>
-                <td>{{ quiz.titre }}</td>
+
+            <tr style="border-bottom:1px solid var(--border-color);">
+                <td style="padding:12px;">Titre</td>
+                <td style="padding:12px;">{{ quiz.titre }}</td>
             </tr>
-            <tr>
-                <th>Question</th>
-                <td>{{ quiz.question }}</td>
+
+            <tr style="border-bottom:1px solid var(--border-color);">
+                <td style="padding:12px;">Question</td>
+                <td style="padding:12px;">{{ quiz.question }}</td>
             </tr>
-            <tr>
-                <th>Description</th>
-                <td>{{ quiz.description }}</td>
+
+            <tr style="border-bottom:1px solid var(--border-color);">
+                <td style="padding:12px;">Description</td>
+                <td style="padding:12px;">{{ quiz.description }}</td>
             </tr>
-            <tr>
-                <th>Duree</th>
-                <td>{{ quiz.duree }}</td>
+
+            <tr style="border-bottom:1px solid var(--border-color);">
+                <td style="padding:12px;">Durée</td>
+                <td style="padding:12px;">⏱ {{ quiz.duree }} minutes</td>
             </tr>
-            <tr>
-                <th>Etat</th>
-                <td>{{ quiz.etat }}</td>
+
+            <tr style="border-bottom:1px solid var(--border-color);">
+                <td style="padding:12px;">Etat</td>
+                 <td style="padding:12px;">
+        {% if quiz.etat == 'active' %}
+            <span style="
+                background:#e6f4ea;
+                color:#1e7e34;
+                padding:4px 10px;
+                border-radius:12px;
+                font-size:13px;
+                font-weight:600;
+                display:inline-block;
+            ">
+                Actif
+            </span>
+        {% else %}
+            <span style="
+                background:#fdecea;
+                color:#c82333;
+                padding:4px 10px;
+                border-radius:12px;
+                font-size:13px;
+                font-weight:600;
+                display:inline-block;
+            ">
+                Inactifj
+            </span>
+        {% endif %}
+    </td>
             </tr>
+
+            <tr>
+                <td style="padding:12px;">Nombre de réponses</td>
+                <td style="padding:12px;">📊 {{ quiz.reponses|length }} réponse(s)</td>
+            </tr>
+
         </tbody>
     </table>
 
-    <a href="{{ path('app_quiz_index') }}">back to list</a>
+    <br>
 
-    <a href="{{ path('app_quiz_edit', {'id': quiz.id}) }}">edit</a>
+    <!-- Actions -->
+    <div style="display:flex; gap:10px; align-items:center;">
+        <a href="{{ path('app_reponse_by_quiz', {id: quiz.id}) }}" class="btn btn-primary">
+            <i class="fas fa-list"></i> Voir les réponses
+        </a>
 
-    {{ include('quiz/_delete_form.html.twig') }}
+        {{ include('quiz/_delete_form.html.twig') }}
+    </div>
+
+</div>
+
+<!-- Styles boutons (identiques à reponse) -->
+<style>
+.btn-secondary {
+    background: #6c757d;
+    color: white;
+    padding: 8px 16px;
+    border-radius: 4px;
+    text-decoration: none;
+    display: inline-block;
+    margin-right: 5px;
+}
+
+.btn-secondary:hover {
+    background: #5a6268;
+}
+
+.btn-primary {
+    background: #007bff;
+    color: white;
+    padding: 8px 16px;
+    border-radius: 4px;
+    text-decoration: none;
+}
+
+.btn-primary:hover {
+    background: #0069d9;
+}
+</style>
+
+
+
 {% endblock %}

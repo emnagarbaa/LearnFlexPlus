@@ -74,6 +74,7 @@ public function index(QuizRepository $quizRepository, Request $request, EntityMa
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager->persist($quiz);
             $entityManager->flush();
+        $this->addFlash('success', 'Le quiz a été ajouté avec succès !');
 
             return $this->redirectToRoute('app_quiz_index', [], Response::HTTP_SEE_OTHER);
         }
@@ -105,6 +106,8 @@ public function edit(Request $request, Quiz $quiz, EntityManagerInterface $entit
         $quiz->setEtat($data['etat'] ?? 'inactive');
 
         $entityManager->flush();
+        $this->addFlash('success', 'Le quiz a été modifié avec succès !');
+
     }
 
     return $this->redirectToRoute('app_quiz_index');
@@ -117,6 +120,8 @@ public function edit(Request $request, Quiz $quiz, EntityManagerInterface $entit
         if ($this->isCsrfTokenValid('delete'.$quiz->getId(), $request->getPayload()->getString('_token'))) {
             $entityManager->remove($quiz);
             $entityManager->flush();
+            $this->addFlash('error', 'Le quiz a été supprimé.');
+
         }
 
         return $this->redirectToRoute('app_quiz_index', [], Response::HTTP_SEE_OTHER);

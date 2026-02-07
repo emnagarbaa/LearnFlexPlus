@@ -1,7 +1,119 @@
-{% extends 'back/index.html.twig' %}
+{% extends 'base.html.twig' %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block stylesheets %}
+<link rel="stylesheet" href="{{ asset('assets/css/styles.css') }}">
+<link rel="stylesheet" href="{{ asset('assets/css/dashboard.css') }}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+{% endblock %}
 
 {% block body %}
-<div class="dashboard-content">
+ <div class="dashboard">
+ 
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <div class="logo">
+          <img src="{{ asset('assets/images/logo1.png') }}" alt="Learnflex+ Logo" class="nav-logo">
+          <span>LearnFlex</span><span class="highlight">+</span>
+        </div>
+        <button class="sidebar-toggle">
+          <i class="fas fa-bars"></i>
+        </button>
+      </div>
+      
+      <div class="sidebar-content">
+        <nav class="sidebar-menu">
+          <ul>
+            <li class="active">
+              <a href="#">
+                <i class="fas fa-tachometer-alt"></i>
+                <span>Dashboard</span>
+              </a>
+            </li>
+            <li>
+              <a href="#">
+                <i class="fas fa-users"></i>
+                <span>Utilisateurs</span>
+              </a>
+            </li>
+            <li>
+              <a href="#">
+                <i class="fas fa-book-open"></i>
+                <span>contenu pédagogique</span>
+              </a>
+            </li>
+            <li>
+              <a href="#">
+                <i class="fas fa-graduation-cap"></i>
+                <span>Evaluation</span>
+              </a>
+            </li>
+         <li>
+  <a href="{{ path('app_quiz_index') }}">
+    <i class="fas fa-question-circle"></i>
+    <span>Questionnaire</span>
+  </a>
+</li>
+
+            <li>
+              <a href="#">
+                <i class="fas fa-directions"></i>
+                <span>Orientation</span>
+              </a>
+            </li>
+            <li>
+              <a href="#">
+                <i class="fas fa-comments"></i>
+                <span>Forum</span>
+              </a>
+            </li>
+          </ul>
+        </nav>
+      </div>
+      
+      <div class="sidebar-footer">
+        <a href="#" class="user-profile">
+          <img src="{{ asset('assets/images/placeholder-admin.png') }}" alt="Admin" class="user-img">
+          <div class="user-info">
+            <h4>Admin User</h4>
+            <p>Administrateur</p>
+          </div>
+        </a>
+        <a href="#" class="logout">
+          <i class="fas fa-sign-out-alt"></i>
+          <span>Déconnexion</span>
+        </a>
+      </div>
+    </aside>
+    
+    <main class="main-content">
+      <header class="dashboard-header">
+        <div class="header-left">
+          <h1>Dashboard</h1>
+    <p>Bienvenue sur la plateforme d’apprentissage LearnFlex+</p>
+        </div>
+        <div class="header-right">
+           <div class="search-bar" style="display:flex; align-items:center; gap:5px;">
+    <form method="get" action="{{ path('app_quiz_index') }}" style="display:flex; align-items:center; gap:5px;">
+        <input type="text" 
+               name="search" 
+               placeholder="Rechercher un quiz..." 
+               value="{{ search|default('') }}" 
+               style="padding:6px 10px; border-radius:4px; border:1px solid #ccc; min-width:200px;">
+        <button type="submit" class="btn btn-primary" style="padding:6px 10px;">
+            <i class="fas fa-search"></i>
+        </button>
+    </form>
+</div>
+          <button class="notification-btn">
+            <i class="fas fa-bell"></i>
+            <span class="badge">3</span>
+          </button>
+        </div>
+      </header>
+      
+      <div class="dashboard-content">
 {# Affichage des flash messages #}
 <div id="flash-messages">
     {% for label, messages in app.flashes %}
@@ -186,5 +298,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 </script>
+
 
 {% endblock %}
