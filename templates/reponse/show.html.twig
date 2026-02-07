@@ -1,0 +1,79 @@
+{% extends 'back/index.html.twig' %}
+
+{% block body %}
+<div class="dashboard-content">
+
+    <!-- Header + bouton Retour -->
+    <div class="section-header" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+        <div>
+            <h2>Détails de la Réponse</h2>
+            <p style="color:#666; margin-top:5px;">
+                <strong>Quiz :</strong> {{ reponse.quiz.titre }}
+            </p>
+        </div>
+        <div>
+            <a href="{{ path('app_reponse_index', {id: reponse.quiz.id}) }}" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i> Retour aux Réponses
+            </a>
+            
+        </div>
+    </div>
+
+    <!-- Tableau de la Réponse -->
+    <table class="parcels-table" style="width:100%; border-collapse: collapse; background:white; border-radius:8px; overflow:hidden; box-shadow: var(--shadow);">
+        <thead style="background: #142341; color:#ffffff;">
+            <tr>
+                <th style="padding:12px;color: #faf9f6;">ID</th>
+                <th style="padding:12px;color: #faf9f6;">Texte</th>
+                <th style="padding:12px;color: #faf9f6;">Correcte</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr style="border-bottom:1px solid var(--border-color);">
+                <td style="padding:12px;">{{ reponse.id }}</td>
+                <td style="padding:12px;">{{ reponse.text }}</td>
+                <td style="padding:12px; text-align:center;">
+                    {% if reponse.estCorrecte %}
+                        <span style="color:green; font-size:18px;">✅</span>
+                    {% else %}
+                        <span style="color:red; font-size:18px;">❌</span>
+                    {% endif %}
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    
+
+</div>
+
+<!-- Styles pour harmoniser les boutons -->
+<style>
+.btn-secondary {
+    background: #6c757d;
+    color: white;
+    padding: 8px 16px;
+    border-radius: 4px;
+    text-decoration: none;
+    display: inline-block;
+    margin-right: 5px;
+}
+
+.btn-secondary:hover {
+    background: #5a6268;
+}
+
+.btn-primary {
+    background: #007bff;
+    color: white;
+    padding: 8px 16px;
+    border-radius: 4px;
+    text-decoration: none;
+}
+
+.btn-primary:hover {
+    background: #0069d9;
+}
+</style>
+
+{% endblock %}

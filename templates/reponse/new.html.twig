@@ -1,0 +1,53 @@
+{% extends 'back/index.html.twig' %}
+
+{% block body %}
+
+<!-- Modal Overlay pour Ajouter Réponse -->
+<div id="reponseModalOverlay" style="display:flex; justify-content:center; align-items:center; position:fixed; inset:0; background: rgba(0,0,0,0.5); backdrop-filter: blur(5px); z-index:1000;">
+    <div style="background:white; padding:20px; border-radius:8px; max-width:600px; width:90%; box-shadow:0 0 20px rgba(0,0,0,0.3); position:relative;">
+        <!-- Bouton fermer -->
+        <span id="closeReponseModal" style="position:absolute; top:10px; right:15px; font-size:20px; cursor:pointer;">&times;</span>
+
+        <h3>Ajouter une nouvelle Réponse</h3>
+
+        {{ form_start(form, {
+    'action': path('app_reponse_new', {'quizId': quiz.id})
+}) }}
+
+            {{ form_row(form.text) }}
+            {{ form_row(form.estCorrecte) }}
+            <div style="margin-top:15px; display:flex; gap:10px;">
+                <button type="submit" class="btn btn-primary"><i class="fas fa-check"></i> Ajouter</button>
+                <button type="button" id="cancelReponseModal" class="btn btn-outline">Annuler</button>
+            </div>
+        {{ form_end(form) }}
+    </div>
+</div>
+
+<!-- JS pour modal -->
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const overlay = document.getElementById('reponseModalOverlay');
+    const closeBtn = document.getElementById('closeReponseModal');
+    const cancelBtn = document.getElementById('cancelReponseModal');
+
+    // Fermer modal
+    closeBtn.addEventListener('click', () => overlay.style.display = 'none');
+    cancelBtn.addEventListener('click', () => overlay.style.display = 'none');
+
+    // Fermer si clic à l'extérieur
+    overlay.addEventListener('click', (e) => {
+        if(e.target === overlay) overlay.style.display = 'none';
+    });
+});
+</script>
+
+<!-- Styles des boutons -->
+<style>
+.btn-primary { background:#007bff; color:white; padding:8px 12px; border-radius:5px; border:none; cursor:pointer; display:inline-flex; align-items:center; gap:5px; }
+.btn-primary:hover { opacity:0.85; }
+.btn-outline { background:white; color:#007bff; border:1px solid #007bff; padding:8px 12px; border-radius:5px; display:inline-flex; align-items:center; gap:5px; cursor:pointer; }
+.btn-outline:hover { background:#007bff; color:white; }
+</style>
+
+{% endblock %}

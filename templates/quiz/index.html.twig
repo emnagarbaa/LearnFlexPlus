@@ -1,0 +1,46 @@
+{% extends 'back/index.html.twig' %}
+
+{% block title %}Gestion des Quiz - LearnFlex+{% endblock %}
+
+{% block body %}
+<div class="container">
+    <h1>Liste des Quiz</h1>
+    <a href="{{ path('quiz/new') }}" class="btn btn-primary">➕ Ajouter un Quiz</a>
+
+    <table class="table table-striped mt-3">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Titre</th>
+                <th>Question</th>
+                <th>Durée</th>
+                <th>Actif</th>
+                <th>Nb Réponses</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for quiz in quizzes %}
+            <tr>
+                <td>{{ quiz.id }}</td>
+                <td>{{ quiz.titre }}</td>
+                <td>{{ quiz.question }}</td>
+                <td>{{ quiz.duree }} min</td>
+                <td>{{ quiz.active ? '✅' : '❌' }}</td>
+                <td>{{ quiz.reponses|length }}</td>
+                <td>
+                    <a href="{{ path('quiz_show', {'id': quiz.id}) }}" class="btn btn-info btn-sm">Voir</a>
+                    <a href="{{ path('quiz_edit', {'id': quiz.id}) }}" class="btn btn-warning btn-sm">✏️ Editer</a>
+                    <a href="{{ path('quiz_delete', {'id': quiz.id}) }}" class="btn btn-danger btn-sm"
+                       onclick="return confirm('Voulez-vous vraiment supprimer ce quiz ?')">🗑️ Supprimer</a>
+                </td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="7">Aucun quiz disponible.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

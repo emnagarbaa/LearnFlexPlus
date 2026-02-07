@@ -1,0 +1,111 @@
+{% extends 'back/index.html.twig' %}
+
+{% block body %}
+<div class="dashboard-content"  >
+    <div class="section-header" style="display:flex; justify-content:space-between; align-items:center;">
+        <h2>Liste des Quiz</h2>
+        <button id="btn-new-quiz" class="btn btn-primary">➕ Nouveau Quiz</button>
+    </div>
+
+    <!-- Modal Formulaire Quiz -->
+    <div id="quiz-modal" class="modal" border-collapse: collapse;>
+        <div class="modal-content">
+            <span id="close-modal" class="close">&times;</span>
+            <h2>Ajouter un Nouveau Quiz</h2>
+
+            {{ form_start(form, {'attr': {'class': 'modern-form'}}) }}
+
+            <div class="form-group" style="margin-bottom: 15px;">
+                {{ form_label(form.titre) }}
+                {{ form_widget(form.titre, {'attr': {'class': 'form-control', 'placeholder': 'Titre du quiz'}}) }}
+                {{ form_errors(form.titre) }}
+            </div>
+
+            <div class="form-group" style="margin-bottom: 15px;">
+                {{ form_label(form.question) }}
+                {{ form_widget(form.question, {'attr': {'class': 'form-control', 'placeholder': 'Question du quiz'}}) }}
+                {{ form_errors(form.question) }}
+            </div>
+
+            <div class="form-group" style="margin-bottom: 15px;">
+                {{ form_label(form.description) }}
+                {{ form_widget(form.description, {'attr': {'class': 'form-control', 'placeholder': 'Description (optionnel)'}}) }}
+                {{ form_errors(form.description) }}
+            </div>
+
+            <div class="form-group" style="margin-bottom: 15px;">
+                {{ form_label(form.duree) }}
+                {{ form_widget(form.duree, {'attr': {'class': 'form-control', 'placeholder': 'Durée en minutes'}}) }}
+                {{ form_errors(form.duree) }}
+            </div>
+
+            <div class="form-group" style="margin-bottom: 15px;">
+                {{ form_label(form.etat) }}
+                {{ form_widget(form.etat, {'attr': {'class': 'form-control'}}) }}
+                {{ form_errors(form.etat) }}
+            </div>
+
+            <button type="submit" class="btn btn-success">
+                💾 Enregistrer
+            </button>
+
+            {{ form_end(form) }}
+        </div>
+    </div>
+
+    <!-- Table des Quiz (optionnelle) -->
+    <div class="dashboard-card mt-4">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Titre</th>
+                    <th>Question</th>
+                    <th>Durée</th>
+                    <th>Actif</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for quiz in quizzes %}
+                <tr>
+                    <td>{{ quiz.id }}</td>
+                    <td>{{ quiz.titre }}</td>
+                    <td>{{ quiz.question }}</td>
+                    <td>{{ quiz.duree }} min</td>
+                    <td>{{ quiz.etat ? '✅' : '❌' }}</td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="5">Aucun quiz disponible.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
+
+{% block javascripts %}
+<script>
+    const modal = document.getElementById('quiz-modal');
+    const btn = document.getElementById('btn-new-quiz');
+    const closeBtn = document.getElementById('close-modal');
+
+    // Ouvrir le modal
+    btn.onclick = () => modal.style.display = 'block';
+
+    // Fermer le modal
+    closeBtn.onclick = () => modal.style.display = 'none';
+
+    // Fermer si clic à l'extérieur du modal
+    window.onclick = event => {
+        if (event.target == modal) modal.style.display = 'none';
+    }
+
+    // Fermer le modal après soumission du formulaire
+    document.querySelector('#quiz-modal form').addEventListener('submit', () => {
+        modal.style.display = 'none';
+    });
+</script>
+{% endblock %}
+

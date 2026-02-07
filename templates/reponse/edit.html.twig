@@ -1,0 +1,28 @@
+{% extends 'back/index.html.twig' %}
+
+{% block body %}
+
+<div id="editReponseModalOverlay" style="display:flex; justify-content:center; align-items:center; position:fixed; inset:0; background: rgba(0,0,0,0.5); backdrop-filter: blur(5px); z-index:1000;">
+    <div style="background:white; padding:20px; border-radius:8px; max-width:600px; width:90%; box-shadow:0 0 20px rgba(0,0,0,0.3); position:relative;">
+        <span id="closeEditReponseModal" style="position:absolute; top:10px; right:15px; font-size:20px; cursor:pointer;">&times;</span>
+
+        <h3>Modifier la Réponse</h3>
+
+        {{ form_start(form) }}
+            {{ form_row(form.text) }}
+            {{ form_row(form.estCorrecte) }}
+            <div style="margin-top:15px; display:flex; gap:10px;">
+                <button type="submit" class="btn btn-primary">Enregistrer</button>
+                <button type="button" id="cancelEditReponseModal" class="btn btn-outline">Annuler</button>
+            </div>
+        {{ form_end(form) }}
+    </div>
+</div>
+
+<script>
+const overlay = document.getElementById('editReponseModalOverlay');
+document.getElementById('closeEditReponseModal').addEventListener('click', () => overlay.style.display = 'none');
+document.getElementById('cancelEditReponseModal').addEventListener('click', () => overlay.style.display = 'none');
+</script>
+
+{% endblock %}

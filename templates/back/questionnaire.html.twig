@@ -1,0 +1,209 @@
+{% extends 'back/index.html.twig' %}
+
+{% block body %}
+<div class="dashboard-content">
+
+    <!-- Header : titre + recherche + bouton Nouveau Quiz -->
+    <div class="section-header" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+        
+        <!-- Titre -->
+        <h2>Gestion des Quiz</h2>
+
+        <!-- Recherche + bouton Nouveau Quiz -->
+        <div style="display:flex; gap:10px; align-items:center;">
+            <!-- Formulaire de recherche -->
+            <form method="get" action="{{ path('app_quiz_index') }}" style="display:flex; gap:5px; align-items:center;">
+                <input type="text" name="search" placeholder="Rechercher un quiz..." 
+                       value="{{ search|default('') }}" 
+                       style="padding:6px 10px; border-radius:4px; border:1px solid #ccc; min-width:200px;">
+                <button type="submit" class="btn btn-primary" style="padding:6px 12px;">🔍</button>
+            </form>
+
+            <!-- Bouton Nouveau Quiz -->
+            <button id="openQuizModal" class="btn btn-primary" style="display:flex; align-items:center;">
+                <i class="fas fa-plus" style="margin-right:5px;"></i> Nouveau Quiz
+            </button>
+        </div>
+    </div>
+
+
+    <!-- Tableau des Quiz -->
+    <table class="parcels-table" style="width:100%; border-collapse: collapse; background:white; border-radius:8px; overflow:hidden; box-shadow: var(--shadow);">
+        <thead style="background: #142341;"> <!-- fond du header -->
+            <tr>
+            <th style="padding:12px; color: #faf9f6;">
+        <a href="{{ path('app_quiz_index', {sortField: 'id', sortDirection: sortField=='id' and sortDirection=='ASC' ? 'DESC' : 'ASC', search: search}) }}" style="color:#faf9f6; text-decoration:none;">
+            ID {% if sortField=='id' %}{{ sortDirection=='ASC' ? '⬆️' : '⬇️' }}{% endif %}
+        </a>
+    </th>
+                <th style="padding:12px; color: #faf9f6;">Titre</th>
+                <th style="padding:12px; color: #faf9f6;">Description</th>
+                <th style="padding:12px; color: #faf9f6;">Durée</th>
+                <th style="padding:12px; color: #faf9f6;">Active</th>
+                <th style="padding:12px; color: #faf9f6;">Question</th>
+                <th style="padding:12px; color: #faf9f6;">Nb réponses</th>
+                <th style="padding:12px; color: #faf9f6;">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        
+            {% for quiz in quizzes %}
+                <tr style="border-bottom:1px solid var(--border-color);">
+                    <td style="padding:12px;">{{ quiz.id }}</td>  {# <- ID #}
+                    <td style="padding:12px;">{{ quiz.titre }}</td>
+                    <td>{{ quiz.question }}</td>
+                    <td>{{ quiz.duree }} min</td>
+                    <td>{% if quiz.etat == 'active' %}✅{% else %}❌{% endif %}</td>
+                    <td>{{ quiz.question }} </td>
+                    <td>{{ quiz.reponses|length }}</td>
+                    <td class="actions">
+<button
+    type="button"
+    class="action-btn edit"
+    data-id="{{ quiz.id }}"
+    data-titre="{{ quiz.titre }}"
+    data-question="{{ quiz.question }}"
+    data-description="{{ quiz.description }}"
+    data-duree="{{ quiz.duree }}"
+    data-etat="{{ quiz.etat }}"
+>
+    <i class="fas fa-edit"></i>
+</button>
+<a href="{{ path('app_reponse_by_quiz', { id: quiz.id }) }}"
+   class="action-btn view"
+   title="Voir les réponses">
+    <i class="fas fa-list"></i>
+</a>
+
+                        <form method="post" action="{{ path('app_quiz_delete', {id: quiz.id}) }}" style="display:inline;">
+                            <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ quiz.id) }}">
+                            <button class="action-btn delete"><i class="fas fa-trash"></i></button>
+                        </form>
+                        <a href="{{ path('app_quiz_index', {id: quiz.id}) }}" class="action-btn view"><i class="fas fa-eye"></i></a>
+                    </td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="8" style="text-align:center; padding:12px;">Aucun quiz trouvé</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+
+</div>
+
+<!-- Overlay et Formulaire Modal -->
+<div id="quizModalOverlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.5); backdrop-filter: blur(5px); z-index:1000; justify-content:center; align-items:center;">
+    <div id="quizModal" style="background:white; padding:20px; border-radius:8px; max-width:600px; width:90%; box-shadow:0 0 20px rgba(0,0,0,0.3); position:relative;">
+        <span id="closeQuizModal" style="position:absolute; top:10px; right:15px; font-size:20px; cursor:pointer;">&times;</span>
+        <h3>Ajouter un nouveau Quiz</h3>
+        {{ form_start(form) }}
+            {{ form_row(form.titre) }}
+            {{ form_row(form.question) }}
+            {{ form_row(form.description) }}
+            {{ form_row(form.duree) }}
+            {{ form_row(form.etat) }}
+            <div style="margin-top:15px; display:flex; gap:10px;">
+                <button type="submit" class="btn btn-primary">Ajouter</button>
+                <button type="button" id="cancelQuizModal" class="btn btn-outline">Annuler</button>
+            </div>
+        {{ form_end(form) }}
+    </div>
+</div>
+<!-- Modal Modifier Quiz -->
+<div id="editQuizModalOverlay" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,.5); z-index:1000; justify-content:center; align-items:center;">
+    <div style="background:white; padding:20px; border-radius:8px; width:90%; max-width:600px; position:relative;">
+        <span id="closeEditQuizModal" style="position:absolute; top:10px; right:15px; cursor:pointer;">&times;</span>
+
+        <h3>Modifier le Quiz</h3>
+
+        <form id="editQuizForm" method="post">
+            <input type="hidden" name="_token" value="{{ csrf_token('edit_quiz') }}">
+
+            <div>
+                <label>Titre</label>
+                <input type="text" name="quiz[titre]" id="editTitre" class="form-control">
+            </div>
+
+            <div>
+                <label>Question</label>
+                <textarea name="quiz[question]" id="editQuestion" class="form-control"></textarea>
+            </div>
+
+            <div>
+                <label>Description</label>
+                <textarea name="quiz[description]" id="editDescription" class="form-control"></textarea>
+            </div>
+
+            <div>
+                <label>Durée</label>
+                <input type="number" name="quiz[duree]" id="editDuree" class="form-control">
+            </div>
+
+            <div>
+                <label>État</label>
+                <select name="quiz[etat]" id="editEtat" class="form-control">
+                    <option value="active">Active</option>
+                    <option value="inactive">Inactive</option>
+                </select>
+            </div>
+
+            <div style="margin-top:15px; display:flex; gap:10px;">
+                <button class="btn btn-primary">Enregistrer</button>
+                <button type="button" id="cancelEditQuizModal" class="btn btn-outline">Annuler</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    const openBtn = document.getElementById('openQuizModal');
+    const overlay = document.getElementById('quizModalOverlay');
+    const closeBtn = document.getElementById('closeQuizModal');
+    const cancelBtn = document.getElementById('cancelQuizModal');
+
+    // Ouvrir la modal
+    openBtn.addEventListener('click', () => {
+        overlay.style.display = 'flex';
+    });
+
+    // Fermer la modal
+    closeBtn.addEventListener('click', () => overlay.style.display = 'none');
+    cancelBtn.addEventListener('click', () => overlay.style.display = 'none');
+
+    // Fermer si clic à l'extérieur du formulaire
+    overlay.addEventListener('click', (e) => {
+        if(e.target === overlay){
+            overlay.style.display = 'none';
+        }
+    });
+</script>
+<script>
+const editButtons = document.querySelectorAll('.action-btn.edit');
+const editOverlay = document.getElementById('editQuizModalOverlay');
+const editForm = document.getElementById('editQuizForm');
+
+editButtons.forEach(btn => {
+    btn.addEventListener('click', () => {
+        const id = btn.dataset.id;
+
+        document.getElementById('editTitre').value = btn.dataset.titre;
+        document.getElementById('editQuestion').value = btn.dataset.question;
+        document.getElementById('editDescription').value = btn.dataset.description;
+        document.getElementById('editDuree').value = btn.dataset.duree;
+        document.getElementById('editEtat').value = btn.dataset.etat;
+
+        editForm.action = `/quiz/${id}/edit`;
+
+        editOverlay.style.display = 'flex';
+    });
+});
+
+document.getElementById('closeEditQuizModal').onclick =
+document.getElementById('cancelEditQuizModal').onclick = () => {
+    editOverlay.style.display = 'none';
+};
+</script>
+
+{% endblock %}
