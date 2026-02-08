@@ -1,0 +1,32 @@
+{% for matiere in matieres %}
+    <a href="{{ path('app_etudiant_cours_list', {'id': matiere.id}) }}" class="catalog-card">
+        <div class="catalog-img-wrapper">
+            {% if matiere.image %}
+                <img src="{{ asset('uploads/images/' ~ matiere.image) }}" alt="{{ matiere.nomMatiere }}">
+            {% else %}
+                <div style="height: 100%; background: #f1f5f9; display: flex; align-items: center; justify-content: center;">
+                    <i class="fas fa-book-atlas fa-4x" style="color: #cbd5e1;"></i>
+                </div>
+            {% endif %}
+            <span class="category-badge">{{ matiere.section }}</span>
+        </div>
+        <div class="catalog-body">
+            <h3>{{ matiere.nomMatiere }}</h3>
+            <p>{{ matiere.description|length > 120 ? matiere.description|slice(0, 120) ~ '...' : matiere.description }}</p>
+            
+        </div>
+        <div class="catalog-footer">
+            <div class="etudiant-info">
+                <i class="fas fa-layer-group"></i> {{ matiere.cours|length }} cours
+            </div>
+            <div class="btn-explore">
+                Apprendre <i class="fas fa-chevron-right"></i>
+            </div>
+        </div>
+    </a>
+{% else %}
+    <div style="grid-column: 1 / -1; text-align: center; padding: 40px; color: #64748b;">
+        <i class="fas fa-search fa-3x" style="margin-bottom: 15px; opacity: 0.5;"></i>
+        <p>Aucune matière ne correspond à votre recherche.</p>
+    </div>
+{% endfor %}

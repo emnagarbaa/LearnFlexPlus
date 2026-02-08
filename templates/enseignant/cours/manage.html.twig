@@ -1,0 +1,402 @@
+{% extends 'front/home.html.twig' %}
+
+{% block title %}Gestion des Cours - {{ matiere.nomMatiere }}{% endblock %}
+
+{% block stylesheets %}
+<style>
+    .manage-container { padding: 80px 0; background: #f1f5f9; min-height: 100vh; }
+    .header-actions { display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; }
+    .header-actions h2 { font-size: 2rem; color: var(--secondary); }
+    
+    .btn-add {
+        background: var(--primary); color: white; padding: 12px 24px; border-radius: 12px;
+        display: flex; align-items: center; gap: 10px; font-weight: 600; cursor: pointer;
+        transition: all 0.3s ease; border: none;
+    }
+    .btn-add:hover { background: #86b391; transform: translateY(-2px); }
+
+    .cours-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+        gap: 25px;
+    }
+
+    .cours-card {
+        background: white; border-radius: 16px; overflow: hidden;
+        box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+        display: flex; flex-direction: column; height: 100%;
+        transition: transform 0.3s ease;
+    }
+    .cours-card:hover { transform: translateY(-5px); }
+
+    .cours-image { height: 180px; position: relative; }
+    .cours-image img { width: 100%; height: 100%; object-fit: cover; }
+    
+    .cours-content { padding: 20px; flex-grow: 1; }
+    .cours-content h4 { font-size: 1.1rem; color: #1e293b; margin-bottom: 10px; }
+    .cours-content p { font-size: 0.9rem; color: #64748b; line-height: 1.4; margin-bottom: 15px; }
+
+    .cours-meta { display: flex; gap: 15px; font-size: 0.85rem; color: #94a3b8; margin-bottom: 15px; }
+    .cours-meta span { display: flex; align-items: center; gap: 5px; }
+
+    .cours-actions {
+        padding: 15px 20px; border-top: 1px solid #f1f5f9;
+        display: flex; justify-content: flex-end; gap: 10px;
+    }
+    .action-btn { 
+        width: 36px; height: 36px; border-radius: 8px; 
+        display: flex; align-items: center; justify-content: center;
+        transition: all 0.2s ease; border: none; cursor: pointer;
+    }
+    .btn-edit { background: #eff6ff; color: #2563eb; }
+    .btn-edit:hover { background: #2563eb; color: white; }
+    .btn-delete { background: #fff1f2; color: #e11d48; }
+    .btn-delete:hover { background: #e11d48; color: white; }
+
+    /* Modal Styling */
+    .modal {
+        display: none; position: fixed; z-index: 1000; left: 0; top: 0;
+        width: 100%; height: 100%; background: rgba(0,0,0,0.5);
+        backdrop-filter: blur(4px);
+    }
+    .modal-content {
+        background: white; margin: 2% auto; padding: 30px; border-radius: 20px;
+        width: 90%; max-width: 600px; position: relative;
+        animation: slideDown 0.4s ease-out;
+        max-height: 90vh; overflow-y: auto;
+    }
+    @keyframes slideDown { 
+        from { transform: translateY(-50px); opacity: 0; }
+        to { transform: translateY(0); opacity: 1; }
+    }
+
+    /* Scrollbar for modal */
+    .modal-content::-webkit-scrollbar { width: 8px; }
+    .modal-content::-webkit-scrollbar-track { background: #f1f5f9; border-radius: 10px; }
+    .modal-content::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+    .modal-content::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+    .close-modal { position: absolute; right: 25px; top: 20px; font-size: 1.5rem; cursor: pointer; color: #94a3b8; z-index: 10; }
+    
+    .form-group { margin-bottom: 20px; }
+    .form-group label { display: block; margin-bottom: 8px; font-weight: 600; color: #1e293b; }
+    .form-group input, .form-group textarea, .form-group select {
+        width: 100%; padding: 12px; border: 1px solid #e2e8f0; border-radius: 10px;
+        background-color: white; color: #1e293b; font-size: 0.95rem;
+        transition: all 0.3s ease;
+    }
+    .form-group input:focus, .form-group textarea:focus, .form-group select:focus {
+        border-color: var(--primary); outline: none; box-shadow: 0 0 0 3px rgba(151, 195, 162, 0.1);
+    }
+
+    /* Premium File Upload in Modal */
+    .file-upload-wrapper {
+        position: relative;
+        width: 100%;
+        margin-top: 5px;
+    }
+    .file-upload-label {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 30px 20px;
+        background: #f8fafc;
+        border: 2px dashed #e2e8f0;
+        border-radius: 12px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        color: #64748b;
+    }
+    .file-upload-label i { font-size: 2rem; color: var(--primary); margin-bottom: 10px; }
+    .file-upload-label:hover { border-color: var(--primary); background: #f0fdf4; }
+    .file-input-hidden { display: none; }
+    .file-name-preview {
+        margin-top: 8px;
+        font-size: 0.85rem;
+        color: var(--primary);
+        font-weight: 500;
+        text-align: center;
+    }
+
+    /* Validation Errors */
+    .invalid-feedback {
+        color: #e11d48;
+        font-size: 0.85rem;
+        margin-top: 5px;
+        display: block;
+        font-weight: 500;
+    }
+    .is-invalid {
+        border-color: #e11d48 !important;
+        background-color: #fff1f2 !important;
+    }
+    .is-invalid:focus {
+        box-shadow: 0 0 0 3px rgba(225, 29, 72, 0.1) !important;
+    }
+</style>
+{% endblock %}
+
+{% block body %}
+<div class="manage-container">
+    <div class="container">
+        <div class="header-actions">
+            <div>
+                <a href="{{ path('app_enseignant_matiere_index') }}" style="color: #64748b; text-decoration: none; font-size: 0.9rem;">
+                    <i class="fas fa-arrow-left"></i> Retour aux matières
+                </a>
+                <h2>{{ matiere.nomMatiere }}</h2>
+            </div>
+            <button class="btn-add" onclick="openModal('addModal')">
+                <i class="fas fa-plus"></i> Nouveau Cours
+            </button>
+        </div>
+
+        {% for message in app.flashes('success') %}
+            <div style="background: #dcfce7; color: #166534; padding: 16px; border-radius: 12px; margin-bottom: 30px; display: flex; align-items: center; gap: 10px;">
+                <i class="fas fa-check-circle"></i> {{ message }}
+            </div>
+        {% endfor %}
+
+        <div class="cours-grid">
+            {% for cours in cours_list %}
+                <div class="cours-card">
+                    <div class="cours-image">
+                        {% if cours.image %}
+                            <img src="{{ asset('uploads/images/' ~ cours.image) }}" alt="{{ cours.titre }}">
+                        {% else %}
+                            <div style="display: flex; align-items: center; justify-content: center; height: 100%; background: #f1f5f9; color: #cbd5e1;">
+                                <i class="fas fa-image fa-3x"></i>
+                            </div>
+                        {% endif %}
+                    </div>
+                    <div class="cours-content">
+                        <h4>{{ cours.titre }}</h4>
+                        <p>{{ cours.description|slice(0, 120) }}{{ cours.description|length > 120 ? '...' : '' }}</p>
+                        <div class="cours-meta">
+                            <span><i class="fas fa-clock"></i> {{ cours.dureeTotale }}</span>
+                            <span><i class="fas fa-language"></i> {{ cours.langue }}</span>
+                        </div>
+                    </div>
+                    <div class="cours-actions">
+                        <button class="action-btn btn-edit" title="Modifier" onclick="openEditModal({{ cours.id }}, '{{ cours.titre|e('js') }}', '{{ cours.description|e('js') }}', '{{ cours.section|e('js') }}', '{{ cours.dureeTotale|e('js') }}', '{{ cours.langue|e('js') }}', {{ cours.matiere.id }}, '{{ cours.image|e('js') }}')">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <form method="post" action="{{ path('app_enseignant_cours_delete', {'id': cours.id}) }}" style="display: inline-block" onsubmit="return confirm('Supprimer ce cours ?');">
+                            <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ cours.id) }}">
+                            <button class="action-btn btn-delete" title="Supprimer">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            {% else %}
+                <div style="grid-column: 1/-1; text-align: center; padding: 50px; background: white; border-radius: 20px;">
+                    <i class="fas fa-book fa-3x" style="color: #cbd5e1; margin-bottom: 20px;"></i>
+                    <p style="color: #64748b;">Aucun cours créé pour cette matière.</p>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<!-- ajouter  form -->
+<div id="addModal" class="modal">
+    <div class="modal-content">
+        <span class="close-modal" onclick="closeModal('addModal')">&times;</span>
+        <h3 style="margin-bottom: 25px; color: var(--secondary);">Ajouter un nouveau cours</h3>
+        {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
+            <div class="form-group">
+                {{ form_label(form.titre) }}
+                {{ form_widget(form.titre, {'attr': {'class': form.titre.vars.errors|length > 0 ? 'is-invalid' : ''}}) }}
+                {{ form_errors(form.titre) }}
+            </div>
+            <div class="form-group">
+                {{ form_label(form.description) }}
+                {{ form_widget(form.description, {'attr': {'class': form.description.vars.errors|length > 0 ? 'is-invalid' : ''}}) }}
+                {{ form_errors(form.description) }}
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                <div class="form-group">
+                    {{ form_label(form.section) }}
+                    {{ form_widget(form.section, {'attr': {'class': form.section.vars.errors|length > 0 ? 'is-invalid' : ''}}) }}
+                    {{ form_errors(form.section) }}
+                </div>
+                <div class="form-group">
+                    {{ form_label(form.duree_totale) }}
+                    {{ form_widget(form.duree_totale, {'attr': {'class': form.duree_totale.vars.errors|length > 0 ? 'is-invalid' : ''}}) }}
+                    {{ form_errors(form.duree_totale) }}
+                </div>
+            </div>
+            <div class="form-group">
+                {{ form_label(form.langue) }}
+                {{ form_widget(form.langue, {'attr': {'class': form.langue.vars.errors|length > 0 ? 'is-invalid' : ''}}) }}
+                {{ form_errors(form.langue) }}
+            </div>
+            <div class="form-group">
+                {{ form_label(form.matiere) }}
+                {{ form_widget(form.matiere, {'attr': {'class': form.matiere.vars.errors|length > 0 ? 'is-invalid' : ''}}) }}
+                {{ form_errors(form.matiere) }}
+            </div>
+            <div class="form-group">
+                {{ form_label(form.image) }}
+                <div class="file-upload-wrapper">
+                    <label for="{{ form.image.vars.id }}" class="file-upload-label">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                        <span>Cliquez pour choisir une image</span>
+                    </label>
+                    {{ form_widget(form.image, {'attr': {'class': 'file-input-hidden', 'onchange': 'updateFileName(this, "add-file-preview")'}}) }}
+                    <div id="add-file-preview" class="file-name-preview">Aucun fichier sélectionné</div>
+                </div>
+                {{ form_errors(form.image) }}
+            </div>
+            <div class="form-group">
+                {{ form_label(form.pdf_file) }}
+                <div class="file-upload-wrapper">
+                    <label for="{{ form.pdf_file.vars.id }}" class="file-upload-label">
+                        <i class="fas fa-file-pdf"></i>
+                        <span>Cliquez pour choisir un PDF</span>
+                    </label>
+                    {{ form_widget(form.pdf_file, {'attr': {'class': 'file-input-hidden', 'onchange': 'updateFileName(this, "add-pdf-preview")'}}) }}
+                    <div id="add-pdf-preview" class="file-name-preview">Aucun fichier sélectionné</div>
+                </div>
+                {{ form_errors(form.pdf_file) }}
+            </div>
+            <button type="submit" class="btn-add" style="width: 100%; justify-content: center; margin-top: 20px;">
+                Créer le cours
+            </button>
+        {{ form_end(form) }}
+    </div>
+</div>
+
+<!-- edit  form -->
+<div id="editModal" class="modal">
+    <div class="modal-content">
+        <span class="close-modal" onclick="closeModal('editModal')">&times;</span>
+        <h3 style="margin-bottom: 25px; color: var(--secondary);">Modifier le cours</h3>
+        <form id="editForm" method="post" enctype="multipart/form-data" novalidate>
+            <input type="hidden" name="cours[_token]" id="editToken">
+            <input type="hidden" name="cours[matiere]" id="editMatiereId">
+            
+            <div id="currentImageContainer" style="margin-bottom: 20px; text-align: center; display: none;">
+                <label>Image actuelle</label>
+                <img id="editImagePreview" src="" alt="Aperçu" style="width: 100%; max-height: 150px; object-fit: contain; border-radius: 12px; margin-top: 10px; border: 1px solid #e2e8f0;">
+            </div>
+
+            <div class="form-group">
+                <label>Titre</label>
+                <input type="text" name="cours[titre]" id="editTitre" required>
+            </div>
+            <div class="form-group">
+                <label>Description</label>
+                <textarea name="cours[description]" id="editDescription" rows="4" required></textarea>
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                <div class="form-group">
+                    <label>Section</label>
+                    <input type="text" name="cours[section]" id="editSection" required>
+                </div>
+                <div class="form-group">
+                    <label>Durée totale</label>
+                    <input type="text" name="cours[duree_totale]" id="editDurée" required>
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Langue</label>
+                <input type="text" name="cours[langue]" id="editLangue" required>
+            </div>
+            <div class="form-group">
+                <label>Changer l'image (optionnel)</label>
+                <div class="file-upload-wrapper">
+                    <label for="editImageInput" class="file-upload-label">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                        <span>Cliquez pour changer l'image</span>
+                    </label>
+                    <input type="file" name="cours[image]" id="editImageInput" class="file-input-hidden" onchange="updateFileName(this, 'edit-file-preview')">
+                    <div id="edit-file-preview" class="file-name-preview">Aucun fichier sélectionné</div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Changer le PDF (optionnel)</label>
+                <div class="file-upload-wrapper">
+                    <label for="editPdfInput" class="file-upload-label">
+                        <i class="fas fa-file-pdf"></i>
+                        <span>Cliquez pour changer le PDF</span>
+                    </label>
+                    <input type="file" name="cours[pdf_file]" id="editPdfInput" class="file-input-hidden" accept=".pdf" onchange="updateFileName(this, 'edit-pdf-preview')">
+                    <div id="edit-pdf-preview" class="file-name-preview">Aucun fichier sélectionné</div>
+                </div>
+            </div>
+            <button type="submit" class="btn-add" style="width: 100%; justify-content: center; margin-top: 20px;">
+                Enregistrer les modifications
+            </button>
+        </form>
+    </div>
+</div>
+
+{% block javascripts %}
+<script>
+    function openModal(id) {
+        document.getElementById(id).style.display = 'block';
+    }
+
+    function closeModal(id) {
+        document.getElementById(id).style.display = 'none';
+    }
+
+    function openEditModal(id, titre, desc, section, duree, langue, matiereId, imagePath) {
+        const form = document.getElementById('editForm');
+        form.action = '/enseignant/cours/' + id + '/edit';
+        
+        document.getElementById('editTitre').value = titre;
+        document.getElementById('editDescription').value = desc;
+        document.getElementById('editSection').value = section;
+        document.getElementById('editDurée').value = duree;
+        document.getElementById('editLangue').value = langue;
+        document.getElementById('editMatiereId').value = matiereId;
+        document.getElementById('editToken').value = '{{ csrf_token("cours") }}';
+
+        const imgContainer = document.getElementById('currentImageContainer');
+        const imgPreview = document.getElementById('editImagePreview');
+        if (imagePath) {
+            imgPreview.src = '/uploads/images/' + imagePath;
+            imgContainer.style.display = 'block';
+        } else {
+            imgContainer.style.display = 'none';
+        }
+        
+        openModal('editModal');
+    }
+
+    function updateFileName(input, previewId) {
+        const preview = document.getElementById(previewId);
+        if (input.files && input.files[0]) {
+            preview.textContent = 'Fichier sélectionné : ' + input.files[0].name;
+            preview.style.color = 'var(--primary)';
+        } else {
+            preview.textContent = 'Aucun fichier sélectionné';
+            preview.style.color = '#64748b';
+        }
+    }
+
+    // Auto-open modals if there are errors
+    document.addEventListener('DOMContentLoaded', function() {
+        {% if not form.vars.valid %}
+            openModal('addModal');
+        {% endif %}
+        
+        {% if edit_cours is defined and not edit_form_valid %}
+            // If we're coming from a failed edit submission
+            openEditModal({{ edit_cours.id }}, '{{ edit_cours.titre|e('js') }}', '{{ edit_cours.description|e('js') }}', '{{ edit_cours.section|e('js') }}', '{{ edit_cours.dureeTotale|e('js') }}', '{{ edit_cours.langue|e('js') }}');
+        {% endif %}
+    });
+
+    window.onclick = function(event) {
+        if (event.target.className === 'modal') {
+            event.target.style.display = 'none';
+        }
+    }
+</script>
+{% endblock %}
+
+{% endblock %}

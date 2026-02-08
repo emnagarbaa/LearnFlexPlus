@@ -64,11 +64,12 @@
         {% endif %}
 
         <div style="margin-top: 30px; display: flex; justify-content: center; gap: 15px; flex-wrap: wrap;">
-            <a href="{{ path('front_quiz', {'id': quiz.id}) }}" 
+    <a href="{{ path('front_quiz', {'id': quiz.id}) }}" 
    class="btn btn-primary" 
    style="flex: 1 1 150px; padding: 12px 20px; font-weight: bold; border-radius: 8px;">
    <i class="fas fa-redo"></i> Refaire ce quiz
 </a>
+
 
 <a href="{{ path('front_quiz') }}" class="btn btn-secondary" style="flex: 1 1 150px; padding: 12px 20px; font-weight: bold; border-radius: 8px;">
     ➡️ Quiz suivant

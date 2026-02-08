@@ -1,0 +1,156 @@
+{# templates/register.html.twig #}
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LearnFlexPlus - Inscription</title>
+    <link rel="stylesheet" href="{{ asset('assets/css/main.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/css/auth.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <div class="auth-page">
+        <div class="auth-container">
+            <div class="auth-card">
+                <div class="auth-header">
+                    <div class="logo-container">
+                        <img src="{{ asset('assets/images/logo1.png') }}" alt="LearnFlexPlus Logo" class="auth-logo">
+                        <span class="logo-text">LearnFlexPlus</span>
+                    </div>
+                    <h1>Inscription</h1>
+                    <p>Créez votre compte LearnFlexPlus pour profiter de tous nos services.</p>
+                </div>
+
+                {{ form_start(registrationForm, {'attr': {'class': 'auth-form', 'novalidate': 'novalidate'}}) }}
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Prénom</label>
+                            <div class="input-with-icon">
+                                <i class="fas fa-user"></i>
+                                {{ form_widget(registrationForm.prenom, {'attr': {'placeholder': 'Entrez votre prénom'}}) }}
+                            </div>
+                            {{ form_errors(registrationForm.prenom) }}
+                        </div>
+                        <div class="form-group">
+                            <label>Nom</label>
+                            <div class="input-with-icon">
+                                <i class="fas fa-user"></i>
+                                {{ form_widget(registrationForm.nom, {'attr': {'placeholder': 'Entrez votre nom'}}) }}
+                            </div>
+                            {{ form_errors(registrationForm.nom) }}
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Email</label>
+                        <div class="input-with-icon">
+                            <i class="fas fa-envelope"></i>
+                            {{ form_widget(registrationForm.email, {'attr': {'placeholder': 'Entrez votre email'}}) }}
+                        </div>
+                        {{ form_errors(registrationForm.email) }}
+                    </div>
+
+                    <div class="form-group">
+                        <label>Téléphone</label>
+                        <div class="input-with-icon">
+                            <i class="fas fa-phone"></i>
+                            {{ form_widget(registrationForm.telephone, {'attr': {'placeholder': 'Entrez votre numéro de téléphone'}}) }}
+                        </div>
+                        {{ form_errors(registrationForm.telephone) }}
+                    </div>
+
+                    <div class="form-group">
+                        <label>Rôle <i class="fas fa-user-shield"></i></label>
+                        <div class="input-with-icon" style="display: flex; align-items: center; gap: 5px;">
+                            {{ form_widget(registrationForm.role) }}
+                        </div>
+                        {{ form_errors(registrationForm.role) }}
+                    </div>
+
+                    <div class="form-group">
+                        <label>Mot de passe</label>
+                        <div class="input-with-icon">
+                            <i class="fas fa-lock"></i>
+                            {{ form_widget(registrationForm.password, {'attr': {'placeholder': 'Créez un mot de passe'}}) }}
+                        </div>
+                        {{ form_errors(registrationForm.password) }}
+                    </div>
+
+                    <div class="form-group">
+                    <label>Âge</label>
+                    <div class="input-with-icon">
+                        <i class="fas fa-calendar"></i>
+                        {{ form_widget(registrationForm.age, {'attr': {'placeholder': 'Entrez votre âge'}}) }}
+                    </div>
+                    {{ form_errors(registrationForm.age) }}
+                     </div>
+
+                    <div class="form-group">
+                    <label>Adresse de résidence</label>
+                    <div class="input-with-icon">
+                        <i class="fas fa-home"></i>
+                        {{ form_widget(registrationForm.adresseResidence, {'attr': {'placeholder': 'Entrez votre adresse'}}) }}
+                    </div>
+                    {{ form_errors(registrationForm.adresseResidence) }}
+                     </div>
+
+                    <button type="button" id="openRegFaceIdModal" class="btn btn-primary btn-block">
+                        <i class="fas fa-face-smile"></i> Enregistrer mon visage (optionnel)
+                    </button>
+                    <input type="hidden" name="face_descriptor" id="face_descriptor">
+
+                    <button type="submit" class="btn btn-primary btn-block">S'inscrire</button>
+                {{ form_end(registrationForm) }}
+
+                <div class="auth-footer">
+                    <p>Vous avez déjà un compte? <a href="{{ path('app_login') }}">Se connecter</a></p>
+                </div>
+            </div>
+        </div>
+
+        <div class="auth-image">
+            <div class="overlay"></div>
+        </div>
+    </div>
+
+    {# Face ID Modal #}
+    <div id="regFaceIdModal" class="faceid-modal-overlay">
+        <div class="faceid-modal-content">
+            <div class="faceid-modal-header">
+                <h3>Enregistrement Face ID</h3>
+            </div>
+            <div id="regFaceIdError" class="faceid-error-message" style="display:none;"></div>
+            <video id="regFaceIdVideo" width="600" height="500" autoplay></video>
+            <br>
+            <div class="faceid-modal-buttons">
+                <button id="regCaptureFaceIdBtn" class="btn btn-primary">
+                    <i class="fas fa-camera"></i> Capturer et enregistrer
+                </button>
+                <button id="closeRegFaceIdModal" class="btn btn-secondary" type="button">
+                    <i class="fas fa-xmark"></i> Annuler
+                </button>
+            </div>
+            <canvas id="regFaceIdCanvas" width="600" height="500" style="display:none;"></canvas>
+        </div>
+    </div>
+
+    <script defer src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"></script>
+    <script defer src="{{ asset('js/register-face.js') }}"></script>
+
+    <script>
+        // Password confirmation check
+        document.querySelector('.auth-form').addEventListener('submit', function (e) {
+            if (document.getElementById('password').value !== document.getElementById('confirm-password').value) {
+                e.preventDefault();
+                alert('Les mots de passe ne correspondent pas.');
+            }
+        });
+    </script>
+</body>
+
+</html>

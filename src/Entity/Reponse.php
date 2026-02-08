@@ -19,7 +19,8 @@ class Reponse
 )]
 private ?string $text = null;
 
-    #[ORM\Column]
+  #[ORM\Column]
+    #[Assert\NotNull(message: "Il faut préciser si la réponse est correcte ou non.")]
     private ?bool $estCorrecte = null;
 
     #[ORM\ManyToOne(inversedBy: 'reponses')]

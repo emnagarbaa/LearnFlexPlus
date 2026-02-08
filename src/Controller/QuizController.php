@@ -10,6 +10,9 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+// <-- Ici les imports Dompdf
+use Dompdf\Dompdf;
+use Dompdf\Options;
 
 #[Route('/quiz')]
 final class QuizController extends AbstractController
@@ -65,25 +68,60 @@ public function index(QuizRepository $quizRepository, Request $request, EntityMa
 }
 
     #[Route('/new', name: 'app_quiz_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, EntityManagerInterface $entityManager): Response
-    {
-        $quiz = new Quiz();
-        $form = $this->createForm(QuizType::class, $quiz);
-        $form->handleRequest($request);
+public function new(Request $request, EntityManagerInterface $entityManager): Response
+{
+    $quiz = new Quiz(); 
+    $form = $this->createForm(QuizType::class, $quiz);
+    $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager->persist($quiz);
-            $entityManager->flush();
-        $this->addFlash('success', 'Le quiz a été ajouté avec succès !');
+if ($form->isSubmitted() && $form->isValid()) {
 
-            return $this->redirectToRoute('app_quiz_index', [], Response::HTTP_SEE_OTHER);
+        // 🔹 Récupération et nettoyage
+        $titre = trim($quiz->getTitre());
+        $question = trim($quiz->getQuestion());
+        $description = trim($quiz->getDescription() ?? '');
+        $duree = $quiz->getDuree();
+        $etat = $quiz->getEtat();
+
+        $errors = [];
+
+        // Validation des champs
+        if (empty($titre)) {
+            $errors[] = "Le titre est obligatoire.";
         }
 
-        return $this->render('back/addQuiz.html.twig', [
-            'quiz' => $quiz,
-            'form' => $form,
-        ]);
+        if (empty($question)) {
+            $errors[] = "La question est obligatoire.";
+        }
+
+        if (!is_int($duree) || $duree <= 0) {
+            $errors[] = "La durée doit être un entier positif.";
+        }
+
+        // 🔹 Validation stricte de l'état
+        if (!in_array($etat, ['active', 'inactive'])) {
+            $errors[] = "L'état doit être 'active' ou 'inactive'. Le quiz ne sera pas enregistré.";
+        }
+
+        // Si il y a des erreurs, on affiche les messages et on **ne persiste pas**
+        if (!empty($errors)) {
+            foreach ($errors as $error) {
+                $this->addFlash('error', $error);
+            }
+            return $this->redirectToRoute('app_quiz_index');
+        }
+
+        // 🔹 Tout est correct => persistance en BDD
+        $entityManager->persist($quiz);
+        $entityManager->flush();
+
+        $this->addFlash('success', 'Le quiz a été ajouté avec succès !');
+        return $this->redirectToRoute('app_quiz_index');
     }
+
+    // Redirection si formulaire non soumis
+    return $this->redirectToRoute('app_quiz_index'); 
+}
 
     #[Route('/{id}', name: 'app_quiz_show', methods: ['GET'])]
     public function show(Quiz $quiz): Response
@@ -92,6 +130,7 @@ public function index(QuizRepository $quizRepository, Request $request, EntityMa
             'quiz' => $quiz,
         ]);
     }
+    //modifier un quiz
 #[Route('/{id}/edit', name: 'app_quiz_edit', methods: ['POST'])]
 public function edit(Request $request, Quiz $quiz, EntityManagerInterface $entityManager): Response
 {
@@ -113,14 +152,14 @@ public function edit(Request $request, Quiz $quiz, EntityManagerInterface $entit
     return $this->redirectToRoute('app_quiz_index');
 }
 
-
+//supprimer un quiz
     #[Route('/{id}', name: 'app_quiz_delete', methods: ['POST'])]
     public function delete(Request $request, Quiz $quiz, EntityManagerInterface $entityManager): Response
     {
         if ($this->isCsrfTokenValid('delete'.$quiz->getId(), $request->getPayload()->getString('_token'))) {
-            $entityManager->remove($quiz);
-            $entityManager->flush();
-            $this->addFlash('error', 'Le quiz a été supprimé.');
+            $entityManager->remove($quiz); // Supprime le quiz
+            $entityManager->flush();// Applique la suppression dans la BDD
+            $this->addFlash('error', 'Le quiz a été supprimé.');// Message flash
 
         }
 
@@ -137,5 +176,40 @@ public function quizReponses(Quiz $quiz): Response
         'reponses' => $reponses,
     ]);
 }
+
+  #[Route('/admin/quiz/pdf', name: 'app_quizzes_pdf')]
+    public function generatePdf(QuizRepository $quizRepository): Response
+    {
+        // 1. Récupérer tous les quiz depuis la base de données
+        $quizzes = $quizRepository->findAll();
+
+        // 2. Rendre le template Twig en HTML
+        $html = $this->renderView('quiz/pdf_quizzes.html.twig', [
+            'quizzes' => $quizzes
+        ]);
+
+        // 3. Configurer Dompdf
+        $options = new Options();
+        $options->set('defaultFont', 'Poppins');
+        $dompdf = new Dompdf($options);
+
+        // 4. Charger le HTML
+        $dompdf->loadHtml($html);
+
+        // 5. Définir le format de la page
+        $dompdf->setPaper('A4', 'portrait');
+
+        // 6. Générer le PDF
+        $dompdf->render();
+
+        // 7. Récupérer le contenu du PDF
+        $pdfContent = $dompdf->output();
+
+        // 8. Retourner la réponse avec le PDF
+        return new Response($pdfContent, 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'inline; filename="quizzes.pdf"',
+        ]);
+    }
 
 }

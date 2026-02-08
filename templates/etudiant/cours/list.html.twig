@@ -1,0 +1,122 @@
+{% extends 'front/home.html.twig' %}
+
+{% block title %}Cours de {{ matiere.nomMatiere }} - LearnFlex{% endblock %}
+
+{% block stylesheets %}
+<style>
+    .courses-hero { 
+        padding: 80px 0; 
+        background: linear-gradient(135deg, #065f46 0%, #10b981 100%); 
+        color: white;
+        text-align: center;
+        border-radius: 0 0 50px 50px;
+    }
+    .courses-container { padding: 60px 0; background: #f8fafc; min-height: 80vh; }
+
+    .course-card {
+        background: white;
+        border-radius: 20px;
+        padding: 25px;
+        margin-bottom: 25px;
+        display: grid;
+        grid-template-columns: 200px 1fr auto;
+        gap: 30px;
+        align-items: center;
+        box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05);
+        transition: all 0.3s ease;
+        border: 1px solid transparent;
+    }
+
+    .course-card:hover {
+        transform: scale(1.01);
+        border-color: var(--primary);
+        box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+    }
+
+    .course-visual {
+        width: 200px;
+        height: 130px;
+        border-radius: 12px;
+        overflow: hidden;
+        border: 1px solid #f1f5f9;
+    }
+
+    .course-visual img { width: 100%; height: 100%; object-fit: cover; }
+
+    .course-meta { display: flex; gap: 20px; margin-top: 15px; }
+    .meta-item { display: flex; align-items: center; gap: 8px; color: #64748b; font-size: 0.9rem; font-weight: 500; }
+    .meta-item i { color: var(--primary); }
+
+    .course-btn {
+        background: var(--primary);
+        color: white;
+        padding: 12px 30px;
+        border-radius: 12px;
+        text-decoration: none;
+        font-weight: 700;
+        transition: all 0.3s ease;
+    }
+    .course-btn:hover { background: var(--secondary); transform: translateX(5px); }
+
+    .back-link { margin-bottom: 30px; display: inline-flex; align-items: center; gap: 10px; color: #64748b; text-decoration: none; font-weight: 600; }
+    .back-link:hover { color: var(--primary); }
+</style>
+{% endblock %}
+
+{% block body %}
+<div class="courses-hero">
+    <div class="container">
+        <span class="badge" style="background: rgba(255,255,255,0.2); color: white; padding: 8px 16px; margin-bottom: 20px; display: inline-block;">{{ matiere.section }}</span>
+        <h1 style="font-size: 3rem; margin-bottom: 15px;">{{ matiere.nomMatiere }}</h1>
+        <p style="font-size: 1.2rem; opacity: 0.9; max-width: 700px; margin: 0 auto;">{{ matiere.description }}</p>
+    </div>
+</div>
+
+<div class="courses-container">
+    <div class="container">
+        <a href="{{ path('app_etudiant_matiere_catalog') }}" class="back-link">
+            <i class="fas fa-chevron-left"></i> Retour au catalogue
+        </a>
+
+        {% for cours in cours_list %}
+            <div class="course-card">
+                <div class="course-visual">
+                    {% if cours.image %}
+                        <img src="{{ asset('uploads/images/' ~ cours.image) }}" alt="{{ cours.titre }}">
+                    {% else %}
+                        <div style="width: 100%; height: 100%; background: #f8fafc; display: flex; align-items: center; justify-content: center;">
+                            <i class="fas fa-play-circle fa-3x" style="color: #cbd5e1;"></i>
+                        </div>
+                    {% endif %}
+                </div>
+                <div class="course-info">
+                    <h3 style="font-size: 1.5rem; color: #1e293b; margin-bottom: 10px;">{{ cours.titre }}</h3>
+                    <p style="color: #64748b; line-height: 1.5;">{{ cours.description }}</p>
+                        <div class="course-meta">
+                            <div class="meta-item">
+                                <i class="far fa-clock"></i> {{ cours.dureeTotale }}
+                            </div>
+                            <div class="meta-item">
+                                <i class="fas fa-globe"></i> {{ cours.langue }}
+                            </div>
+                        </div>
+                </div>
+                <div class="course-action" style="display: grid; grid-template-columns: 1fr; gap: 10px;">
+                    <a href="#" class="course-btn">Commencer</a>
+                    {% if cours.pdfFile %}
+                        <a href="{{ asset('uploads/images/' ~ cours.pdfFile) }}" target="_blank" class="course-btn" style="background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);">
+                            <i class="fas fa-file-pdf"></i>
+                            <span>Télécharger Ressource</span>
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+        {% else %}
+            <div style="text-align: center; padding: 60px; background: white; border-radius: 20px;">
+                <i class="fas fa-graduation-cap fa-4x" style="color: #e2e8f0; margin-bottom: 20px;"></i>
+                <h3 style="color: #64748b;">Aucun cours n'est encore disponible pour cette matière.</h3>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,6 @@
+<svg width="400" height="250" viewBox="0 0 400 250" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="400" height="250" fill="#f0fff4"/>
+  <path d="M50 200C100 200 150 50 200 50C250 50 300 200 350 200" stroke="#10b981" stroke-width="8" stroke-linecap="round"/>
+  <path d="M200 30V220" stroke="#065f46" stroke-width="2" stroke-dasharray="4 4"/>
+  <text x="50%" y="235" text-anchor="middle" font-family="Arial" font-size="18" font-weight="bold" fill="#065f46">ANALYSE MATHÉMATIQUE</text>
+</svg>

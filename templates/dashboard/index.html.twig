@@ -1,0 +1,168 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block stylesheets %}
+<link rel="stylesheet" href="{{ asset('assets/css/styles.css') }}">
+<link rel="stylesheet" href="{{ asset('assets/css/dashboard.css') }}">
+<link rel="stylesheet" href="{{ asset('assets/css/crud.css') }}">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+{% endblock %}
+
+{% block body %}
+<div class="dashboard">
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <div class="logo">
+                <a href="{{ path('app_front') }}">
+                    <img src="{{ asset('assets/images/logo1.png') }}" alt="LearnFlexPlus Logo" class="nav-logo">
+                    <span>LearnFlex</span><span class="highlight">+</span>
+                </a>
+            </div>
+            <button class="sidebar-toggle"><i class="fas fa-bars"></i></button>
+        </div>
+
+      <!-- Sidebar -->
+          <div class="sidebar-content">
+              <nav class="sidebar-menu">
+                  <ul>
+                            <li class="active">
+                          <a href="{{ path('dashboard') }}">
+                              <i class="fas fa-tachometer-alt"></i>
+                              <span>Dashboard</span>
+                          </a>
+                      </li>
+
+                      <li>
+                          <a href="{{ path('app_users') }}">
+                              <i class="fas fa-users"></i>
+                              <span>Utilisateurs</span>
+                          </a>
+                      </li>
+                      
+                      <li>
+                          <a href="{{ path('app_back_cours_index') }}"><i class="fas fa-book-open"></i><span>Cours</span></a>
+                      </li>
+                      <li>
+                          <a href="{{ path('app_back_matiere_index') }}"><i class="fas fa-book"></i><span>Matières</span></a>
+                      </li>
+                      <li>
+                          <a href="#"><i class="fas fa-graduation-cap"></i><span>Evaluation</span></a>
+                      </li>
+                      <li>
+                          <a href="#"><i class="fas fa-question-circle"></i><span>Questionnaire</span></a>
+                      </li>
+                      <li>
+                          <a href="#"><i class="fas fa-directions"></i><span>Orientation</span></a>
+                      </li>
+                      <li>
+                          <a href="#"><i class="fas fa-comments"></i><span>Forum</span></a>
+                      </li>
+                  </ul>
+              </nav>
+          </div>
+
+                <div class="sidebar-footer">
+            <a href="#" class="user-profile">
+                <img src="{{ asset('assets/images/placeholder-admin.png') }}" 
+                    alt="{{ app.user.nom }} {{ app.user.prenom }}" class="user-img">
+                <div class="user-info">
+                    <h4>{{ app.user.nom }} {{ app.user.prenom }}</h4>
+                    <p>{{ app.user.getRole() }}</p>
+                </div>
+            </a>
+            <a href="{{ path('app_logout') }}" class="logout">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Déconnexion</span>
+            </a>
+        </div>
+    </aside>
+      
+    <!-- Main Content -->
+    <main class="main-content">
+        <header>
+            <button class="sidebar-toggle"><i class="fas fa-bars"></i></button>
+            <h1>Dashboard</h1>
+        </header>
+
+        <section class="stats-cards">
+            <div class="stat-card">
+                <h3 class="stat-value">{{ totalUsers }}</h3>
+                <p>Utilisateurs</p>
+            </div>
+        </section>
+
+                <section class="dashboard-grid">
+            <div class="chart-card dashboard-card">
+                <div class="dashboard-card-header">
+                    <h3>Utilisateurs</h3>
+                    <p>Statistiques des utilisateurs</p>
+                </div>
+                <div class="dashboard-card-body">
+                    <canvas id="usersChart"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <section class="recent-activity">
+            <h2>Derniers utilisateurs</h2>
+            <table class="activity-table">
+                <thead>
+                    <tr>
+                        <th>Nom</th>
+                        <th>Prénom</th>
+                        <th>Email</th>
+                        <th>Rôle</th>
+                        <th>Inscription</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in recentUsers %}
+                        <tr>
+                            <td>{{ user.nom }}</td>
+                            <td>{{ user.prenom }}</td>
+                            <td>{{ user.email }}</td>
+                            <td>{{ user.role }}</td>
+                            <td>{{ user.createdAt ? user.createdAt|date('d/m/Y H:i') : 'N/A' }}</td>
+                        </tr>
+                    {% else %}
+                        <tr><td colspan="5">Aucun utilisateur récent</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </section>
+    </main>
+</div>
+{% endblock %}
+
+{% block javascripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Sidebar toggle
+    const sidebarToggle = document.querySelector('.sidebar-toggle');
+    const sidebar = document.querySelector('.sidebar');
+    const mainContent = document.querySelector('.main-content');
+    sidebarToggle?.addEventListener('click', () => {
+        sidebar.classList.toggle('collapsed');
+        mainContent.classList.toggle('expanded');
+    });
+
+    // Charts
+    const usersChartCtx = document.getElementById('usersChart');
+    new Chart(usersChartCtx, {
+        type: 'bar',
+        data: {
+            labels: {{ usersChart.labels|raw }},
+            datasets: [{
+                label: 'Utilisateurs',
+                data: {{ usersChart.data|raw }},
+                backgroundColor: 'rgba(54, 162, 235, 0.6)'
+            }]
+        },
+        options: { responsive: true }
+    });
+});
+</script>
+{% endblock %}

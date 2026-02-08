@@ -25,20 +25,21 @@
         </nav>
 
         <div class="header-right">
-            {% if app.user and app.user.type != 'client' %}
-                <a href="#" class="btn btn-outline dashboard-btn">Dashboard</a>
-            {% endif %}
-            
-            {% if app.user %}
-                <a href="#" class="btn btn-primary logout-btn">Déconnexion</a>
-            {% else %}
-                <a href="#" class="btn btn-primary">Connexion</a>
-            {% endif %}
+    {% if app.user %}
+        <!-- Déconnexion via POST -->
+        <form action="{{ path('app_logout') }}" method="post" style="display:inline;">
+            <button type="submit" class="btn btn-primary logout-btn">Déconnexion</button>
+        </form>
+    {% else %}
+        <!-- Connexion -->
+        <a href="{{ path('app_login') }}" class="btn btn-primary">Connexion</a>
+    {% endif %}
+    <button class="mobile-menu-btn">
+        <i class="fas fa-bars"></i>
+    </button>
+</div>
 
-            <button class="mobile-menu-btn">
-                <i class="fas fa-bars"></i>
-            </button>
-        </div>
+
     </div>
 </header>
 {% endblock %}

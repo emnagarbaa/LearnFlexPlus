@@ -1,0 +1,259 @@
+{# templates/user/index.html.twig #}
+{% extends 'base.html.twig' %}
+
+{% block stylesheets %}
+<link rel="stylesheet" href="{{ asset('assets/css/styles.css') }}">
+<link rel="stylesheet" href="{{ asset('assets/css/dashboard.css') }}">
+<link rel="stylesheet" href="{{ asset('assets/css/users.css') }}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+{% endblock %}
+
+{% block body %}
+<div class="dashboard">
+    <aside class="sidebar">
+        <div class="sidebar-header">
+    <div class="logo">
+        <a href="{{ path('app_front') }}">
+            <img src="{{ asset('assets/images/logo1.png') }}" alt="LearnFlexPlus Logo" class="nav-logo">
+            <span>LearnFlex</span><span class="highlight">Plus</span>
+        </a>
+    </div>
+    <button class="sidebar-toggle"><i class="fas fa-bars"></i></button>
+</div>
+
+
+        <div class="sidebar-content">
+            <nav class="sidebar-menu">
+                <ul>
+                    <li>
+                        <a href="{{ path('dashboard') }}">
+                            <i class="fas fa-tachometer-alt"></i>
+                            <span>Dashboard</span>
+                        </a>
+                    </li>
+
+                    <li class="active">
+                        <a href="{{ path('app_users') }}">
+                            <i class="fas fa-users"></i>
+                            <span>Utilisateurs</span>
+                        </a>
+                    </li>
+
+                    <li><a href="#"><i class="fas fa-book-open"></i><span>Contenu pédagogique</span></a></li>
+                    <li><a href="#"><i class="fas fa-graduation-cap"></i><span>Evaluation</span></a></li>
+                    <li><a href="{{ path('app_quiz_index') }}">
+    <i class="fas fa-question-circle"></i>
+    <span>Questionnaire</span>
+  </a></li>
+                    <li><a href="#"><i class="fas fa-directions"></i><span>Orientation</span></a></li>
+                    <li><a href="#"><i class="fas fa-comments"></i><span>Forum</span></a></li>
+                </ul>
+            </nav>
+        </div>
+
+                <div class="sidebar-footer">
+           {% if app.user %}
+<a href="#" class="user-profile">
+    <img src="{{ asset('assets/images/placeholder-admin.png') }}" 
+        alt="{{ app.user.nom }} {{ app.user.prenom }}" class="user-img">
+    <div class="user-info">
+        <h4>{{ app.user.nom }} {{ app.user.prenom }}</h4>
+        <p>{{ app.user.getRole() }}</p>
+    </div>
+</a>
+{% else %}
+<a href="{{ path('app_login') }}" class="user-profile">
+    <img src="{{ asset('assets/images/placeholder-admin.png') }}" class="user-img">
+    <div class="user-info">
+        <h4>Invité</h4>
+        <p>Non connecté</p>
+    </div>
+</a>
+{% endif %}
+
+            <a href="{{ path('app_logout') }}" class="logout">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Déconnexion</span>
+            </a>
+        </div>
+    </aside>
+
+    <main class="main-content">
+        <header class="dashboard-header">
+            <div class="header-left">
+                <h1>Gestion des Utilisateurs</h1>
+                <p>Ajoutez, modifiez et supprimez des utilisateurs</p>
+            </div>
+
+            <div class="header-right">
+                <div class="search-bar">
+                    <form method="GET" action="{{ path('app_users') }}">
+                        <input type="text" name="search" placeholder="Rechercher un utilisateur..."
+                            value="{{ search|default('') }}">
+                        <button type="submit"><i class="fas fa-search"></i></button>
+                        {% if search %}
+                            <a href="{{ path('app_users') }}" class="btn btn-outline-secondary ms-2">Effacer</a>
+                        {% endif %}
+                    </form>
+                </div>
+
+
+                <div class="actions">
+                    <a href="{{ path('app_adduser') }}" class="btn primary">
+                        <i class="fas fa-plus"></i> Ajouter un utilisateur
+                    </a>
+                </div>
+            </div>
+        </header>
+
+        <div class="dashboard-content">
+
+            <!-- STATS -->
+            <div class="stats-cards">
+                <div class="stat-card">
+                    <div class="icon neutral"><i class="fas fa-users"></i></div>
+                    <div><h3>{{ totalUsers }}</h3><span>Total</span></div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="icon red"><i class="fas fa-user-shield"></i></div>
+                    <div><h3>{{ adminsCount }}</h3><span>Admins</span></div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="icon blue"><i class="fas fa-car"></i></div>
+                    <div><h3>{{ enseignantsCount }}</h3><span>Enseignants</span></div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="icon green"><i class="fas fa-walking"></i></div>
+                    <div><h3>{{ etudiantsCount }}</h3><span>Étudiants</span></div>
+                </div>
+            </div>
+
+            <!-- ACTION BAR -->
+<div class="table-actions">
+    <div class="view-icons">
+        <button type="button" class="icon-btn active" title="Liste" 
+                onclick="switchView('list', this)">
+            <i class="fas fa-list" style="font-size: 18px; color: #1f4f65;"></i>
+        </button>
+        <button type="button" class="icon-btn" title="Grille" 
+                onclick="switchView('grid', this)">
+            <i class="fas fa-th" style="font-size: 18px; color: #666;"></i>
+        </button>
+    </div>
+
+    <div class="actions-right">
+        <a href="{{ path('app_users_pdf') }}" target="_blank" 
+           class="btn pdf" title="Exporter PDF"
+           style="background-color: #007bff; color: #fff;">
+            <i class="fas fa-file-pdf"></i> PDF
+        </a>
+        <button type="button" class="btn ai" title="Assistance IA"
+                style="background-color: #1d2a37; color: #fff;">
+            <i class="fas fa-robot"></i> Assistance IA
+        </button>
+    </div>
+</div>
+
+<!-- USERS TABLE -->
+<div class="parcels-table-container" id="usersTableContainer">
+    <table class="parcels-table" id="usersTable">
+        <thead>
+    <tr>
+        <th><a href="{{ path('app_users', { sort: 'id', direction: direction == 'asc' ? 'desc' : 'asc' }) }}">ID</a></th>
+        <th><a href="{{ path('app_users', { sort: 'nom', direction: direction == 'asc' ? 'desc' : 'asc' }) }}">Nom</a></th>
+        <th><a href="{{ path('app_users', { sort: 'prenom', direction: direction == 'asc' ? 'desc' : 'asc' }) }}">Prénom</a></th>
+        <th>Email</th>
+        <th><a href="{{ path('app_users', { sort: 'role', direction: direction == 'asc' ? 'desc' : 'asc' }) }}">Rôle</a></th>
+        <th>Avatar</th>
+        <th>Téléphone</th>
+        <th>Actions</th>
+    </tr>
+</thead>
+        <tbody>
+        {% for user in users %}
+            <tr>
+                <td>{{ user.id }}</td>
+                <td><strong>{{ user.nom }}</strong></td>
+                <td>{{ user.prenom }}</td>
+                <td>{{ user.email }}</td>
+                <td>{{ user.getRole() }}</td>
+                
+                <td>
+                    <div class="activity-icon" style="background-color: var(--primary); color: var(--text-light); font-weight: bold;">
+                        {{ user.prenom|first }}{{ user.nom|first }}
+                    </div>
+                </td>
+                <td>{{ user.telephone ?? '—' }}</td>
+                <td class="actions">
+                    <a href="{{ path('app_edituser', { id: user.id }) }}" class="action-btn edit" title="Éditer">
+                        <i class="fas fa-edit"></i>
+                    </a>
+                    <a href="{{ path('app_deleteuser', { id: user.id }) }}" class="action-btn delete"
+                       onclick="return confirm('Voulez-vous vraiment supprimer cet utilisateur ?');" title="Supprimer">
+                        <i class="fas fa-trash"></i>
+                    </a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="8" class="text-center">Aucun utilisateur trouvé</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<script>
+function switchView(view, btn) {
+    const table = document.getElementById('usersTable');
+    const container = document.getElementById('usersTableContainer');
+
+    // Remove active from all buttons
+    document.querySelectorAll('.view-icons button').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+
+    if (view === 'grid') {
+        // Switch table container to flex/grid view
+        container.style.display = 'grid';
+        container.style.gridTemplateColumns = 'repeat(auto-fill, minmax(250px, 1fr))';
+        container.style.gap = '1rem';
+        table.style.display = 'block';  // hide normal table layout
+        table.querySelectorAll('tr').forEach(tr => {
+            tr.style.display = 'flex';
+            tr.style.flexDirection = 'column';
+            tr.style.border = '1px solid var(--gray)';
+            tr.style.padding = '0.5rem';
+            tr.style.borderRadius = '8px';
+            tr.style.background = 'white';
+            tr.style.marginBottom = '0.5rem';
+        });
+        // Hide table header in grid view
+        table.querySelector('thead').style.display = 'none';
+    } else {
+        // Reset to normal table view
+        container.style.display = '';
+        container.style.gridTemplateColumns = '';
+        container.style.gap = '';
+        table.style.display = '';
+        table.querySelectorAll('tr').forEach(tr => {
+            tr.style.display = '';
+            tr.style.flexDirection = '';
+            tr.style.border = '';
+            tr.style.padding = '';
+            tr.style.borderRadius = '';
+            tr.style.background = '';
+            tr.style.marginBottom = '';
+        });
+        table.querySelector('thead').style.display = '';
+    }
+}
+</script>
+
+{% endblock %} {# body #}
+
+{% block javascripts %}
+<script src="{{ asset('assets/js/main.js') }}"></script>
+{% endblock %}

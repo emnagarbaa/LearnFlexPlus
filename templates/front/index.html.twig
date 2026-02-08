@@ -16,24 +16,27 @@
                 <li class="active"><a href="#">Accueil</a></li>
                 <li><a href="#">Contenus pédagogiques</a></li>
                 <li><a href="#">Evaluation</a></li>
-<li><a href="{{ path('front_quiz') }}">Questionnaire</a></li>
+                <li><a href="{{ path('front_quiz') }}">Questionnaire</a></li>
                 <li><a href="#">Orientation</a></li>
-                <li><a href="#">Forum </a></li>
+                <li><a href="#">Forum</a></li>
             </ul>
         </nav>
-        <div class="header-right">
-            {% if app.user and app.user.type != 'client' %}
-                <a href="#" class="btn btn-outline dashboard-btn">Dashboard</a>
-            {% endif %}
-            {% if app.user %}
-                <a href="#" class="btn btn-primary logout-btn">Déconnexion</a>
-            {% else %}
-                <a href="#" class="btn btn-primary">Connexion</a>
-            {% endif %}
-            <button class="mobile-menu-btn">
-                <i class="fas fa-bars"></i>
-            </button>
-        </div>
+   <div class="header-right">
+    {% if app.user %}
+        <!-- Déconnexion via POST -->
+        <form action="{{ path('app_logout') }}" method="post" style="display:inline;">
+            <button type="submit" class="btn btn-primary logout-btn">Déconnexion</button>
+        </form>
+    {% else %}
+        <!-- Connexion -->
+        <a href="{{ path('app_login') }}" class="btn btn-primary">Connexion</a>
+    {% endif %}
+    <button class="mobile-menu-btn">
+        <i class="fas fa-bars"></i>
+    </button>
+</div>
+
+
     </div>
 </header>
 {% endblock %}
@@ -42,252 +45,119 @@
 <main>
     <!-- Hero Section -->
     <section class="hero-section">
-      <div class="container">
-        <div class="hero-content">
-<h1>Apprends malin ,Ton bac en main.</h1>
-        <p>
-  LearnFlex+ aide les élèves du bac avec des cours interactifs, des quiz et un accompagnement intelligent.
-</p>
-
-          <div class="hero-buttons">
-           <a href="#" class="btn btn-primary">
-  Commencer à apprendre
-  <i class="fas fa-arrow-right"></i>
-</a>
-<a href="#" class="btn btn-outline">
-  Explorer les cours
-</a>
-          </div>
+        <div class="container">
+            <div class="hero-content">
+                <h1>Apprends malin, ton bac en main.</h1>
+                <p>LearnFlex+ aide les élèves du bac avec des cours interactifs, des quiz et un accompagnement intelligent.</p>
+                <div class="hero-buttons">
+                    <a href="{{ path('front_quiz') }}" class="btn btn-primary">
+                        Commencer à apprendre
+                        <i class="fas fa-arrow-right"></i>
+                    </a>
+                    <a href="#" class="btn btn-outline">
+                        Explorer les cours
+                    </a>
+                </div>
+            </div>
+            <div class="hero-image">
+                <img src="{{ asset('assets/images/learnflexplus.png') }}" alt="Learnflexplus Sustainable Mobility">
+            </div>
         </div>
-        <div class="hero-image">
-<img src="{{ asset('assets/images/learnflexplus.png') }}" alt="Learnflexplus Sustainable Mobility">
-        </div>
-      </div>
     </section>
 
     <!-- Features Section -->
     <section class="features-section">
-      <div class="container">
-        <div class="feature-cards">
-          <div class="feature-card">
-            <div class="feature-icon">
-             <i class="fas fa-book-open"></i>
-  </div>
-  <h3>Cours interactifs</h3>
-  <p>Des cours clairs et structurés adaptés au programme du bac.</p>
-</div>
-          <div class="feature-card">
-  <div class="feature-icon">
-    <i class="fas fa-question-circle"></i>
-  </div>
-  <h3>Quiz & Exercices</h3>
-  <p>Testez vos connaissances avec des quiz corrigés automatiquement.</p>
-</div>
-          <div class="feature-card">
-  <div class="feature-icon">
-    <i class="fas fa-compass"></i>
-  </div>
-  <h3>Orientation intelligente</h3>
-  <p>Découvrez les filières qui correspondent à votre profil et vos résultats.</p>
-</div>
+        <div class="container">
+            <div class="feature-cards">
+                <div class="feature-card">
+                    <div class="feature-icon"><i class="fas fa-book-open"></i></div>
+                    <h3>Cours interactifs</h3>
+                    <p>Des cours clairs et structurés adaptés au programme du bac.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon"><i class="fas fa-question-circle"></i></div>
+                    <h3>Quiz & Exercices</h3>
+                    <p>Testez vos connaissances avec des quiz corrigés automatiquement.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon"><i class="fas fa-compass"></i></div>
+                    <h3>Orientation intelligente</h3>
+                    <p>Découvrez les filières qui correspondent à votre profil et vos résultats.</p>
+                </div>
+            </div>
         </div>
-      </div>
     </section>
 
     <!-- Benefits Section -->
     <section class="benefits-section">
-      <div class="container">
-        <div class="section-header">
-          <span class="badge">Nos avantages</span>
-          <h2>Pourquoi choisir LearnFlex+ ?</h2>
-      <p>Des outils et contenus conçus pour réussir ton bac facilement et efficacement.</p>
-        </div>
-        <div class="benefits-grid">
-          <div class="benefit-item">
-            <div class="benefit-icon">
-          <i class="fas fa-clock"></i>
+        <div class="container">
+            <div class="section-header">
+                <span class="badge">Nos avantages</span>
+                <h2>Pourquoi choisir LearnFlex+ ?</h2>
+                <p>Des outils et contenus conçus pour réussir ton bac facilement et efficacement.</p>
             </div>
-            <div class="benefit-content">
-          <h3>Gain de temps</h3>
-          <p>Apprends à ton rythme avec des cours et quiz interactifs, sans perte de temps.</p>
-        </div>
-      </div>
-      <div class="benefit-item">
-        <div class="benefit-icon">
-          <i class="fas fa-book"></i>
-        </div>
-        <div class="benefit-content">
-          <h3>Cours complets</h3>
-          <p>Accède à tous les cours du programme du bac, expliqués clairement et avec exemples.</p>
-        </div>
-      </div>
-          <div class="benefit-item">
-        <div class="benefit-icon">
-          <i class="fas fa-tasks"></i>
-        </div>
-        <div class="benefit-content">
-          <h3>Quiz et évaluations</h3>
-          <p>Testez vos connaissances avec des quiz interactifs et des évaluations régulières.</p>
-        </div>
-      </div>
-      <div class="benefit-item">
-        <div class="benefit-icon">
-          <i class="fas fa-user-graduate"></i>
-        </div>
-            <div class="benefit-content">
-              <h3>Fiabilité</h3>
-              <p>Des services ponctuels et fiables, avec des notifications en cas de retard ou d'imprévu.</p>
+            <div class="benefits-grid">
+                <!-- … tes items de bénéfices ici … -->
             </div>
-          </div>
-          
-          <div class="benefit-item">
-        <div class="benefit-icon">
-          <i class="fas fa-chart-line"></i>
         </div>
-        <div class="benefit-content">
-          <h3>Suivi de progrès</h3>
-          <p>Visualisez vos progrès et identifiez les points à améliorer grâce à nos outils.</p>
-        </div>
-      </div>
-      <div class="benefit-item">
-        <div class="benefit-icon">
-          <i class="fas fa-comments"></i>
-        </div>
-        <div class="benefit-content">
-          <h3>Forum d’entraide</h3>
-          <p>Pose tes questions et échange avec d’autres élèves et enseignants.</p>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
+    </section>
 
     <!-- Services Section -->
-<section class="services-section">
-  <div class="container">
-    <div class="section-header">
-      <h2>Nos Services</h2>
-      <p>Tout ce dont tu as besoin pour réussir ton bac en un seul endroit.</p>
-    </div>
+    <section class="services-section">
+        <div class="container">
+            <div class="section-header">
+                <h2>Nos Services</h2>
+                <p>Tout ce dont tu as besoin pour réussir ton bac en un seul endroit.</p>
+            </div>
 
-    <!-- Cours interactifs -->
-    <div class="service-item">
-      <div class="service-content">
-        <span class="badge">Cours</span>
-        <h3>Apprends facilement</h3>
-        <p>Des cours interactifs pour tous les sujets du bac, avec exemples et exercices pratiques.</p>
-        <a href="#" class="btn btn-primary">
-          Voir les cours
-          <i class="fas fa-arrow-right"></i>
-        </a>
-      </div>
-      <div class="service-image">
-        <img src="{{ asset('assets/images/cours-service.jpg') }}" alt="Cours LearnFlex+">
-      </div>
-    </div>
+            <!-- Cours interactifs -->
+            <div class="service-item">
+                <div class="service-content">
+                    <span class="badge">Cours</span>
+                    <h3>Apprends facilement</h3>
+                    <p>Des cours interactifs pour tous les sujets du bac, avec exemples et exercices pratiques.</p>
+                    <a href="#" class="btn btn-primary">
+                        Voir les cours
+                        <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+                <div class="service-image">
+                    <img src="{{ asset('assets/images/cours-service.jpg') }}" alt="Cours LearnFlex+">
+                </div>
+            </div>
 
-    <!-- Quiz et évaluations -->
-    <div class="service-item reverse">
-      <div class="service-image">
-        <img src="{{ asset('assets/images/quiz-service.jpg') }}" alt="Quiz LearnFlex+">
-      </div>
-      <div class="service-content">
-        <span class="badge">Quiz & Evaluations</span>
-        <h3>Testez vos connaissances</h3>
-        <p>Évaluez vos acquis avec des quiz interactifs et des examens blancs pour chaque matière.</p>
-        <a href="#" class="btn btn-primary">
-          Passer un quiz
-          <i class="fas fa-arrow-right"></i>
-        </a>
-      </div>
-    </div>
+            <!-- Quiz et évaluations -->
+            <div class="service-item reverse">
+                <div class="service-image">
+                    <img src="{{ asset('assets/images/quiz-service.jpg') }}" alt="Quiz LearnFlex+">
+                </div>
+                <div class="service-content">
+                    <span class="badge">Quiz & Evaluations</span>
+                    <h3>Testez vos connaissances</h3>
+                    <p>Évaluez vos acquis avec des quiz interactifs et des examens blancs pour chaque matière.</p>
+                    <a href="{{ path('front_quiz') }}" class="btn btn-primary">
+                        Passer un quiz
+                        <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
 
-    <!-- Forum d'entraide -->
-    <div class="service-item">
-      <div class="service-content">
-        <span class="badge">Forum</span>
-        <h3>Échangez et progressez</h3>
-        <p>Discutez avec d’autres élèves et enseignants pour poser vos questions et partager vos astuces.</p>
-        <a href="#" class="btn btn-primary">
-          Accéder au forum
-          <i class="fas fa-arrow-right"></i>
-        </a>
-      </div>
-      <div class="service-image">
-        <img src="{{ asset('assets/images/forum-service.jpg') }}" alt="Forum LearnFlex+">
-      </div>
-    </div>
-  </div>
-</section>
-
-  </main>
-  {% endblock %}
-
-{% block footer %}
-<footer class="main-footer">
-  <div class="container">
-    <div class="footer-top">
-      <div class="footer-logo">
-        <img src="{{ asset('assets/images/logo1.png') }}" alt="LearnFlex+ Logo" class="footer-logo-img">
-        <span>LearnFlex+</span>
-      </div>
-      <div class="footer-slogan">
-        <p>Apprends malin, ton bac en main</p>
-      </div>
-      <div class="footer-social">
-        <a href="#"><i class="fab fa-facebook-f"></i></a>
-        <a href="#"><i class="fab fa-twitter"></i></a>
-        <a href="#"><i class="fab fa-instagram"></i></a>
-        <a href="#"><i class="fab fa-linkedin-in"></i></a>
-      </div>
-    </div>
-
-    <div class="footer-middle">
-      <div class="footer-column">
-        <h4>Services</h4>
-        <ul>
-          <li><a href="#">Cours</a></li>
-          <li><a href="#">Quiz & Evaluations</a></li>
-          <li><a href="#">Forum</a></li>
-        </ul>
-      </div>
-      <div class="footer-column">
-        <h4>À propos</h4>
-        <ul>
-          <li><a href="#">Notre mission</a></li>
-          <li><a href="#">Orientation</a></li>
-        </ul>
-      </div>
-      <div class="footer-column">
-        <h4>Légal</h4>
-        <ul>
-          <li><a href="#">Conditions d'utilisation</a></li>
-          <li><a href="#">Politique de confidentialité</a></li>
-          <li><a href="#">Cookies</a></li>
-        </ul>
-      </div>
-      <div class="footer-column">
-        <h4>Contact</h4>
-        <ul>
-          <li><i class="fas fa-map-marker-alt"></i> 123 Avenue Habib Bourguiba, Tunis</li>
-          <li><i class="fas fa-phone"></i> +216 71 123 456</li>
-          <li><i class="fas fa-envelope"></i> contact@learnflexplus.com</li>
-        </ul>
-      </div>
-    </div>
-
-    <div class="footer-bottom">
-      <p>&copy; 2026 LearnFlex+. Tous droits réservés.</p>
-    </div>
-  </div>
-</footer>
-
-{% block javascripts %}
-<script>
-  document.querySelector('.mobile-menu-btn')?.addEventListener('click', function() {
-    document.querySelector('.main-nav').classList.toggle('active');
-  });
-</script>
-{% endblock %}
-
+            <!-- Forum -->
+            <div class="service-item">
+                <div class="service-content">
+                    <span class="badge">Forum</span>
+                    <h3>Échangez et progressez</h3>
+                    <p>Discutez avec d’autres élèves et enseignants pour poser vos questions et partager vos astuces.</p>
+                    <a href="#" class="btn btn-primary">
+                        Accéder au forum
+                        <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+                <div class="service-image">
+                    <img src="{{ asset('assets/images/forum-service.jpg') }}" alt="Forum LearnFlex+">
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
 {% endblock %}

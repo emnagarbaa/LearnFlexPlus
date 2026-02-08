@@ -1,0 +1,6 @@
+<svg width="400" height="250" viewBox="0 0 400 250" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="400" height="250" fill="#f0fdf4"/>
+  <circle cx="200" cy="110" r="60" fill="#fecaca" fill-opacity="0.4" stroke="#dc2626" stroke-width="2"/>
+  <circle cx="200" cy="110" r="30" fill="#f87171" stroke="#b91c1c" stroke-width="3"/>
+  <text x="50%" y="230" text-anchor="middle" font-family="Arial" font-size="18" font-weight="bold" fill="#064e3b">IMMUNOLOGIE</text>
+</svg>

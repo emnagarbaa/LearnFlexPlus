@@ -1,0 +1,8 @@
+<svg width="400" height="250" viewBox="0 0 400 250" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="400" height="250" fill="#f8fafc"/>
+  <path d="M180 60C180 60 140 80 140 120C140 160 180 180 180 180C180 180 220 160 220 120C220 80 180 60 180 60Z" fill="#86efac" fill-opacity="0.6"/>
+  <path d="M180 60C180 60 220 80 220 120C220 160 180 180 180 180" stroke="#166534" stroke-width="3" stroke-linecap="round"/>
+  <path d="M180 60V180" stroke="#166534" stroke-width="2" opacity="0.5"/>
+  <circle cx="250" cy="100" r="15" fill="#fecaca" fill-opacity="0.5" stroke="#dc2626" stroke-width="2"/>
+  <text x="50%" y="220" text-anchor="middle" font-family="Arial" font-size="24" font-weight="bold" fill="#064e3b">SCIENCES (SVT)</text>
+</svg>

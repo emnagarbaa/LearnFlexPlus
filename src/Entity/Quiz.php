@@ -6,6 +6,7 @@ use App\Repository\QuizRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: QuizRepository::class)]
 class Quiz
@@ -19,16 +20,31 @@ class Quiz
     private ?string $titre = null;
 
     #[ORM\Column(type: 'text')]
-    private ?string $question = null;
+#[Assert\NotBlank(message: "La question est obligatoire.")]
+#[Assert\Length(
+    min: 5,
+    minMessage: "La question doit contenir au moins 5 caractères."
+)]
+private ?string $question = null;
+
 
     #[ORM\Column(type: 'text', nullable: true)]
     private ?string $description = null;
 
-    #[ORM\Column]
-    private ?int $duree = null;
+  #[Assert\NotNull(message: "La durée est obligatoire.")]
+#[Assert\Positive(message: "La durée doit être un nombre positif.")]
+private ?int $duree = null;
 
-    #[ORM\Column(length: 20)]
-    private ?string $etat = null;
+
+  #[ORM\Column(length: 20)]
+#[Assert\NotBlank(message: "L'état est obligatoire.")]
+#[Assert\Choice(
+    choices: ['active', 'inactive'],
+    message: "L'état doit être 'active' ou 'inactive'."
+)]
+private ?string $etat = null;
+
+
 
     /**
      * @var Collection<int, Reponse>

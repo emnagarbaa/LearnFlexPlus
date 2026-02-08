@@ -1,0 +1,54 @@
+{{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
+    {% for field in form %}
+        {% if field.vars.name != '_token' %}
+            <div class="form-group">
+                {{ form_label(field) }}
+                {% if field.vars.name == 'image' %}
+                    <div class="file-upload-wrapper">
+                        <label for="{{ field.vars.id }}" class="file-upload-label">
+                            <i class="fas fa-cloud-upload-alt"></i>
+                            <span>Cliquez pour choisir une image</span>
+                        </label>
+                        {{ form_widget(field, {'attr': {'class': 'file-input-hidden'}}) }}
+                        <div id="file-name-preview" class="file-name-preview">Aucun fichier sélectionné</div>
+                    </div>
+                {% elseif field.vars.name == 'pdf_file' %}
+                    <div class="file-upload-wrapper">
+                        <label for="{{ field.vars.id }}" class="file-upload-label">
+                            <i class="fas fa-file-pdf"></i>
+                            <span>Cliquez pour choisir un PDF</span>
+                        </label>
+                        {{ form_widget(field, {'attr': {'class': 'file-input-hidden'}}) }}
+                        <div id="pdf-name-preview" class="file-name-preview">Aucun fichier sélectionné</div>
+                    </div>
+                {% else %}
+                    {{ form_widget(field) }}
+                {% endif %}
+                <div class="form-error">
+                    {{ form_errors(field) }}
+                </div>
+            </div>
+        {% endif %}
+    {% endfor %}
+    <button class="btn primary">{{ button_label|default('Enregistrer') }}</button>
+{{ form_end(form) }}
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const fileInput = document.querySelector('.file-input-hidden');
+    const fileNamePreview = document.getElementById('file-name-preview');
+    const uploadLabel = document.querySelector('.file-upload-label');
+
+    if (fileInput) {
+        fileInput.addEventListener('change', function() {
+            if (this.files && this.files.length > 0) {
+                fileNamePreview.textContent = this.files[0].name;
+                uploadLabel.classList.add('has-file');
+            } else {
+                fileNamePreview.textContent = 'Aucun fichier sélectionné';
+                uploadLabel.classList.remove('has-file');
+            }
+        });
+    }
+});
+</script>

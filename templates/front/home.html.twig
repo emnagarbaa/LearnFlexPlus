@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}TransitX{% endblock %}</title>
+    <title>{% block title %}LearnFlexPlus{% endblock %}</title>
 
     <!-- CSS -->
     <link rel="stylesheet" href="{{ asset('assets/css/main.css') }}">
@@ -13,7 +13,56 @@
     {% block stylesheets %}{% endblock %}
 </head>
 <body>
-    {% block header %}{% endblock %}
+    {% block header %}
+    <header class="landing-header">
+        <div class="container">
+            <div class="header-left">
+                <div class="logo">
+                    {# Logo clickable for Admin and Enseignant only #}
+                    {% if app.user and ('ROLE_ADMIN' in app.user.roles or 'ROLE_ENSEIGNANT' in app.user.roles) %}
+                        <a href="{{ path('dashboard') }}">
+                            <img src="{{ asset('assets/images/logo1.png') }}" alt="LearnFlexPlus Logo" class="main-logo">
+                            <span class="logo-text">LearnFlexPlus</span>
+                        </a>
+                    {% else %}
+                        <img src="{{ asset('assets/images/logo1.png') }}" alt="LearnFlexPlus Logo" class="main-logo">
+                        <span class="logo-text">LearnFlexPlus</span>
+                    {% endif %}
+                </div>
+            </div>
+
+            <nav class="main-nav">
+                <ul>
+                    <li class="active"><a href="{{ path('app_front') }}">Accueil</a></li>
+                    <li><a href="#">Contenus pédagogiques</a></li>
+                    <li><a href="#">Evaluation</a></li>
+                    <li><a href="#">Questionnaire</a></li>
+                    <li><a href="#">Orientation</a></li>
+                    <li><a href="#">Forum</a></li>
+                </ul>
+            </nav>
+
+            <div class="header-right">
+                {# Dashboard button now optional, you can even remove it if logo is enough #}
+                {% if app.user and ('ROLE_ADMIN' in app.user.roles or 'ROLE_ENSEIGNANT' in app.user.roles) %}
+                    <a href="{{ path('dashboard') }}" class="btn btn-outline dashboard-btn">Dashboard</a>
+                {% endif %}
+
+                {# Logout for logged-in users #}
+                {% if app.user %}
+                    <form action="{{ path('app_logout') }}" method="post" style="display:inline;">
+                        <button type="submit" class="btn btn-primary logout-btn">Déconnexion</button>
+                    </form>
+                {% else %}
+                    <a href="{{ path('app_login') }}" class="btn btn-primary">Connexion</a>
+                {% endif %}
+                <button class="mobile-menu-btn">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+    {% endblock %}
     <main>
         {% block body %}<section class="quiz-home">
     <h2>🎯 Testez vos connaissances</h2>
@@ -25,7 +74,71 @@
 </section>
 {% endblock %}
     </main>
-    {% block footer %}{% endblock %}
+    {% block footer %}
+    <footer class="main-footer">
+      <div class="container">
+        <div class="footer-top">
+          <div class="footer-logo">
+            <img src="{{ asset('assets/images/logo1.png') }}" alt="LearnFlexPlus Logo" class="footer-logo-img">
+            <span>LearnFlexPlus</span>
+          </div>
+          <div class="footer-slogan">
+            <p>Apprends malin, ton bac en main</p>
+          </div>
+          <div class="footer-social">
+            <a href="#"><i class="fab fa-facebook-f"></i></a>
+            <a href="#"><i class="fab fa-twitter"></i></a>
+            <a href="#"><i class="fab fa-instagram"></i></a>
+            <a href="#"><i class="fab fa-linkedin-in"></i></a>
+          </div>
+        </div>
+    
+        <div class="footer-middle">
+          <div class="footer-column">
+            <h4>Services</h4>
+            <ul>
+              <li><a href="#">Cours</a></li>
+              <li><a href="#">Quiz & Evaluations</a></li>
+              <li><a href="#">Forum</a></li>
+            </ul>
+          </div>
+          <div class="footer-column">
+            <h4>À propos</h4>
+            <ul>
+              <li><a href="#">Notre mission</a></li>
+              <li><a href="#">Orientation</a></li>
+            </ul>
+          </div>
+          <div class="footer-column">
+            <h4>Légal</h4>
+            <ul>
+              <li><a href="#">Conditions d'utilisation</a></li>
+              <li><a href="#">Politique de confidentialité</a></li>
+              <li><a href="#">Cookies</a></li>
+            </ul>
+          </div>
+          <div class="footer-column">
+            <h4>Contact</h4>
+            <ul>
+              <li><i class="fas fa-map-marker-alt"></i> 123 Avenue Habib Bourguiba, Tunis</li>
+              <li><i class="fas fa-phone"></i> +216 71 123 456</li>
+              <li><i class="fas fa-envelope"></i> contact@learnflexplus.com</li>
+            </ul>
+          </div>
+        </div>
+    
+        <div class="footer-bottom">
+          <p>&copy; 2026 LearnFlexPlus. Tous droits réservés.</p>
+        </div>
+      </div>
+    </footer>
+    
+    <script>
+      document.querySelector('.mobile-menu-btn')?.addEventListener('click', function() {
+        document.querySelector('.main-nav').classList.toggle('active');
+      });
+    </script>
+    {% endblock %}
 
     <!-- JS -->
     <script src="{{ asset('assets/js/main.js') }}"></script>

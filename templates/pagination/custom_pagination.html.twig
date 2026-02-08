@@ -1,0 +1,178 @@
+{% if pageCount > 1 %}
+<nav aria-label="Page navigation" class="premium-pagination">
+    <ul class="pagination-list">
+        {% if previous is defined %}
+            <a href="{{ path(route, query|merge({(pageParameterName): previous})) }}" class="pagination-btn pagination-prev" title="Page précédente">
+                <i class="fas fa-chevron-left"></i>
+                <span>Précédent</span>
+            </a>
+        {% else %}
+            <span class="pagination-btn pagination-prev disabled">
+                <i class="fas fa-chevron-left"></i>
+                <span>Précédent</span>
+            </span>
+        {% endif %}
+
+        <div class="pagination-numbers">
+            {% if startPage > 1 %}
+                <a href="{{ path(route, query|merge({(pageParameterName): 1})) }}" class="pagination-number">1</a>
+                {% if startPage > 2 %}
+                    <span class="pagination-ellipsis">...</span>
+                {% endif %}
+            {% endif %}
+
+            {% for page in pagesInRange %}
+                {% if page == current %}
+                    <span class="pagination-number active">{{ page }}</span>
+                {% else %}
+                    <a href="{{ path(route, query|merge({(pageParameterName): page})) }}" class="pagination-number">{{ page }}</a>
+                {% endif %}
+            {% endfor %}
+
+            {% if endPage < pageCount %}
+                {% if endPage < pageCount - 1 %}
+                    <span class="pagination-ellipsis">...</span>
+                {% endif %}
+                <a href="{{ path(route, query|merge({(pageParameterName): pageCount})) }}" class="pagination-number">{{ pageCount }}</a>
+            {% endif %}
+        </div>
+
+        {% if next is defined %}
+            <a href="{{ path(route, query|merge({(pageParameterName): next})) }}" class="pagination-btn pagination-next" title="Page suivante">
+                <span>Suivant</span>
+                <i class="fas fa-chevron-right"></i>
+            </a>
+        {% else %}
+            <span class="pagination-btn pagination-next disabled">
+                <span>Suivant</span>
+                <i class="fas fa-chevron-right"></i>
+            </span>
+        {% endif %}
+    </ul>
+
+    <div class="pagination-info">
+        Page <strong>{{ current }}</strong> sur <strong>{{ pageCount }}</strong>
+    </div>
+</nav>
+
+<style>
+.premium-pagination {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+    margin: 30px 0;
+}
+
+.pagination-list {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.pagination-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 18px;
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    color: #1e293b;
+    font-weight: 600;
+    font-size: 0.9rem;
+    text-decoration: none;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: pointer;
+}
+
+.pagination-btn:hover:not(.disabled) {
+    background: var(--primary);
+    color: white;
+    border-color: var(--primary);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(151, 195, 162, 0.3);
+}
+
+.pagination-btn.disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+.pagination-numbers {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.pagination-number {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 40px;
+    height: 40px;
+    padding: 0 12px;
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    color: #64748b;
+    font-weight: 600;
+    font-size: 0.95rem;
+    text-decoration: none;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.pagination-number:hover:not(.active) {
+    background: #f8fafc;
+    border-color: var(--primary);
+    color: var(--primary);
+    transform: translateY(-2px);
+}
+
+.pagination-number.active {
+    background: linear-gradient(135deg, var(--primary) 0%, #86b391 100%);
+    border-color: var(--primary);
+    color: white;
+    box-shadow: 0 4px 12px rgba(151, 195, 162, 0.4);
+    transform: scale(1.05);
+}
+
+.pagination-ellipsis {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 40px;
+    height: 40px;
+    color: #94a3b8;
+    font-weight: 600;
+}
+
+.pagination-info {
+    color: #64748b;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.pagination-info strong {
+    color: var(--primary);
+    font-weight: 700;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .pagination-btn span {
+        display: none;
+    }
+    
+    .pagination-number {
+        min-width: 36px;
+        height: 36px;
+        font-size: 0.85rem;
+    }
+}
+</style>
+{% endif %}

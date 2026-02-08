@@ -32,10 +32,10 @@
               </a>
             </li>
             <li>
-              <a href="#">
-                <i class="fas fa-users"></i>
-                <span>Utilisateurs</span>
-              </a>
+             <a href="{{ path('app_users') }}">
+                            <i class="fas fa-users"></i>
+                            <span>Utilisateurs</span>
+                        </a>
             </li>
             <li>
               <a href="#">
@@ -43,6 +43,18 @@
                 <span>contenu pédagogique</span>
               </a>
             </li>
+             <li>
+                        <a href="{{ path('app_back_cours_index') }}">
+                            <i class="fas fa-book-open"></i>
+                            <span>Cours</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ path('app_back_matiere_index') }}">
+                            <i class="fas fa-book"></i>
+                            <span>Matières</span>
+                        </a>
+                    </li>
             <li>
               <a href="#">
                 <i class="fas fa-graduation-cap"></i>
@@ -127,9 +139,30 @@
           
 
             <!-- Bouton Nouveau Quiz -->
-            <button id="openQuizModal" class="btn btn-primary" style="display:flex; align-items:center;">
-                <i class="fas fa-plus" style="margin-right:5px;"></i> Nouveau Quiz
-            </button>
+       <!-- Bouton Ajouter un quiz -->
+<button id="openQuizModal" class="btn btn-success" 
+        style="display:inline-flex; align-items:center; gap:10px; padding:10px 20px; 
+               background-color:#77af84; color:white; font-weight:600; border:none; 
+               border-radius:4px; cursor:pointer; transition: background 0.2s;">
+    <i class="fas fa-plus"></i> Ajouter un quiz
+</button>
+
+<style>
+#openQuizModal:hover {
+    background-color: #7777af; /* vert foncé au survol */
+}
+</style>
+
+
+
+<!-- Bouton Exporter PDF -->
+<a href="{{ path('app_quizzes_pdf') }}" target="_blank" class="btn btn-primary" 
+   style="display:inline-flex; align-items:center; gap:10px; padding:10px 20px; background-color:#142341; color:white; font-weight:600; border:none; border-radius:4px; text-decoration:none;">
+    <i class="fas fa-file-pdf"></i> Exporter PDF
+</a>
+
+
+
         </div>
     </div>
 
@@ -201,68 +234,145 @@
 </div>
 
 <!-- Overlay et Formulaire Modal -->
-<div id="quizModalOverlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.5); backdrop-filter: blur(5px); z-index:1000; justify-content:center; align-items:center;">
-    <div id="quizModal" style="background:white; padding:20px; border-radius:8px; max-width:600px; width:90%; box-shadow:0 0 20px rgba(0,0,0,0.3); position:relative;">
-        <span id="closeQuizModal" style="position:absolute; top:10px; right:15px; font-size:20px; cursor:pointer;">&times;</span>
-        <h3>Ajouter un nouveau Quiz</h3>
-        {{ form_start(form) }}
-            {{ form_row(form.titre) }}
-            {{ form_row(form.question) }}
-            {{ form_row(form.description) }}
-            {{ form_row(form.duree) }}
-            {{ form_row(form.etat) }}
-            <div style="margin-top:15px; display:flex; gap:10px;">
-                <button type="submit" class="btn btn-primary">Ajouter</button>
-                <button type="button" id="cancelQuizModal" class="btn btn-outline">Annuler</button>
+<div id="quizModalOverlay" 
+     style="display:none; 
+            position:fixed; 
+            inset:0; 
+            background: rgba(0,0,0,0.3); 
+            backdrop-filter: blur(6px); 
+            -webkit-backdrop-filter: blur(6px);
+            z-index:1000; 
+            justify-content:center; 
+            align-items:center;
+            transition: opacity 0.3s ease;">
+
+    <div id="quizModal" 
+         style="background:#fff; 
+                padding:30px 25px; 
+                border-radius:12px; 
+                max-width:600px; 
+                width:90%; 
+                box-shadow:0 10px 25px rgba(0,0,0,0.2);
+                position:relative;
+                font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                transition: transform 0.3s ease;
+                transform: translateY(-20px);">
+
+        <!-- Bouton fermer -->
+        <span id="closeQuizModal" 
+              style="position:absolute; top:15px; right:20px; font-size:22px; cursor:pointer; color:#555; transition: color 0.2s;">
+              &times;
+        </span>
+
+        <!-- Titre -->
+        <h3 style="margin-bottom:20px; font-size:24px; color:#142341; text-align:center;">Ajouter un nouveau Quiz</h3>
+
+        <!-- Formulaire -->
+        {{ form_start(form, {'attr': {'style': 'display:flex; flex-direction:column; gap:15px;'}}) }}
+
+            {{ form_row(form.titre, {'attr': {'style':'padding:10px; border-radius:6px; border:1px solid #ccc; font-size:14px;'}}) }}
+            {{ form_row(form.question, {'attr': {'style':'padding:10px; border-radius:6px; border:1px solid #ccc; font-size:14px; resize:vertical; min-height:60px;'}}) }}
+            {{ form_row(form.description, {'attr': {'style':'padding:10px; border-radius:6px; border:1px solid #ccc; font-size:14px; resize:vertical; min-height:60px;'}}) }}
+            {{ form_row(form.duree, {'attr': {'style':'padding:10px; border-radius:6px; border:1px solid #ccc; font-size:14px;'}}) }}
+            {{ form_row(form.etat, {'attr': {'style':'padding:10px; border-radius:6px; border:1px solid #ccc; font-size:14px;'}}) }}
+
+            <div style="display:flex; justify-content:center; gap:15px; margin-top:10px;">
+                <button type="submit" class="btn btn-primary" style="flex:1; padding:10px; border:none; border-radius:6px; background:#142341; color:white; font-weight:600; transition: background 0.2s;">
+                    Ajouter
+                </button>
+                <button type="button" id="cancelQuizModal" class="btn btn-outline" style="flex:1; padding:10px; border:1px solid #ccc; border-radius:6px; background:#f9f9f9; transition: background 0.2s;">
+                    Annuler
+                </button>
             </div>
+
         {{ form_end(form) }}
     </div>
 </div>
+
 <!-- Modal Modifier Quiz -->
-<div id="editQuizModalOverlay" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,.5); z-index:1000; justify-content:center; align-items:center;">
-    <div style="background:white; padding:20px; border-radius:8px; width:90%; max-width:600px; position:relative;">
-        <span id="closeEditQuizModal" style="position:absolute; top:10px; right:15px; cursor:pointer;">&times;</span>
+<div id="editQuizModalOverlay" 
+     style="display:none; 
+            position:fixed; 
+            inset:0; 
+            background: rgba(0,0,0,0.3); 
+            backdrop-filter: blur(6px); 
+            -webkit-backdrop-filter: blur(6px);
+            z-index:1000; 
+            justify-content:center; 
+            align-items:center;
+            transition: opacity 0.3s ease;">
 
-        <h3>Modifier le Quiz</h3>
+    <div style="background:#fff; 
+                padding:30px 25px; 
+                border-radius:12px; 
+                width:90%; 
+                max-width:600px; 
+                position:relative; 
+                box-shadow:0 10px 25px rgba(0,0,0,0.2);
+                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                transition: transform 0.3s ease;
+                transform: translateY(-20px);">
 
-        <form id="editQuizForm" method="post">
+        <!-- Bouton fermer -->
+        <span id="closeEditQuizModal" 
+              style="position:absolute; top:15px; right:20px; font-size:22px; cursor:pointer; color:#555; transition: color 0.2s;">
+              &times;
+        </span>
+
+        <!-- Titre -->
+        <h3 style="margin-bottom:20px; font-size:24px; color:#142341; text-align:center;">Modifier le Quiz</h3>
+
+        <!-- Formulaire -->
+        <form id="editQuizForm" method="post" style="display:flex; flex-direction:column; gap:15px;">
             <input type="hidden" name="_token" value="{{ csrf_token('edit_quiz') }}">
 
-            <div>
-                <label>Titre</label>
-                <input type="text" name="quiz[titre]" id="editTitre" class="form-control">
+            <div style="display:flex; flex-direction:column;">
+                <label for="editTitre" style="margin-bottom:5px; font-weight:600;">Titre</label>
+                <input type="text" name="quiz[titre]" id="editTitre" class="form-control"
+                       style="padding:10px; border-radius:6px; border:1px solid #ccc; font-size:14px;">
             </div>
 
-            <div>
-                <label>Question</label>
-                <textarea name="quiz[question]" id="editQuestion" class="form-control"></textarea>
+            <div style="display:flex; flex-direction:column;">
+                <label for="editQuestion" style="margin-bottom:5px; font-weight:600;">Question</label>
+                <textarea name="quiz[question]" id="editQuestion" class="form-control" 
+                          style="padding:10px; border-radius:6px; border:1px solid #ccc; font-size:14px; resize:vertical; min-height:60px;"></textarea>
             </div>
 
-            <div>
-                <label>Description</label>
-                <textarea name="quiz[description]" id="editDescription" class="form-control"></textarea>
+            <div style="display:flex; flex-direction:column;">
+                <label for="editDescription" style="margin-bottom:5px; font-weight:600;">Description</label>
+                <textarea name="quiz[description]" id="editDescription" class="form-control"
+                          style="padding:10px; border-radius:6px; border:1px solid #ccc; font-size:14px; resize:vertical; min-height:60px;"></textarea>
             </div>
 
-            <div>
-                <label>Durée</label>
-                <input type="number" name="quiz[duree]" id="editDuree" class="form-control">
+            <div style="display:flex; flex-direction:column;">
+                <label for="editDuree" style="margin-bottom:5px; font-weight:600;">Durée (min)</label>
+                <input type="number" name="quiz[duree]" id="editDuree" class="form-control"
+                       style="padding:10px; border-radius:6px; border:1px solid #ccc; font-size:14px;">
             </div>
 
-            <div>
-                <label>État</label>
-                <select name="quiz[etat]" id="editEtat" class="form-control">
+            <div style="display:flex; flex-direction:column;">
+                <label for="editEtat" style="margin-bottom:5px; font-weight:600;">État</label>
+                <select name="quiz[etat]" id="editEtat" class="form-control" 
+                        style="padding:10px; border-radius:6px; border:1px solid #ccc; font-size:14px;">
                     <option value="active">Active</option>
                     <option value="inactive">Inactive</option>
                 </select>
             </div>
 
-            <div style="margin-top:15px; display:flex; gap:10px;">
-                <button class="btn btn-primary">Enregistrer</button>
-                <button type="button" id="cancelEditQuizModal" class="btn btn-outline">Annuler</button>
+            <!-- Boutons -->
+            <div style="display:flex; justify-content:center; gap:15px; margin-top:10px;">
+                <button class="btn btn-primary" style="flex:1; padding:10px; border:none; border-radius:6px; background:#142341; color:white; font-weight:600; transition: background 0.2s;">
+                    Enregistrer
+                </button>
+                <button type="button" id="cancelEditQuizModal" class="btn btn-outline" 
+                        style="flex:1; padding:10px; border:1px solid #ccc; border-radius:6px; background:#f9f9f9; transition: background 0.2s;">
+                    Annuler
+                </button>
             </div>
         </form>
     </div>
 </div>
+
 
 <script>
     const openBtn = document.getElementById('openQuizModal');
