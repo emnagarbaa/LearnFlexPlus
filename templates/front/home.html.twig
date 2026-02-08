@@ -15,7 +15,15 @@
 <body>
     {% block header %}{% endblock %}
     <main>
-        {% block body %}{% endblock %}
+        {% block body %}<section class="quiz-home">
+    <h2>🎯 Testez vos connaissances</h2>
+    <p>Répondez à un quiz rapide et découvrez votre niveau !</p>
+
+    <a href="{{ path('front_quiz') }}" class="btn btn-warning">
+        Commencer le Quiz
+    </a>
+</section>
+{% endblock %}
     </main>
     {% block footer %}{% endblock %}
 

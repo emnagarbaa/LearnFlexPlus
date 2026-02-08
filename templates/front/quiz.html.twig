@@ -1,0 +1,163 @@
+{% extends 'front/home.html.twig' %}
+
+{% block title %}Quiz Rapide - LearnFlex+{% endblock %}
+
+{# ======================== HEADER ======================== #}
+{% block header %}
+<header class="landing-header">
+    <div class="container">
+        <div class="header-left">
+            <div class="logo">
+                <img src="{{ asset('assets/images/logo1.png') }}" alt="LearnFlex+ Logo" class="main-logo">
+                <span class="logo-text">LearnFlex +</span>
+            </div>
+        </div>
+
+        <nav class="main-nav">
+            <ul>
+                <li class="active"><a href="#">Accueil</a></li>
+                <li><a href="#">Contenus pédagogiques</a></li>
+                <li><a href="#">Evaluation</a></li>
+                <li><a href="{{ path('front_quiz') }}">Questionnaire</a></li>
+                <li><a href="#">Orientation</a></li>
+                <li><a href="#">Forum</a></li>
+            </ul>
+        </nav>
+
+        <div class="header-right">
+            {% if app.user and app.user.type != 'client' %}
+                <a href="#" class="btn btn-outline dashboard-btn">Dashboard</a>
+            {% endif %}
+            
+            {% if app.user %}
+                <a href="#" class="btn btn-primary logout-btn">Déconnexion</a>
+            {% else %}
+                <a href="#" class="btn btn-primary">Connexion</a>
+            {% endif %}
+
+            <button class="mobile-menu-btn">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+    </div>
+</header>
+{% endblock %}
+
+{# ======================== BODY ======================== #}
+{% block body %}
+<main class="main-content" style="padding: 50px 20px; display: flex; justify-content: center; align-items: center; flex-direction: column; min-height: 80vh;">
+
+    {% if quiz %}
+    <div class="card quiz-card" style="max-width: 600px; width: 100%; padding: 30px; box-shadow: 0 8px 18px rgba(0,0,0,0.12); border-radius: 15px; transition: transform 0.3s ease;">
+        
+        <div class="card-header bg-primary text-white" style="padding: 15px 20px; border-radius: 12px 12px 0 0; font-size: 24px; font-weight: bold;">
+            {{ quiz.titre }}
+        </div>
+
+        <div class="card-body" style="padding: 20px;">
+            {% if quiz.description %}
+                <p style="font-size: 16px; color: #555; margin-bottom: 15px;"><strong>Description :</strong> {{ quiz.description }}</p>
+            {% endif %}
+
+            <p style="font-size: 18px; font-weight: 600;"><strong>Question :</strong> {{ quiz.question }}</p>
+            <p style="color: #777; margin-bottom: 15px;">⏱ Durée : {{ quiz.duree }} min | Nombre de réponses : {{ quiz.reponses|length }}</p>
+
+            <form method="POST" action="{{ path('quiz_result') }}">
+                <div class="mb-3">
+                    {% for reponse in quiz.reponses %}
+                        <div class="form-check" style="margin-bottom: 10px;">
+                            <input class="form-check-input" type="radio" name="reponse" value="{{ reponse.id }}" id="reponse{{ reponse.id }}" required>
+                            <label class="form-check-label" for="reponse{{ reponse.id }}">
+                                {{ reponse.text }}
+                            </label>
+                        </div>
+                    {% endfor %}
+                </div>
+
+                <input type="hidden" name="quiz_id" value="{{ quiz.id }}">
+                <button type="submit" class="btn btn-success" style="width: 100%; font-size: 16px; padding: 12px; border-radius: 8px;">
+                    ✅ Valider ma réponse
+                </button>
+            </form>
+
+            
+        </div>
+    </div>
+    {% else %}
+    <div class="alert alert-warning" style="max-width: 500px; text-align: center; padding: 20px; border-radius: 12px;">
+        Aucun quiz disponible pour le moment.
+    </div>
+    {% endif %}
+
+</main>
+{% endblock %}
+
+{# ======================== FOOTER ======================== #}
+{% block footer %}
+<footer class="main-footer">
+    <div class="container">
+        <div class="footer-top">
+            <div class="footer-logo">
+                <img src="{{ asset('assets/images/logo1.png') }}" alt="LearnFlex+ Logo" class="footer-logo-img">
+                <span>LearnFlex+</span>
+            </div>
+            <div class="footer-slogan">
+                <p>Apprends malin, ton bac en main</p>
+            </div>
+            <div class="footer-social">
+                <a href="#"><i class="fab fa-facebook-f"></i></a>
+                <a href="#"><i class="fab fa-twitter"></i></a>
+                <a href="#"><i class="fab fa-instagram"></i></a>
+                <a href="#"><i class="fab fa-linkedin-in"></i></a>
+            </div>
+        </div>
+
+        <div class="footer-middle">
+            <div class="footer-column">
+                <h4>Services</h4>
+                <ul>
+                    <li><a href="#">Cours</a></li>
+                    <li><a href="#">Quiz & Evaluations</a></li>
+                    <li><a href="#">Forum</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h4>À propos</h4>
+                <ul>
+                    <li><a href="#">Notre mission</a></li>
+                    <li><a href="#">Orientation</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h4>Légal</h4>
+                <ul>
+                    <li><a href="#">Conditions d'utilisation</a></li>
+                    <li><a href="#">Politique de confidentialité</a></li>
+                    <li><a href="#">Cookies</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h4>Contact</h4>
+                <ul>
+                    <li><i class="fas fa-map-marker-alt"></i> 123 Avenue Habib Bourguiba, Tunis</li>
+                    <li><i class="fas fa-phone"></i> +216 71 123 456</li>
+                    <li><i class="fas fa-envelope"></i> contact@learnflexplus.com</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <p>&copy; 2026 LearnFlex+. Tous droits réservés.</p>
+        </div>
+    </div>
+</footer>
+{% endblock %}
+
+{# ======================== JAVASCRIPT ======================== #}
+{% block javascripts %}
+<script>
+    document.querySelector('.mobile-menu-btn')?.addEventListener('click', function() {
+        document.querySelector('.main-nav').classList.toggle('active');
+    });
+</script>
+{% endblock %}
