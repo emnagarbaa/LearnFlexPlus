@@ -5,18 +5,19 @@ namespace App\Controller;
 use App\Entity\Quiz;
 use App\Form\QuizType;
 use App\Repository\QuizRepository;
-use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\EntityManagerInterface; 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
-// <-- Ici les imports Dompdf
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Dompdf\Dompdf;
 use Dompdf\Options;
 
 #[Route('/quiz')]
 final class QuizController extends AbstractController
 {
+  #[IsGranted('ROLE_ENSEIGNANT')]
   #[Route('/admin/questionnaire', name: 'app_quiz_index', methods: ['GET', 'POST'])]
 public function index(QuizRepository $quizRepository, Request $request, EntityManagerInterface $entityManager): Response
 {
@@ -66,7 +67,7 @@ public function index(QuizRepository $quizRepository, Request $request, EntityMa
         'totalPages' => $totalPages,
     ]);
 }
-
+#[IsGranted('ROLE_ENSEIGNANT')]
     #[Route('/new', name: 'app_quiz_new', methods: ['GET', 'POST'])]
 public function new(Request $request, EntityManagerInterface $entityManager): Response
 {
@@ -122,7 +123,7 @@ if ($form->isSubmitted() && $form->isValid()) {
     // Redirection si formulaire non soumis
     return $this->redirectToRoute('app_quiz_index'); 
 }
-
+#[IsGranted('ROLE_ETUDIANT')]
     #[Route('/{id}', name: 'app_quiz_show', methods: ['GET'])]
     public function show(Quiz $quiz): Response
     {
@@ -130,7 +131,7 @@ if ($form->isSubmitted() && $form->isValid()) {
             'quiz' => $quiz,
         ]);
     }
-    //modifier un quiz
+#[IsGranted('ROLE_ENSEIGNANT')]
 #[Route('/{id}/edit', name: 'app_quiz_edit', methods: ['POST'])]
 public function edit(Request $request, Quiz $quiz, EntityManagerInterface $entityManager): Response
 {
@@ -152,7 +153,7 @@ public function edit(Request $request, Quiz $quiz, EntityManagerInterface $entit
     return $this->redirectToRoute('app_quiz_index');
 }
 
-//supprimer un quiz
+#[IsGranted('ROLE_ENSEIGNANT')]
     #[Route('/{id}', name: 'app_quiz_delete', methods: ['POST'])]
     public function delete(Request $request, Quiz $quiz, EntityManagerInterface $entityManager): Response
     {

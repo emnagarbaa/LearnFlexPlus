@@ -3,6 +3,7 @@
 namespace App\Controller;
 use App\Entity\Quiz;  // ← AJOUTEZ CETTE LIGNE
 use App\Repository\QuizRepository;  // ← AJOUTEZ AUSSI CELLE-CI si vous utilisez la première méthode
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 use App\Entity\Reponse;
 use App\Form\ReponseType;
@@ -12,7 +13,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
-
+#[IsGranted('ROLE_ENSEIGNANT')]
 #[Route('/reponse')]
 final class ReponseController extends AbstractController
 {

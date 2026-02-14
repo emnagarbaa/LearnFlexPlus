@@ -44,6 +44,13 @@ security:
     access_control:
         # - { path: ^/admin, roles: ROLE_ADMIN }
         # - { path: ^/profile, roles: ROLE_USER }
+        # partie étudiant
+        - { path: ^/etudiant, roles: ROLE_ETUDIANT }
+        - { path: ^/quiz/\d+$, roles: ROLE_ETUDIANT }
+
+        # partie enseignant
+        - { path: ^/quiz/admin, roles: ROLE_ENSEIGNANT }
+        - { path: ^/reponse, roles: ROLE_ENSEIGNANT }
 
 when@test:
     security:

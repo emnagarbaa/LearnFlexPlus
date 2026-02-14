@@ -30,7 +30,7 @@ private ?string $question = null;
 
     #[ORM\Column(type: 'text', nullable: true)]
     private ?string $description = null;
-
+#[ORM\Column]
   #[Assert\NotNull(message: "La durée est obligatoire.")]
 #[Assert\Positive(message: "La durée doit être un nombre positif.")]
 private ?int $duree = null;

@@ -36,8 +36,9 @@
                     <li class="active"><a href="{{ path('app_front') }}">Accueil</a></li>
                     <li><a href="#">Contenus pédagogiques</a></li>
                     <li><a href="#">Evaluation</a></li>
-                    <li><a href="#">Questionnaire</a></li>
-                    <li><a href="#">Orientation</a></li>
+{% if is_granted('ROLE_ETUDIANT') %}
+<li><a href="{{ path('front_quiz') }}">Questionnaire</a></li>
+{% endif %}                    <li><a href="#">Orientation</a></li>
                     <li><a href="#">Forum</a></li>
                 </ul>
             </nav>
