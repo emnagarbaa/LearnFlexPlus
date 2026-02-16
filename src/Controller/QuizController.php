@@ -224,19 +224,25 @@ if (!$reponseEtudiant) {
 
     $bonneReponse = $quiz->getReponses()->filter(fn($r) => $r->isEstCorrecte())->first();
     
-$estCorrecte = $this->normaliser($reponseEtudiant) === $this->normaliser($bonneReponse?->getText());
+$reponseChoisie = $quiz->getReponses()->filter(
+    fn($r) => $r->getId() == $reponseEtudiant
+)->first();
+
+$estCorrecte = $reponseChoisie && $reponseChoisie->isEstCorrecte();
+$texteReponseEtudiant = $reponseChoisie?->getText();
 
     // ⚡ Générer explication avec Cohere
   if ($estCorrecte) {
     $explication = "Bonne réponse 👍 Continue comme ça !";
 } else {
     $explication = $iaService->getExplication(
-        $quiz->getQuestion(), 
-        $reponseEtudiant,
-        $bonneReponse?->getText(),
-        $estCorrecte,
-        $quiz->getId()
-    );
+    $quiz->getQuestion(),
+    $texteReponseEtudiant,
+    $bonneReponse?->getText(),
+    $estCorrecte,
+    $quiz->getId()
+);
+
 }
     return $this->render('front/result.html.twig', [
         'estCorrecte' => $estCorrecte,
