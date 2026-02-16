@@ -63,7 +63,7 @@
             <p style="font-size: 18px; font-weight: 600;"><strong>Question :</strong> {{ quiz.question }}</p>
             <p style="color: #777; margin-bottom: 15px;">⏱ Durée : {{ quiz.duree }} min | Nombre de réponses : {{ quiz.reponses|length }}</p>
 
-            <form method="POST" action="{{ path('quiz_result') }}">
+<form method="POST" action="{{ path('quiz_result', {'id': quiz.id}) }}">
                 <div class="mb-3">
                     {% for reponse in quiz.reponses %}
                         <div class="form-check" style="margin-bottom: 10px;">

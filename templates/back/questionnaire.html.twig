@@ -268,14 +268,37 @@
         <h3 style="margin-bottom:20px; font-size:24px; color:#142341; text-align:center;">Ajouter un nouveau Quiz</h3>
 
         <!-- Formulaire -->
-        {{ form_start(form, {'attr': {'style': 'display:flex; flex-direction:column; gap:15px;'}}) }}
+     {{ form_start(form, {'attr': {'novalidate': 'novalidate','style': 'display:flex; flex-direction:column; gap:15px;'}}) }}
 
-            {{ form_row(form.titre, {'attr': {'style':'padding:10px; border-radius:6px; border:1px solid #ccc; font-size:14px;'}}) }}
-            {{ form_row(form.question, {'attr': {'style':'padding:10px; border-radius:6px; border:1px solid #ccc; font-size:14px; resize:vertical; min-height:60px;'}}) }}
-            {{ form_row(form.description, {'attr': {'style':'padding:10px; border-radius:6px; border:1px solid #ccc; font-size:14px; resize:vertical; min-height:60px;'}}) }}
-            {{ form_row(form.duree, {'attr': {'style':'padding:10px; border-radius:6px; border:1px solid #ccc; font-size:14px;'}}) }}
-            {{ form_row(form.etat, {'attr': {'style':'padding:10px; border-radius:6px; border:1px solid #ccc; font-size:14px;'}}) }}
+<div>
+    {{ form_label(form.titre) }}
+    {{ form_widget(form.titre, {'attr': {'required': false,'style':'padding:10px; border-radius:6px; border:1px solid #ccc; font-size:14px;'}}) }}
+    {{ form_errors(form.titre) }}
+</div>
 
+<div>
+    {{ form_label(form.question) }}
+    {{ form_widget(form.question, {'attr': {'required': false,'style':'padding:10px; border-radius:6px; border:1px solid #ccc; font-size:14px; resize:vertical; min-height:60px;'}}) }}
+    {{ form_errors(form.question) }}
+</div>
+
+<div>
+    {{ form_label(form.description) }}
+    {{ form_widget(form.description, {'attr': {'required': false,'style':'padding:10px; border-radius:6px; border:1px solid #ccc; font-size:14px; resize:vertical; min-height:60px;'}}) }}
+    {{ form_errors(form.description) }}
+</div>
+
+<div>
+    {{ form_label(form.duree) }}
+    {{ form_widget(form.duree, {'attr': {'required': false,'style':'padding:10px; border-radius:6px; border:1px solid #ccc; font-size:14px;'}}) }}
+    {{ form_errors(form.duree) }}
+</div>
+
+<div>
+    {{ form_label(form.etat) }}
+    {{ form_widget(form.etat, {'attr': {'required': false,'style':'padding:10px; border-radius:6px; border:1px solid #ccc; font-size:14px;'}}) }}
+    {{ form_errors(form.etat) }}
+</div>
             <div style="display:flex; justify-content:center; gap:15px; margin-top:10px;">
                 <button type="submit" class="btn btn-primary" style="flex:1; padding:10px; border:none; border-radius:6px; background:#142341; color:white; font-weight:600; transition: background 0.2s;">
                     Ajouter

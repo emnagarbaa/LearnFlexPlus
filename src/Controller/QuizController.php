@@ -13,6 +13,7 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Dompdf\Dompdf;
 use Dompdf\Options;
+use App\Service\IaService;
 
 #[Route('/quiz')]
 final class QuizController extends AbstractController
@@ -212,5 +213,63 @@ public function quizReponses(Quiz $quiz): Response
             'Content-Disposition' => 'inline; filename="quizzes.pdf"',
         ]);
     }
+
+#[Route('/quiz/resultat/{id}', name: 'quiz_result')]
+public function corriger(Quiz $quiz, Request $request, IaService $iaService)
+{
+$reponseEtudiant = $request->request->get('reponse');
+if (!$reponseEtudiant) {
+    return $this->redirectToRoute('front_quiz');
+}
+
+    $bonneReponse = $quiz->getReponses()->filter(fn($r) => $r->isEstCorrecte())->first();
+    
+$estCorrecte = $this->normaliser($reponseEtudiant) === $this->normaliser($bonneReponse?->getText());
+
+    // ⚡ Générer explication avec Cohere
+  if ($estCorrecte) {
+    $explication = "Bonne réponse 👍 Continue comme ça !";
+} else {
+    $explication = $iaService->getExplication(
+        $quiz->getQuestion(), 
+        $reponseEtudiant,
+        $bonneReponse?->getText(),
+        $estCorrecte,
+        $quiz->getId()
+    );
+}
+    return $this->render('front/result.html.twig', [
+        'estCorrecte' => $estCorrecte,
+        'quiz' => $quiz,
+        'reponseEtudiant' => $reponseEtudiant,
+        'bonneReponse' => $bonneReponse?->getText(),
+        'explication' => $explication
+    ]);
+}
+
+private function normaliser(?string $texte): string
+{
+    if ($texte === null) {
+        return '';
+    }
+
+    // minuscules
+    $texte = strtolower($texte);
+
+    // enlever tous les espaces et tabulations
+    $texte = preg_replace('/\s+/', '', $texte);
+
+    // harmoniser les symboles mathématiques
+    $texte = str_replace(['×', 'x'], '*', $texte); // x et × → *
+    $texte = str_replace(['²'], '^2', $texte);     // puissance
+    $texte = str_replace(['–', '−'], '-', $texte); // tirets spéciaux → -
+
+    // enlever tout caractère invisible (UTF8)
+    $texte = preg_replace('/[^\P{C}]+/u', '', $texte);
+
+    return $texte;
+}
+
+
 
 }
