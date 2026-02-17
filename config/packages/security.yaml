@@ -1,0 +1,46 @@
+# config/packages/security.yaml
+security:
+    password_hashers:
+        App\Entity\Users:
+            algorithm: auto
+
+    providers:
+        app_user_provider:
+            entity:
+                class: App\Entity\Users
+                property: email
+
+    firewalls:
+        dev:
+            pattern: ^/(_(profiler|wdt)|css|images|js)/
+            security: false
+
+        main:
+            lazy: true
+            provider: app_user_provider
+
+            custom_authenticators:
+            - App\Security\GoogleAuthenticator
+
+            form_login:
+                login_path: app_login
+                check_path: app_login
+                default_target_path: app_front
+                always_use_default_target_path: true
+
+            logout:
+                path: app_logout
+                target: app_front
+
+            entry_point: form_login
+
+    #access_control:
+        # Public routes
+       # - { path: ^/front, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+       # - { path: ^/login, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        #- { path: ^/register, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+
+        # Admin routes
+       # - { path: ^/users, roles: ROLE_ADMIN }
+        # Authenticated user routes
+       # - { path: ^/front/user, roles: ROLE_USER }

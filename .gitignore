@@ -1,0 +1,9 @@
+/var/
+/vendor/
+/node_modules/
+/.env.local
+/.idea
+/.vscode
+/public/build
+/public/bundles
+/.phpunit.result.cache

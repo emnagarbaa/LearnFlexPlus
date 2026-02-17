@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}LearnFlexPlus{% endblock %}</title>
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="{{ asset('assets/css/styles.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/css/dashboard.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/css/main.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700&display=swap" rel="stylesheet">
+
+    {% block stylesheets %}{% endblock %}
+</head>
+<body>
+    {% block header %}{% endblock %}
+    <main>
+        {% block body %}{% endblock %}
+    </main>
+    {% block footer %}{% endblock %}
+
+    <!-- JS -->
+    <script src="{{ asset('assets/js/main.js') }}"></script>
+    {% block javascripts %}{% endblock %}
+</body>
+</html>
