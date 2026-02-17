@@ -1,9 +1,19 @@
+# env files (never commit)
+.env
+.env.*
+!.env.example
+
+# Symfony
 /var/
 /vendor/
+
 /node_modules/
-/.env.local
-/.idea
-/.vscode
-/public/build
-/public/bundles
-/.phpunit.result.cache
+public/build/
+public/bundles/
+
+# IDE
+.idea/
+.vscode/
+
+# Cache
+.phpunit.result.cache
