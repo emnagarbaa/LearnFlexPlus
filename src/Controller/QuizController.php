@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Controller;
-
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use App\Entity\Quiz;
 use App\Form\QuizType;
 use App\Repository\QuizRepository;
@@ -215,65 +215,154 @@ public function quizReponses(Quiz $quiz): Response
     }
 
 #[Route('/quiz/resultat/{id}', name: 'quiz_result')]
-public function corriger(Quiz $quiz, Request $request, IaService $iaService)
+public function corriger(Quiz $quiz, Request $request, IaService $iaService, SessionInterface $session, QuizRepository $quizRepository)
 {
-$reponseEtudiant = $request->request->get('reponse');
-if (!$reponseEtudiant) {
-    return $this->redirectToRoute('front_quiz');
-}
+    $reponseEtudiant = $request->request->get('reponse');
 
-    $bonneReponse = $quiz->getReponses()->filter(fn($r) => $r->isEstCorrecte())->first();
-    
-$reponseChoisie = $quiz->getReponses()->filter(
-    fn($r) => $r->getId() == $reponseEtudiant
-)->first();
+    // Initialisation de la session
+    if (!$session->has('score')) {
+        $session->set('score', 0);
+        $session->set('questionsFaites', []);
+    }
 
-$estCorrecte = $reponseChoisie && $reponseChoisie->isEstCorrecte();
-$texteReponseEtudiant = $reponseChoisie?->getText();
+    $questionsFaites = $session->get('questionsFaites');
 
-    // ⚡ Générer explication avec Cohere
-  if ($estCorrecte) {
-    $explication = "Bonne réponse 👍 Continue comme ça !";
-} else {
-    $explication = $iaService->getExplication(
-    $quiz->getQuestion(),
-    $texteReponseEtudiant,
-    $bonneReponse?->getText(),
-    $estCorrecte,
-    $quiz->getId()
-);
+    if ($reponseEtudiant) {
+        // Vérifier la réponse
+        $bonneReponse = $quiz->getReponses()->filter(fn($r) => $r->isEstCorrecte())->first();
+        $reponseChoisie = $quiz->getReponses()->filter(fn($r) => $r->getId() == $reponseEtudiant)->first();
+        $estCorrecte = $reponseChoisie && $reponseChoisie->isEstCorrecte();
 
-}
-    return $this->render('front/result.html.twig', [
-        'estCorrecte' => $estCorrecte,
-        'quiz' => $quiz,
-        'reponseEtudiant' => $reponseEtudiant,
-        'bonneReponse' => $bonneReponse?->getText(),
-        'explication' => $explication
+        if ($estCorrecte) {
+            $session->set('score', $session->get('score') + 1);
+        }
+
+        // Ajouter l'ID du quiz à la liste des faits
+        if (!in_array($quiz->getId(), $questionsFaites)) {
+            $questionsFaites[] = $quiz->getId();
+            $session->set('questionsFaites', $questionsFaites);
+        }
+
+        // Générer explication IA
+        $texteReponseEtudiantNorm = $this->normaliser($reponseChoisie?->getText());
+        $bonneReponseNorm = $this->normaliser($bonneReponse?->getText());
+
+        $explication = $estCorrecte ? "✅ Très bien ! Bonne réponse 👏" :
+            $iaService->getExplication($quiz->getQuestion(), $texteReponseEtudiantNorm, $bonneReponseNorm, false, $quiz->getId());
+    } else {
+        $estCorrecte = null;
+        $explication = null;
+    }
+
+    // 🔹 Trouver le prochain quiz non fait
+    $allQuizzes = $quizRepository->findBy(['etat' => 'active'], ['id' => 'ASC']);
+    $nextQuiz = null;
+    foreach ($allQuizzes as $q) {
+        if (!in_array($q->getId(), $questionsFaites)) {
+            $nextQuiz = $q;
+            break;
+        }
+    }
+
+    // Si pas de quiz suivant => rediriger vers score final
+// Si pas de quiz suivant => rediriger vers score final
+if (!$nextQuiz) {
+    $scoreFinal = $session->get('score');
+    $session->remove('score');
+    $session->remove('questionsFaites');
+
+    return $this->render('front/quiz_score.html.twig', [
+        'scoreFinal' => $scoreFinal,
+        'totalQuestions' => count($allQuizzes),
+        'lastQuizId' => $quiz->getId(), // 🔹 On ajoute l'ID du dernier quiz
     ]);
 }
 
+
+    return $this->render('front/result.html.twig', [
+        'estCorrecte' => $estCorrecte,
+        'quiz' => $quiz,
+        'explication' => $explication,
+        'nextQuiz' => $nextQuiz
+    ]);
+}
+
+
+// Normalisation
 private function normaliser(?string $texte): string
 {
     if ($texte === null) {
         return '';
     }
 
-    // minuscules
-    $texte = strtolower($texte);
-
-    // enlever tous les espaces et tabulations
-    $texte = preg_replace('/\s+/', '', $texte);
-
-    // harmoniser les symboles mathématiques
-    $texte = str_replace(['×', 'x'], '*', $texte); // x et × → *
+    $texte = mb_strtolower($texte);                 // minuscules
+    $texte = preg_replace('/\s+/', '', $texte);    // enlever espaces et tabulations
+    $texte = str_replace(['×','x'], '*', $texte);  // x et × → *
     $texte = str_replace(['²'], '^2', $texte);     // puissance
-    $texte = str_replace(['–', '−'], '-', $texte); // tirets spéciaux → -
-
-    // enlever tout caractère invisible (UTF8)
-    $texte = preg_replace('/[^\P{C}]+/u', '', $texte);
+    $texte = str_replace(['–','−'], '-', $texte);  // tirets spéciaux → -
+    $texte = preg_replace('/[^\P{C}]+/u', '', $texte); // caractères invisibles
 
     return $texte;
+}
+
+
+#[IsGranted('ROLE_ETUDIANT')]
+#[Route('/student/quiz/{id}', name: 'front_quiz_show', methods: ['GET', 'POST'])]
+public function showForStudent(Quiz $quiz): Response
+{
+    // Cette méthode affichera le quiz pour l'étudiant avec son formulaire
+    return $this->render('front/quiz.html.twig', [
+        'quiz' => $quiz,
+    ]);
+}
+#[Route('/quiz/certificate/{quizId}', name: 'quiz_certificate')]
+public function certificate(int $quizId, QuizRepository $quizRepository, SessionInterface $session): Response
+{
+    $quiz = $quizRepository->find($quizId);
+    if (!$quiz) {
+        throw $this->createNotFoundException('Quiz non trouvé');
+    }
+
+    $score = $session->get('score', 0);
+    $totalQuestions = count($quizRepository->findBy(['etat' => 'active']));
+
+    return $this->render('front/quiz_certificate.html.twig', [
+        'quizTitre' => $quiz->getTitre(),
+        'score' => $score,
+        'totalQuestions' => $totalQuestions,
+        'quizId' => $quiz->getId()
+    ]);
+}
+#[Route('/quiz/certificate/download/{quizId}', name: 'quiz_download_certificate')]
+public function downloadCertificate(int $quizId, QuizRepository $quizRepository, SessionInterface $session): Response
+{
+    $quiz = $quizRepository->find($quizId);
+    if (!$quiz) {
+        throw $this->createNotFoundException('Quiz non trouvé');
+    }
+
+    $score = $session->get('score', 0);
+    $totalQuestions = count($quizRepository->findBy(['etat' => 'active']));
+
+    // 🔹 Utiliser le template PDF dédié
+    $html = $this->renderView('front/quiz_certificate_pdf.html.twig', [
+        'quizTitre' => $quiz->getTitre(),
+        'score' => $score,
+        'totalQuestions' => $totalQuestions,
+        'quizId' => $quiz->getId()
+    ]);
+
+    $options = new \Dompdf\Options();
+    $options->set('defaultFont', 'Poppins');
+    $dompdf = new \Dompdf\Dompdf($options);
+    $dompdf->loadHtml($html);
+    $dompdf->setPaper('A4', 'portrait');
+    $dompdf->render();
+
+    return new Response($dompdf->output(), 200, [
+        'Content-Type' => 'application/pdf',
+        'Content-Disposition' => 'attachment; filename="certificat_quiz.pdf"'
+    ]);
 }
 
 

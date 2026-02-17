@@ -1,0 +1,23 @@
+{% extends 'front/home.html.twig' %}
+
+{% block title %}Score final - LearnFlex+{% endblock %}
+
+{% block body %}
+<main class="main-content" style="padding: 60px 20px; display:flex; justify-content:center; align-items:center; flex-direction:column; min-height:80vh;">
+    <div class="card" style="max-width: 500px; text-align:center; padding:40px; border-radius:15px; box-shadow:0 10px 20px rgba(0,0,0,0.15);">
+        <h2>🎉 Quiz terminé !</h2>
+        <p>Votre score final : <strong>{{ scoreFinal }}/{{ totalQuestions }}</strong></p>
+
+        <!-- Bouton pour recommencer -->
+        <a href="{{ path('front_quiz') }}" class="btn btn-primary" style="margin-top:20px;">
+            Recommencer le Quiz
+        </a>
+
+        <!-- Bouton pour obtenir le certificat -->
+        <a href="{{ path('quiz_certificate', {'quizId': lastQuizId}) }}" class="btn btn-success" style="margin-top: 15px;">
+            🎓 Obtenir mon certificat
+        </a>
+    </div>
+</main>
+
+{% endblock %}

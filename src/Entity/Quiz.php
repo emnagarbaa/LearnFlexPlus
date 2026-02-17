@@ -53,10 +53,17 @@ private ?string $etat = null;
     // ↑ Changé 'Quiz' en 'quiz' pour correspondre à la propriété $quiz dans Reponse
     private Collection $reponses;
 
+    /**
+     * @var Collection<int, Attempt>
+     */
+    #[ORM\OneToMany(targetEntity: Attempt::class, mappedBy: 'quiz')]
+    private Collection $attempts;
+
     public function __construct()
     {
         $this->etat = 'inactive';
         $this->reponses = new ArrayCollection();
+        $this->attempts = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -143,6 +150,36 @@ private ?string $etat = null;
             // set the owning side to null (unless already changed)
             if ($reponse->getQuiz() === $this) {
                 $reponse->setQuiz(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Attempt>
+     */
+    public function getAttempts(): Collection
+    {
+        return $this->attempts;
+    }
+
+    public function addAttempt(Attempt $attempt): static
+    {
+        if (!$this->attempts->contains($attempt)) {
+            $this->attempts->add($attempt);
+            $attempt->setQuiz($this);
+        }
+
+        return $this;
+    }
+
+    public function removeAttempt(Attempt $attempt): static
+    {
+        if ($this->attempts->removeElement($attempt)) {
+            // set the owning side to null (unless already changed)
+            if ($attempt->getQuiz() === $this) {
+                $attempt->setQuiz(null);
             }
         }
 

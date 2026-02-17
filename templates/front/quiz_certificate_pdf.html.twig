@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Certificat - {{ app.user.prenom }} {{ app.user.nom }}</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: #f5f5f5;
+        }
+
+        .certificate-container {
+            width: 80%;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 40px;
+            background: #fff;
+            border: 10px solid #4CAF50;
+            border-radius: 15px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        .certificate-header {
+            border-bottom: 3px solid #4CAF50;
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+
+        .certificate-header img {
+            max-height: 60px;
+        }
+
+        h1 {
+            font-size: 40px;
+            color: #4CAF50;
+            margin: 20px 0 10px 0;
+        }
+
+        h2 {
+            font-size: 32px;
+            color: #333;
+            margin: 20px 0;
+            font-weight: bold;
+        }
+
+        p {
+            font-size: 18px;
+            color: #555;
+            margin: 10px 0;
+        }
+
+        .highlight {
+            color: #4CAF50;
+            font-weight: bold;
+        }
+
+        .score {
+            font-size: 24px;
+            margin: 20px 0;
+            color: #000;
+        }
+
+        .footer {
+            margin-top: 40px;
+            font-size: 14px;
+            color: #777;
+        }
+
+        .certificate-footer {
+            border-top: 3px solid #4CAF50;
+            margin-top: 30px;
+            padding-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="certificate-container">
+        <div class="certificate-header">
+            <!-- 🔹 Mettre ton logo si disponible -->
+<img src="{{ absolute_url(asset('assets/images/logo1.png')) }}" alt="LearnFlexPlus Logo" style="max-height:60px;">
+            <h1>🎓 Certificat de réussite</h1>
+        </div>
+
+        <p>Ce certificat est décerné à :</p>
+        <h2 class="highlight">{{ app.user.prenom }} {{ app.user.nom }}</h2>
+
+        <p>Pour avoir complété avec succès le quiz :</p>
+        <p class="highlight">"{{ quizTitre }}"</p>
+
+        <p class="score">Score obtenu : {{ score }} / {{ totalQuestions }}</p>
+
+        <p>Félicitations pour vos efforts et votre réussite !</p>
+
+        <div class="certificate-footer footer">
+            LearnFlexPlus - Apprends malin, ton bac en main
+        </div>
+    </div>
+</body>
+</html>
