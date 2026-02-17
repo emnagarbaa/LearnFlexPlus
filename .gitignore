@@ -1,7 +1,5 @@
-# env files (never commit)
 .env
-.env.*
-!.env.example
+.env.dev
 
 # Symfony
 /var/
