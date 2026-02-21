@@ -34,13 +34,14 @@ security:
 
             entry_point: form_login
 
-    #access_control:
-        # Public routes
-       # - { path: ^/front, roles: IS_AUTHENTICATED_ANONYMOUSLY }
-       # - { path: ^/login, roles: IS_AUTHENTICATED_ANONYMOUSLY }
-        #- { path: ^/register, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+    access_control:
+    # Public routes (keep what you actually have)
+    - { path: ^/login, roles: PUBLIC_ACCESS }
+    - { path: ^/register, roles: PUBLIC_ACCESS }
+    - { path: ^/front, roles: PUBLIC_ACCESS }
 
-        # Admin routes
-       # - { path: ^/users, roles: ROLE_ADMIN }
-        # Authenticated user routes
-       # - { path: ^/front/user, roles: ROLE_USER }
+    # Dashboard: only Enseignant + Admin
+    - { path: ^/dashboard, roles: [ROLE_ENSEIGNANT, ROLE_ADMIN] }
+
+    # Everything else: must be logged in (any of the 3)
+    - { path: ^/, roles: [ROLE_ETUDIANT, ROLE_ENSEIGNANT, ROLE_ADMIN] }
