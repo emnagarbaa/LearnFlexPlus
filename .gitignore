@@ -15,3 +15,8 @@ public/bundles/
 
 # Cache
 .phpunit.result.cache
+
+# Uploads (ignore all files inside, keep gitkeep)
+ /public/uploads/**
+!/public/uploads/.gitkeep
+!/public/uploads/users/.gitkeep
