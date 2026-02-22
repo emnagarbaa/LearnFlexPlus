@@ -8,7 +8,11 @@
   --text-dark: #333;
   --text-light: #fff;
   --background: #f8f9fa;
+<<<<<<< HEAD
   --gray-light: #f1f1f124;
+=======
+  --gray-light: #f1f1f1;
+>>>>>>> origin/user
   --gray: #ddd;
   --border-color: #e9ecef;
   --sidebar-width: 260px;

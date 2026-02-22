@@ -683,3 +683,70 @@ ul {
   }
 }
 
+<<<<<<< HEAD
+=======
+/* No-JS dropdown using <details> */
+.user-dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.user-dropdown summary {
+  list-style: none;         /* remove default marker */
+  cursor: pointer;
+}
+.user-dropdown summary::-webkit-details-marker {
+  display: none;            /* remove marker in Chrome */
+}
+
+/* hidden by default */
+.user-dropdown .user-dropdown-menu {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  background: #fff;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+  border-radius: 8px;
+  width: 200px;
+  padding: 8px;
+  z-index: 9999;
+  display: none;
+}
+
+/* show when details is open */
+.user-dropdown[open] .user-dropdown-menu {
+  display: block;
+}
+
+.user-dropdown-menu a,
+.user-dropdown-menu .dropdown-logout-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  width: 100%;
+  padding: 0.8rem 1rem;
+  border-radius: 6px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.3s ease;
+}
+
+.user-dropdown-menu a:hover,
+.user-dropdown-menu .dropdown-logout-btn:hover {
+  background: #f1f1f1;
+}
+
+.user-dropdown-menu .dropdown-logout-btn {
+  color: #c0392b;
+}
+
+/* IMPORTANT so it doesn't get clipped */
+.landing-header,
+.landing-header .container,
+.header-right {
+  overflow: visible;
+}
+
+>>>>>>> origin/user

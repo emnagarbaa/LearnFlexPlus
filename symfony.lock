@@ -1,7 +1,10 @@
 {
+<<<<<<< HEAD
     "cmen/google-charts-bundle": {
         "version": "7.1.0"
     },
+=======
+>>>>>>> origin/user
     "doctrine/deprecations": {
         "version": "1.1",
         "recipe": {
@@ -38,6 +41,7 @@
             "./migrations/.gitignore"
         ]
     },
+<<<<<<< HEAD
     "knplabs/knp-snappy-bundle": {
         "version": "1.10",
         "recipe": {
@@ -71,6 +75,20 @@
             "ref": "e805aba9eff5372e2d149a9ff56566769e22819d"
         }
     },
+=======
+    "knpuniversity/oauth2-client-bundle": {
+        "version": "2.20",
+        "recipe": {
+            "repo": "github.com/symfony/recipes-contrib",
+            "branch": "main",
+            "version": "1.20",
+            "ref": "1ff300d8c030f55c99219cc55050b97a695af3f6"
+        },
+        "files": [
+            "./config/packages/knpu_oauth2_client.yaml"
+        ]
+    },
+>>>>>>> origin/user
     "symfony/asset-mapper": {
         "version": "6.4",
         "recipe": {
@@ -130,6 +148,7 @@
             "./src/Kernel.php"
         ]
     },
+<<<<<<< HEAD
     "symfony/google-mailer": {
         "version": "6.4",
         "recipe": {
@@ -139,6 +158,8 @@
             "ref": "f8fd4ddb9b477510f8f4bce2b9c054ab428c0120"
         }
     },
+=======
+>>>>>>> origin/user
     "symfony/mailer": {
         "version": "6.4",
         "recipe": {
@@ -152,7 +173,11 @@
         ]
     },
     "symfony/maker-bundle": {
+<<<<<<< HEAD
         "version": "1.66",
+=======
+        "version": "1.65",
+>>>>>>> origin/user
         "recipe": {
             "repo": "github.com/symfony/recipes",
             "branch": "main",
@@ -160,6 +185,7 @@
             "ref": "fadbfe33303a76e25cb63401050439aa9b1a9c7f"
         }
     },
+<<<<<<< HEAD
     "symfony/messenger": {
         "version": "6.4",
         "recipe": {
@@ -196,6 +222,8 @@
             "./config/packages/notifier.yaml"
         ]
     },
+=======
+>>>>>>> origin/user
     "symfony/routing": {
         "version": "6.4",
         "recipe": {
@@ -222,6 +250,7 @@
             "./config/routes/security.yaml"
         ]
     },
+<<<<<<< HEAD
     "symfony/stimulus-bundle": {
         "version": "2.32",
         "recipe": {
@@ -249,6 +278,8 @@
             "./translations/.gitignore"
         ]
     },
+=======
+>>>>>>> origin/user
     "symfony/twig-bundle": {
         "version": "6.4",
         "recipe": {
@@ -262,6 +293,7 @@
             "./templates/base.html.twig"
         ]
     },
+<<<<<<< HEAD
     "symfony/twilio-notifier": {
         "version": "6.4",
         "recipe": {
@@ -280,6 +312,8 @@
             "ref": "9dd2778a116b6e5e01e5e1582d03d5a9e82630de"
         }
     },
+=======
+>>>>>>> origin/user
     "symfony/validator": {
         "version": "6.4",
         "recipe": {
@@ -292,6 +326,7 @@
             "./config/packages/validator.yaml"
         ]
     },
+<<<<<<< HEAD
     "symfony/webapp-pack": {
         "version": "1.4",
         "recipe": {
@@ -318,5 +353,12 @@
         "files": [
             "./config/packages/vich_uploader.yaml"
         ]
+=======
+    "symfonycasts/verify-email-bundle": {
+        "version": "v1.18.0"
+    },
+    "twig/extra-bundle": {
+        "version": "v3.23.0"
+>>>>>>> origin/user
     }
 }

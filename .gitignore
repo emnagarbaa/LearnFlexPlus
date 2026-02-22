@@ -18,3 +18,24 @@
 /assets/vendor/
 ###< symfony/asset-mapper ###
 .env
+.env.dev
+
+# Symfony
+/var/
+/vendor/
+
+/node_modules/
+public/build/
+public/bundles/
+
+# IDE
+.idea/
+.vscode/
+
+# Cache
+.phpunit.result.cache
+
+# Uploads (ignore all files inside, keep gitkeep)
+/public/uploads/**
+!/public/uploads/.gitkeep
+!/public/uploads/users/.gitkeep

@@ -1,11 +1,17 @@
 # config/packages/security.yaml
 security:
+<<<<<<< HEAD
     # Hash des mots de passe
+=======
+>>>>>>> origin/user
     password_hashers:
         App\Entity\Users:
             algorithm: auto
 
+<<<<<<< HEAD
     # Provider basé sur l'entité Users
+=======
+>>>>>>> origin/user
     providers:
         app_user_provider:
             entity:
@@ -21,6 +27,12 @@ security:
             lazy: true
             provider: app_user_provider
 
+<<<<<<< HEAD
+=======
+            custom_authenticators:
+            - App\Security\GoogleAuthenticator
+
+>>>>>>> origin/user
             form_login:
                 login_path: app_login
                 check_path: app_login
@@ -33,9 +45,23 @@ security:
 
             entry_point: form_login
 
+<<<<<<< HEAD
     # access_control (décommenter et ajuster selon tes routes)
     # - { path: ^/front, roles: IS_AUTHENTICATED_ANONYMOUSLY }
     # - { path: ^/login, roles: IS_AUTHENTICATED_ANONYMOUSLY }
     # - { path: ^/register, roles: IS_AUTHENTICATED_ANONYMOUSLY }
     # - { path: ^/users, roles: ROLE_ADMIN }
     # - { path: ^/front/user, roles: ROLE_USER }
+=======
+    access_control:
+    # Public routes (keep what you actually have)
+    - { path: ^/login, roles: PUBLIC_ACCESS }
+    - { path: ^/register, roles: PUBLIC_ACCESS }
+    - { path: ^/front, roles: PUBLIC_ACCESS }
+
+    # Dashboard: only Enseignant + Admin
+    - { path: ^/dashboard, roles: [ROLE_ENSEIGNANT, ROLE_ADMIN] }
+
+    # Everything else: must be logged in (any of the 3)
+    - { path: ^/, roles: [ROLE_ETUDIANT, ROLE_ENSEIGNANT, ROLE_ADMIN] }
+>>>>>>> origin/user

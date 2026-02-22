@@ -1,4 +1,7 @@
 framework:
     mailer:
         dsn: '%env(MAILER_DSN)%'
+<<<<<<< HEAD
 
+=======
+>>>>>>> origin/user

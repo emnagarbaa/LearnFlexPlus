@@ -8,8 +8,19 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+<<<<<<< HEAD
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+=======
+use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Mime\Address;
+use Symfony\Component\Mime\Email;
+use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+use SymfonyCasts\Bundle\VerifyEmail\VerifyEmailHelperInterface;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\String\Slugger\SluggerInterface;
+>>>>>>> origin/user
 
 class RegisterController extends AbstractController
 {
@@ -17,7 +28,14 @@ class RegisterController extends AbstractController
     public function register(
         Request $request,
         EntityManagerInterface $em,
+<<<<<<< HEAD
         UserPasswordHasherInterface $passwordHasher
+=======
+        MailerInterface $mailer,
+        UserPasswordHasherInterface $passwordHasher,
+        VerifyEmailHelperInterface $verifyEmailHelper,
+        SluggerInterface $slugger
+>>>>>>> origin/user
     ): Response {
         $user = new Users();
         $form = $this->createForm(UserType::class, $user, [
@@ -31,9 +49,56 @@ class RegisterController extends AbstractController
             $hashedPassword = $passwordHasher->hashPassword($user, $user->getPassword());
             $user->setPassword($hashedPassword);
 
+<<<<<<< HEAD
             $em->persist($user);
             $em->flush();
 
+=======
+            $user->setIsVerified(false);
+
+            /** @var UploadedFile|null $file */
+            $file = $form->get('profileImageFile')->getData();
+
+            if ($file) {
+                $original = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
+                $safeName = $slugger->slug($original);
+                $newFilename = $safeName.'-'.uniqid().'.'.$file->guessExtension();
+
+                $file->move($this->getParameter('kernel.project_dir').'/public/uploads/users', $newFilename);
+
+                $user->setProfileImage($newFilename);   
+            }
+
+            $em->persist($user);
+            $em->flush();
+
+
+             // 3) Generate signed verification URL
+            $signature = $verifyEmailHelper->generateSignature(
+                'app_verify_email',              // route name
+                (string) $user->getId(),         // user id
+                (string) $user->getEmail(),      // user email
+                ['id' => $user->getId()]         // route params
+            );
+
+            $verifyUrl = $signature->getSignedUrl();
+
+            // 4) Send email (Gmail SMTP: from must be your Gmail)
+            $emailMessage = (new Email())
+                ->from(new Address('omar.jomni433@gmail.com', 'LearnFlexPlus'))
+                ->to((string) $user->getEmail())
+                ->subject('Vérifiez votre email - LearnFlexPlus')
+                ->html("
+                    <h2>Bienvenue sur LearnFlexPlus 👋</h2>
+                    <p>Merci pour votre inscription.</p>
+                    <p>Pour activer votre compte, cliquez sur ce lien :</p>
+                    <p><a href='{$verifyUrl}'>Vérifier mon email</a></p>
+                    <p>Si vous n'êtes pas à l'origine de cette inscription, ignorez cet email.</p>
+                ");
+
+            $mailer->send($emailMessage);
+
+>>>>>>> origin/user
             $this->addFlash('success', 'Votre compte a été créé avec succès.');
             return $this->redirectToRoute('app_login');
         }

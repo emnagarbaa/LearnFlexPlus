@@ -25,8 +25,12 @@
                     <p>Créez votre compte LearnFlexPlus pour profiter de tous nos services.</p>
                 </div>
 
+<<<<<<< HEAD
                 {{ form_start(registrationForm, {'attr': {'class': 'auth-form', 'novalidate': 'novalidate'}}) }}
                     
+=======
+                {{ form_start(registrationForm, {'attr': {'class': 'auth-form', 'novalidate': 'novalidate'}, 'enctype': 'multipart/form-data'}) }}                    
+>>>>>>> origin/user
                     <div class="form-row">
                         <div class="form-group">
                             <label>Prénom</label>
@@ -99,6 +103,18 @@
                     {{ form_errors(registrationForm.adresseResidence) }}
                      </div>
 
+<<<<<<< HEAD
+=======
+                     <div class="form-group">
+                        <label>Photo de profil (optionnel)</label>
+                         <div class="input-with-icon">
+                             <i class="fas fa-image"></i>
+                            {{ form_widget(registrationForm.profileImageFile) }}
+                        </div>
+                        {{ form_errors(registrationForm.profileImageFile) }}
+                    </div>
+
+>>>>>>> origin/user
                     <button type="button" id="openRegFaceIdModal" class="btn btn-primary btn-block">
                         <i class="fas fa-face-smile"></i> Enregistrer mon visage (optionnel)
                     </button>

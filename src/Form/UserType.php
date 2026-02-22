@@ -10,14 +10,40 @@ use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\TelType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
+<<<<<<< HEAD
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+=======
+use Symfony\Component\Form\FormBuilderInterface;    
+use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
+use Symfony\Component\Validator\Constraints\File;
+
+>>>>>>> origin/user
 
 class UserType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
+<<<<<<< HEAD
+=======
+
+            ->add('profileImageFile', FileType::class, [
+                'label' => 'Photo de profil (optionnel)',
+                'mapped' => false,
+                'required' => false,
+                'constraints' => [
+                 new File([
+                'maxSize' => '2M',
+                'mimeTypes' => ['image/jpeg', 'image/png', 'image/webp'],
+                'mimeTypesMessage' => 'Veuillez choisir une image valide (JPG, PNG, WEBP).',
+            
+                        ]),
+                    ],
+                ])
+
+>>>>>>> origin/user
             ->add('nom', TextType::class, [
                 'label' => 'Nom',
                 'required' => true,

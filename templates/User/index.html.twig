@@ -40,6 +40,7 @@
                     </li>
 
                     <li><a href="#"><i class="fas fa-book-open"></i><span>Contenu pédagogique</span></a></li>
+<<<<<<< HEAD
 <li class="has-submenu">
     <a href="#">
         <i class="fas fa-graduation-cap"></i>
@@ -55,6 +56,10 @@
         </li>
     </ul>
 </li>                    <li><a href="#"><i class="fas fa-question-circle"></i><span>Questionnaire</span></a></li>
+=======
+                    <li><a href="#"><i class="fas fa-graduation-cap"></i><span>Evaluation</span></a></li>
+                    <li><a href="#"><i class="fas fa-question-circle"></i><span>Questionnaire</span></a></li>
+>>>>>>> origin/user
                     <li><a href="#"><i class="fas fa-directions"></i><span>Orientation</span></a></li>
                     <li><a href="#"><i class="fas fa-comments"></i><span>Forum</span></a></li>
                 </ul>
@@ -63,8 +68,14 @@
 
                 <div class="sidebar-footer">
             <a href="#" class="user-profile">
+<<<<<<< HEAD
                 <img src="{{ asset('assets/images/placeholder-admin.png') }}" 
                     alt="{{ app.user.nom }} {{ app.user.prenom }}" class="user-img">
+=======
+                <img src="{{ asset('uploads/users/' ~ app.user.profileImage) }}" 
+                    alt="{{ app.user.nom }} {{ app.user.prenom }}" class="user-img"
+                    class="user-img">
+>>>>>>> origin/user
                 <div class="user-info">
                     <h4>{{ app.user.nom }} {{ app.user.prenom }}</h4>
                     <p>{{ app.user.getRole() }}</p>
@@ -149,9 +160,15 @@
            style="background-color: #007bff; color: #fff;">
             <i class="fas fa-file-pdf"></i> PDF
         </a>
+<<<<<<< HEAD
         <button type="button" class="btn ai" title="Assistance IA"
                 style="background-color: #1d2a37; color: #fff;">
             <i class="fas fa-robot"></i> Assistance IA
+=======
+        <button type="button" class="btn ai" title="Meeting"
+                style="background-color: #264d29; color: #fff;">
+            <i class="fas fa-robot"></i> Meeting
+>>>>>>> origin/user
         </button>
     </div>
 </div>
@@ -181,9 +198,23 @@
                 <td>{{ user.getRole() }}</td>
                 
                 <td>
+<<<<<<< HEAD
                     <div class="activity-icon" style="background-color: var(--primary); color: var(--text-light); font-weight: bold;">
                         {{ user.prenom|first }}{{ user.nom|first }}
                     </div>
+=======
+        {% if user.profileImage %}
+            <img
+             src="{{ asset('uploads/users/' ~ user.profileImage) }}"
+             alt="Avatar {{ user.prenom }} {{ user.nom }}"
+             style="width:42px;height:42px;border-radius:10px;object-fit:cover;"
+            >
+         {% else %}
+            <div class="activity-icon" style="background-color: var(--primary); color: var(--text-light); font-weight: bold;">
+            {{ user.prenom|first }}{{ user.nom|first }}
+            </div>
+        {% endif %}
+>>>>>>> origin/user
                 </td>
                 <td>{{ user.telephone ?? '—' }}</td>
                 <td class="actions">

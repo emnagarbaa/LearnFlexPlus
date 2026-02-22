@@ -1,3 +1,12 @@
+<<<<<<< HEAD
+=======
+root:
+    path: /
+    controller: Symfony\Bundle\FrameworkBundle\Controller\RedirectController
+    defaults:
+        route: app_front
+        
+>>>>>>> origin/user
 controllers:
     resource:
         path: ../src/Controller/

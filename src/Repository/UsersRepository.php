@@ -48,6 +48,7 @@ class UsersRepository extends ServiceEntityRepository
 
         return $qb->getQuery()->getResult();
     }
+<<<<<<< HEAD
     public function findEtudiantsByExamen(int $examenId): array
 {
     return $this->createQueryBuilder('u')
@@ -59,4 +60,6 @@ class UsersRepository extends ServiceEntityRepository
         ->getResult();
 }
 
+=======
+>>>>>>> origin/user
 }

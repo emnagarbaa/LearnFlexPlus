@@ -7,7 +7,10 @@
     <div class="container">
         <div class="header-left">
             <div class="logo">
+<<<<<<< HEAD
 
+=======
+>>>>>>> origin/user
                 {# Logo clickable for Admin and Enseignant only #}
                 {% if app.user and ('ROLE_ADMIN' in app.user.roles or 'ROLE_ENSEIGNANT' in app.user.roles) %}
                     <a href="{{ path('dashboard') }}">
@@ -25,7 +28,11 @@
             <ul>
                 <li class="active"><a href="{{ path('app_front') }}">Accueil</a></li>
                 <li><a href="#">Contenus pédagogiques</a></li>
+<<<<<<< HEAD
 <li><a href="{{ path('front_evaluation') }}">Evaluation</a></li>
+=======
+                <li><a href="#">Evaluation</a></li>
+>>>>>>> origin/user
                 <li><a href="#">Questionnaire</a></li>
                 <li><a href="#">Orientation</a></li>
                 <li><a href="#">Forum</a></li>
@@ -38,6 +45,7 @@
                 <a href="{{ path('dashboard') }}" class="btn btn-outline dashboard-btn">Dashboard</a>
             {% endif %}
 
+<<<<<<< HEAD
             {# Logout for logged-in users #}
             {% if app.user %}
                 <form action="{{ path('app_logout') }}" method="post" style="display:inline;">
@@ -46,6 +54,35 @@
             {% else %}
                 <a href="{{ path('app_login') }}" class="btn btn-primary">Connexion</a>
             {% endif %}
+=======
+            {# User dropdown when logged in #}
+            {% if app.user %}
+            <details class="user-dropdown">
+              <summary class="btn btn-primary user-dropdown-btn">
+                <i class="fas fa-user-circle"></i>
+                Profile
+                <i class="fas fa-chevron-down"></i>
+              </summary>
+
+          <div class="user-dropdown-menu">
+            <a href="{{ path('app_profile') }}">
+              <i class="fas fa-user-pen"></i>
+              Modification
+            </a>
+
+                <form action="{{ path('app_logout') }}" method="post" style="margin:0;">
+                  <button type="submit" class="dropdown-logout-btn">
+                  <i class="fas fa-sign-out-alt"></i>
+                    Déconnexion
+                  </button>
+                </form>
+          </div>
+            </details>
+          {% else %}
+            <a href="{{ path('app_login') }}" class="btn btn-primary">Connexion</a>
+          {% endif %}
+
+>>>>>>> origin/user
 
             <button class="mobile-menu-btn">
                 <i class="fas fa-bars"></i>
@@ -63,7 +100,11 @@
         <div class="hero-content">
 <h1>Apprends malin ,Ton bac en main.</h1>
         <p>
+<<<<<<< HEAD
   LearnFlex+ aide les élèves du bac avec des cours interactifs, des quiz et un accompagnement intelligent.
+=======
+  LearnFlexPlus aide les élèves du bac avec des cours interactifs, des quiz et un accompagnement intelligent.
+>>>>>>> origin/user
 </p>
 
           <div class="hero-buttons">
@@ -116,8 +157,12 @@
       <div class="container">
         <div class="section-header">
           <span class="badge">Nos avantages</span>
+<<<<<<< HEAD
           <h2>Pourquoi choisir LearnFlex+ ?</h2>
 
+=======
+          <h2>Pourquoi choisir LearnFlexPlus ?</h2>
+>>>>>>> origin/user
       <p>Des outils et contenus conçus pour réussir ton bac facilement et efficacement.</p>
         </div>
         <div class="benefits-grid">
@@ -200,16 +245,24 @@
         </a>
       </div>
       <div class="service-image">
+<<<<<<< HEAD
         <img src="{{ asset('assets/images/cours-service.jpg') }}" alt="Cours LearnFlex+">
 
+=======
+        <img src="{{ asset('assets/images/cours-service.jpg') }}" alt="Cours LearnFlexPlus">
+>>>>>>> origin/user
       </div>
     </div>
 
     <!-- Quiz et évaluations -->
     <div class="service-item reverse">
       <div class="service-image">
+<<<<<<< HEAD
         <img src="{{ asset('assets/images/quiz-service.jpg') }}" alt="Quiz LearnFlex+">
 
+=======
+        <img src="{{ asset('assets/images/quiz-service.jpg') }}" alt="Quiz LearnFlexPlus">
+>>>>>>> origin/user
       </div>
       <div class="service-content">
         <span class="badge">Quiz & Evaluations</span>
@@ -234,8 +287,12 @@
         </a>
       </div>
       <div class="service-image">
+<<<<<<< HEAD
         <img src="{{ asset('assets/images/forum-service.jpg') }}" alt="Forum LearnFlex+">
 
+=======
+        <img src="{{ asset('assets/images/forum-service.jpg') }}" alt="Forum LearnFlexPlus">
+>>>>>>> origin/user
       </div>
     </div>
   </div>
@@ -248,9 +305,14 @@
   <div class="container">
     <div class="footer-top">
       <div class="footer-logo">
+<<<<<<< HEAD
         <img src="{{ asset('assets/images/logo1.png') }}" alt="LearnFlex+ Logo" class="footer-logo-img">
         <span>LearnFlex+</span>
 
+=======
+        <img src="{{ asset('assets/images/logo1.png') }}" alt="LearnFlexPlus Logo" class="footer-logo-img">
+        <span>LearnFlexPlus</span>
+>>>>>>> origin/user
       </div>
       <div class="footer-slogan">
         <p>Apprends malin, ton bac en main</p>
@@ -298,12 +360,17 @@
     </div>
 
     <div class="footer-bottom">
+<<<<<<< HEAD
       <p>&copy; 2026 LearnFlex+. Tous droits réservés.</p>
 
+=======
+      <p>&copy; 2026 LearnFlexPlus. Tous droits réservés.</p>
+>>>>>>> origin/user
     </div>
   </div>
 </footer>
 
+<<<<<<< HEAD
 {% block javascripts %}
 <script>
   document.querySelector('.mobile-menu-btn')?.addEventListener('click', function() {
@@ -311,5 +378,7 @@
   });
 </script>
 {% endblock %}
+=======
+>>>>>>> origin/user
 
 {% endblock %}

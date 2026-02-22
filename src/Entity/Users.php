@@ -3,8 +3,11 @@
 namespace App\Entity;
 
 use App\Repository\UsersRepository;
+<<<<<<< HEAD
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+=======
+>>>>>>> origin/user
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -94,6 +97,7 @@ class Users implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: "datetime", nullable: true, name: "updated_at")]
     private ?\DateTimeInterface $updatedAt = null;
 
+<<<<<<< HEAD
     /**
      * @var Collection<int, ReponseExamen>
      */
@@ -105,6 +109,8 @@ class Users implements UserInterface, PasswordAuthenticatedUserInterface
         $this->reponseExamens = new ArrayCollection();
     }
 
+=======
+>>>>>>> origin/user
     #[ORM\PrePersist]
     public function setCreatedAtValue(): void
     {
@@ -134,6 +140,39 @@ public function getRoles(): array
         // Not needed for now
     }
 
+<<<<<<< HEAD
+=======
+    #[ORM\Column(type: 'boolean')]
+    private bool $isVerified = false;
+
+    public function isVerified(): bool
+    {
+        return $this->isVerified;
+    }
+
+    public function setIsVerified(bool $isVerified): self
+    {
+     $this->isVerified = $isVerified;
+     return $this;
+    }
+
+
+     #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    private ?string $profileImage = null;
+
+    public function getProfileImage(): ?string
+    {
+        return $this->profileImage;
+    }
+
+    public function setProfileImage(?string $profileImage): self
+    {
+        $this->profileImage = $profileImage;
+        return $this;
+    }
+
+
+>>>>>>> origin/user
     // Getters and Setters
     public function getId(): ?int { return $this->id; }
 
@@ -166,6 +205,7 @@ public function getRoles(): array
 
     public function getUpdatedAt(): ?\DateTimeInterface { return $this->updatedAt; }
     public function setUpdatedAt(?\DateTimeInterface $updatedAt): self { $this->updatedAt = $updatedAt; return $this; }
+<<<<<<< HEAD
 
     /**
      * @return Collection<int, ReponseExamen>
@@ -196,4 +236,6 @@ public function getRoles(): array
 
         return $this;
     }
+=======
+>>>>>>> origin/user
 }

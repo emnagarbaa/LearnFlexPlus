@@ -5,6 +5,7 @@ namespace App\Controller;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+<<<<<<< HEAD
 use App\Repository\ChallengeRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\HttpFoundation\Request;
@@ -21,6 +22,8 @@ use Symfony\Component\Mime\Email;
 use Symfony\Component\Mailer\MailerInterface;   
 use App\Service\EmailService;
 use App\Entity\Users;
+=======
+>>>>>>> origin/user
 
 final class FrontController extends AbstractController
 {
@@ -31,6 +34,7 @@ final class FrontController extends AbstractController
             'controller_name' => 'FrontController',
         ]);
     }
+<<<<<<< HEAD
 #[Route('/evaluation', name: 'front_evaluation')]
     public function afficherchallengef(
         ChallengeRepository $challengeRepo
@@ -181,4 +185,6 @@ public function sendEmail(MailerInterface $mailer): Response
     }
 }
 
+=======
+>>>>>>> origin/user
 }
