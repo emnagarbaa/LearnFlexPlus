@@ -1,0 +1,56 @@
+{% extends 'front/home.html.twig' %}
+
+{% block title %}{{ examen.titre }} - LearnFlex+{% endblock %}
+
+{% block body %}
+<main class="examen-page">
+    <div class="container">
+
+        <h1>{{ examen.titre }}</h1>
+        <p>{{ examen.description }}</p>
+
+        {% if examen.pdf %}
+            <iframe src="{{ asset('assets/exams/' ~ examen.pdf) }}" width="100%" height="500px"></iframe>
+        {% endif %}
+
+        {% for challenge in challenges %}
+            <div class="question">
+                <p><strong>Q{{ loop.index }}:</strong> {{ challenge.question }}</p>
+
+                {% if not isTeacher %}
+                    <input type="text" name="reponse[{{ challenge.id }}]" placeholder="Votre réponse" class="form-control mb-2">
+                {% else %}
+                    <h5>Réponses des étudiants :</h5>
+                    {% for reponse in reponses[challenge.id] %}
+                        <p><strong>{{ reponse.etudiant.nom }}</strong>: {{ reponse.texte }}</p>
+                    {% else %}
+                        <p>Aucune réponse pour cette question.</p>
+                    {% endfor %}
+
+                    <div class="crud-actions mt-2">
+                        <a href="{{ path('edit_challenge', {'id': challenge.id}) }}" class="btn btn-sm btn-warning">Modifier</a>
+                        <a href="{{ path('delete_challenge', {'id': challenge.id}) }}" class="btn btn-sm btn-danger" onclick="return confirm('Supprimer ?')">Supprimer</a>
+                    </div>
+                {% endif %}
+            </div>
+            <hr>
+        {% else %}
+            <p>Aucune question associée à cet examen.</p>
+        {% endfor %}
+
+        {% if not isTeacher %}
+            <button type="submit" class="btn btn-primary mt-3">Submit</button>
+        {% endif %}
+
+        {% if isTeacher %}
+            <h2>Commentaires</h2>
+            {% for comment in commentaires %}
+                <p><strong>{{ comment.auteur }}</strong>: {{ comment.contenu }}</p>
+            {% else %}
+                <p>Aucun commentaire</p>
+            {% endfor %}
+        {% endif %}
+
+    </div>
+</main>
+{% endblock %}

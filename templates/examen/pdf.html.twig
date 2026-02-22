@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Examen PDF - {{ examen.titre }}</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            background-color: #007bff;
+            color: white;
+            padding: 15px 0;
+            margin-bottom: 30px;
+            border-radius: 5px;
+        }
+
+        .section {
+            margin-bottom: 20px;
+        }
+
+        .section h2 {
+            background-color: #f2f2f2;
+            padding: 10px;
+            border-left: 5px solid #007bff;
+            margin-bottom: 10px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #007bff;
+            color: white;
+            padding: 10px;
+            text-align: left;
+        }
+
+        td {
+            padding: 8px;
+        }
+
+        .small-text {
+            font-size: 0.9em;
+            color: #555;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>{{ examen.titre }}</h1>
+
+    <div class="section">
+        <h2>Description</h2>
+        <p>{{ examen.description }}</p>
+    </div>
+
+    <div class="section">
+        <h2>Détails de l'examen</h2>
+        <table>
+            <tr>
+                <th>Matière</th>
+                <td>{{ examen.matiere }}</td>
+            </tr>
+            <tr>
+                <th>Niveau</th>
+                <td>{{ examen.niveauExamen }}</td>
+            </tr>
+            <tr>
+                <th>Type</th>
+                <td>{{ examen.typeExamen }}</td>
+            </tr>
+            <tr>
+                <th>État</th>
+                <td>{{ examen.etat }}</td>
+            </tr>
+            <tr>
+                <th>Date de début</th>
+                <td>{{ examen.datedebut ? examen.datedebut|date('d/m/Y H:i') : '-' }}</td>
+            </tr>
+            <tr>
+                <th>Date de fin</th>
+                <td>{{ examen.datefin ? examen.datefin|date('d/m/Y H:i') : '-' }}</td>
+            </tr>
+
+            <tr>
+                <th>Durée</th>
+                <td>{{ examen.duree }} minutes</td>
+            </tr>
+            <tr>
+                <th>Nombre de questions</th>
+                <td>{{ examen.nbquestion }}</td>
+            </tr>
+            <tr>
+                <th>Score total</th>
+                <td>{{ examen.scoretotal }}</td>
+            </tr>
+           
+           
+            <tr>
+                <th>Coefficient</th>
+                <td>{{ examen.coefficient }}</td>
+            </tr>
+        </table>
+    </div>
+
+</body>
+</html>

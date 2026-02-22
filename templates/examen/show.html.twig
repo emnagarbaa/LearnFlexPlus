@@ -1,0 +1,87 @@
+{% extends 'front/home.html.twig' %}
+
+{% block title %}{{ examen.titre }} - LearnFlex+{% endblock %}
+
+{% block body %}
+<main class="examen-page">
+    <div class="container">
+        <h1>Modifier l'Examen : {{ examen.titre }}</h1>
+
+        <form action="{{ path('front_examen_edit', {'id': examen.id}) }}" method="POST">
+            <!-- Infos générales -->
+            <div class="form-group">
+                <label for="titre">Titre :</label>
+                <input type="text" id="titre" name="titre" class="form-control" value="{{ examen.titre }}" required>
+            </div>
+
+            <div class="form-group">
+                <label for="description">Description :</label>
+                <textarea id="description" name="description" class="form-control" required>{{ examen.description }}</textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="matiere">Matière :</label>
+                <input type="text" id="matiere" name="matiere" class="form-control" value="{{ examen.matiere }}" required>
+            </div>
+
+            <div class="form-group">
+                <label for="niveauexamen">Niveau :</label>
+                <select id="niveauexamen" name="niveauexamen" class="form-control" required>
+                    <option value="facile" {% if examen.niveauexamen == 'facile' %}selected{% endif %}>Facile</option>
+                    <option value="moyen" {% if examen.niveauexamen == 'moyen' %}selected{% endif %}>Moyen</option>
+                    <option value="difficile" {% if examen.niveauexamen == 'difficile' %}selected{% endif %}>Difficile</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="nbquestion">Nombre de questions :</label>
+                <input type="number" id="nbquestion" name="nbquestion" class="form-control" value="{{ examen.nbquestion }}" required>
+            </div>
+
+            <div class="form-group">
+                <label for="duree">Durée (minutes) :</label>
+                <input type="number" id="duree" name="duree" class="form-control" value="{{ examen.duree }}" required>
+            </div>
+
+            <div class="form-group">
+                <label for="scoretotal">Score total :</label>
+                <input type="number" id="scoretotal" name="scoretotal" class="form-control" value="{{ examen.scoretotal }}" required>
+            </div>
+
+            <hr>
+
+            <!-- PDF de l'examen -->
+            <div class="form-group">
+                <label>Fichier PDF :</label>
+               {% if examen.pdf %}
+<a href="{{ asset('assets/exams/' ~ examen.pdf) }}" target="_blank">{{ examen.pdf }}</a>
+{% else %}
+    <p>Aucun PDF disponible pour cet examen.</p>
+{% endif %}
+
+            </div>
+
+            <hr>
+
+            <!-- Questions -->
+            <h2>Questions</h2>
+            {% for challenge in challenges %}
+              <div class="form-group">
+    <label>Fichier PDF :</label>
+    {% if examen.pdf %}
+        <p>📄 Fichier PDF :</p>
+        <iframe src="{{ asset('assets/exams/' ~ examen.pdf) }}" width="100%" height="600px"></iframe>
+        <p>
+            <a href="{{ asset('assets/exams/' ~ examen.pdf) }}" target="_blank">
+                {{ examen.pdf }}
+            </a>
+        </p>
+            {% else %}
+                <p>Aucune question associée à cet examen.</p>
+            {% endfor %}
+
+            <button type="submit" class="btn btn-primary mt-3">Enregistrer les modifications</button>
+        </form>
+    </div>
+</main>
+{% endblock %}

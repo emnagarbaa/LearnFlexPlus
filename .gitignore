@@ -1,4 +1,3 @@
-
 ###> symfony/framework-bundle ###
 /.env.local
 /.env.local.php
@@ -22,3 +21,25 @@
 .env
 .env.local
 .env.*.local
+
+.env.dev
+
+# Symfony
+/var/
+/vendor/
+
+/node_modules/
+public/build/
+public/bundles/
+
+# IDE
+.idea/
+.vscode/
+
+# Cache
+.phpunit.result.cache
+
+# Uploads (ignore all files inside, keep gitkeep)
+/public/uploads/**
+!/public/uploads/.gitkeep
+!/public/uploads/users/.gitkeep

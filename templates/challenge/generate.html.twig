@@ -1,0 +1,155 @@
+{% extends 'base.html.twig' %}
+
+{% block stylesheets %}
+<link rel="stylesheet" href="{{ asset('assets/css/styles.css') }}">
+<link rel="stylesheet" href="{{ asset('assets/css/dashboard.css') }}">
+<link rel="stylesheet" href="{{ asset('assets/css/crud.css') }}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+{% endblock %}
+
+{% block body %}
+<div class="dashboard">
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <div class="logo">
+                <img src="{{ asset('assets/images/logo1.png') }}" alt="Learnflex+ Logo" class="nav-logo">
+                <span>LearnFlex</span><span class="highlight">+</span>
+            </div>
+            <button class="sidebar-toggle">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+
+        <div class="sidebar-content">
+            <nav class="sidebar-menu">
+                <ul>
+                    <li><a href="{{ path('dashboard') }}"><i class="fas fa-tachometer-alt"></i><span>Dashboard</span></a></li>
+                    <li><a href="{{ path('app_users') }}"><i class="fas fa-users"></i><span>Utilisateurs</span></a></li>
+                    <li><a href="#"><i class="fas fa-book-open"></i><span>Contenu pédagogique</span></a></li>
+                    <li class="has-submenu active">
+                        <a href="#"><i class="fas fa-graduation-cap"></i><span>Evaluation</span><i class="fas fa-chevron-down submenu-toggle"></i></a>
+                        <ul class="submenu">
+                            <li><a href="{{ path('admin_examen') }}">Examen</a></li>
+                            <li class="active"><a href="{{ path('app_challenges') }}">Challenge</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="#"><i class="fas fa-question-circle"></i><span>Questionnaire</span></a></li>
+                    <li><a href="#"><i class="fas fa-directions"></i><span>Orientation</span></a></li>
+                    <li><a href="#"><i class="fas fa-comments"></i><span>Forum</span></a></li>
+                </ul>
+            </nav>
+        </div>
+
+        <div class="sidebar-footer">
+            <a href="#" class="user-profile">
+                <img src="{{ asset('assets/images/placeholder-admin.png') }}" alt="Admin" class="user-img">
+                <div class="user-info">
+                    <h4>Admin User</h4>
+                    <p>Administrateur</p>
+                </div>
+            </a>
+            <a href="#" class="logout">
+                <i class="fas fa-sign-out-alt"></i><span>Déconnexion</span>
+            </a>
+        </div>
+    </aside>
+
+    <main class="main-content">
+        <header class="dashboard-header">
+            <div class="header-left">
+                <h1>🤖 Générer des questions avec l'IA</h1>
+                <p>Challenge : <strong>{{ challenge.titrec }}</strong></p>
+            </div>
+            <div class="header-right">
+                <div class="actions">
+                    <a href="{{ path('app_challenges') }}" class="btn primary">
+                        <i class="fas fa-arrow-left"></i> Retour aux challenges
+                    </a>
+                </div>
+            </div>
+        </header>
+
+        <div class="crud-container">
+
+            {% for msg in app.flashes('error') %}
+                <div style="background:#ffeaea; border-left:4px solid #e74c3c; padding:15px 20px; border-radius:8px; margin-bottom:20px; color:#c0392b;">
+                    <i class="fas fa-exclamation-circle"></i> {{ msg }}
+                </div>
+            {% endfor %}
+
+            {% for msg in app.flashes('success') %}
+                <div style="background:#eafaf1; border-left:4px solid #2ecc71; padding:15px 20px; border-radius:8px; margin-bottom:20px; color:#1e8449;">
+                    <i class="fas fa-check-circle"></i> {{ msg }}
+                </div>
+            {% endfor %}
+
+            <div class="view-container table-view active" style="padding: 30px;">
+                <form method="POST" data-turbo="false" style="max-width: 650px; margin: 0 auto;">
+
+                    {# Sujet #}
+                    <div style="margin-bottom: 24px;">
+                        <label class="form-label" style="display:block; font-weight:600; margin-bottom:8px; color:#1f2d3d;">
+                            📚 Sujet des questions
+                        </label>
+                        <input type="text"
+                               name="sujet"
+                               value="{{ challenge.titrec }}"
+                               required
+                               style="width:100%; padding:10px 14px; border:1.5px solid #dee2e6; border-radius:8px; font-size:0.95rem; box-sizing:border-box; outline:none; transition:border 0.2s;">
+                        <small style="color:#6c757d; display:block; margin-top:5px;">
+                            Vous pouvez préciser : ex. "HTML &amp; CSS — les balises de base"
+                        </small>
+                    </div>
+
+                    {# Type de questions #}
+                    <div style="margin-bottom: 24px;">
+                        <label class="form-label" style="display:block; font-weight:600; margin-bottom:8px; color:#1f2d3d;">
+                            🎯 Type de questions
+                        </label>
+                        <select name="type" style="width:100%; padding:10px 14px; border:1.5px solid #dee2e6; border-radius:8px; font-size:0.95rem; box-sizing:border-box; background:#fff; cursor:pointer;">
+                            <option value="qcm">✅ QCM — Choix multiples</option>
+                            <option value="truefalse">⚖️ Vrai / Faux</option>
+                            <option value="open">✏️ Questions ouvertes</option>
+                            <option value="auto">🔀 Mix automatique</option>
+                        </select>
+                    </div>
+
+                    {# Nombre de questions #}
+                    <div style="margin-bottom: 24px;">
+                        <label class="form-label" style="display:block; font-weight:600; margin-bottom:8px; color:#1f2d3d;">
+                            🔢 Nombre de questions
+                        </label>
+                        <input type="number"
+                               name="count"
+                               value="5"
+                               min="1"
+                               max="20"
+                               style="width:100%; padding:10px 14px; border:1.5px solid #dee2e6; border-radius:8px; font-size:0.95rem; box-sizing:border-box;">
+                    </div>
+
+                    {# Niveau de difficulté #}
+                    <div style="margin-bottom: 32px;">
+                        <label class="form-label" style="display:block; font-weight:600; margin-bottom:8px; color:#1f2d3d;">
+                            📊 Niveau de difficulté
+                        </label>
+                        <select name="level" style="width:100%; padding:10px 14px; border:1.5px solid #dee2e6; border-radius:8px; font-size:0.95rem; box-sizing:border-box; background:#fff; cursor:pointer;">
+                            <option value="débutant"       {% if challenge.niveaudifficulte == 'débutant' %}selected{% endif %}>🟢 Débutant</option>
+                            <option value="intermédiaire"  {% if challenge.niveaudifficulte == 'intermédiaire' %}selected{% endif %}>🟡 Intermédiaire</option>
+                            <option value="avancé"         {% if challenge.niveaudifficulte == 'avancé' %}selected{% endif %}>🔴 Avancé</option>
+                            <option value="expert"         {% if challenge.niveaudifficulte == 'expert' %}selected{% endif %}>⚫ Expert</option>
+                        </select>
+                    </div>
+
+                    {# Bouton soumettre #}
+                    <button type="submit" class="btn primary" style="width:100%; padding:13px; font-size:1rem; font-weight:600; border-radius:8px; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px;">
+                        <i class="fas fa-magic"></i> Générer les questions
+                    </button>
+
+                </form>
+            </div>
+        </div>
+    </main>
+</div>
+
+<script src="{{ asset('assets/js/main.js') }}"></script>
+{% endblock %}

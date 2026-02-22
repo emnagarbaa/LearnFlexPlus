@@ -1,5 +1,7 @@
 <?php
 
+<<<<<<< HEAD
+=======
 /**
  * Returns the importmap for this application.
  *
@@ -11,11 +13,13 @@
  *
  * The "importmap:require" command can be used to add new entries to this file.
  */
+>>>>>>> origin/user
 return [
     'app' => [
         'path' => './assets/app.js',
         'entrypoint' => true,
     ],
+<<<<<<< HEAD
     '@hotwired/stimulus' => [
         'version' => '3.2.2',
     ],
@@ -25,4 +29,6 @@ return [
     '@hotwired/turbo' => [
         'version' => '7.3.0',
     ],
+=======
+>>>>>>> origin/user
 ];

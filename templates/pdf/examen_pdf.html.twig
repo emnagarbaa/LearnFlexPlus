@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>{{ examen.titre }}</title>
+    <style>
+        body { font-family: Arial, sans-serif; }
+        h1 { color: #1f4f65; }
+        .question { margin-bottom: 15px; }
+    </style>
+</head>
+<body>
+    <h1>{{ examen.titre }}</h1>
+    <p>Matière : {{ examen.matiere }}</p>
+    <p>Étudiant : {{ etudiant.nom }} {{ etudiant.prenom }}</p>
+
+    <hr>
+    {% for question in examen.questions %}
+        <div class="question">
+            <strong>Q{{ loop.index }}: {{ question.intitule }}</strong>
+            <p>Réponse : ___________________________</p>
+        </div>
+    {% endfor %}
+</body>
+</html>

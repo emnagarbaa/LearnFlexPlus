@@ -5,6 +5,8 @@
 {% block stylesheets %}
 <link rel="stylesheet" href="{{ asset('assets/css/styles.css') }}">
 <link rel="stylesheet" href="{{ asset('assets/css/dashboard.css') }}">
+<link rel="stylesheet" href="{{ asset('assets/css/crud.css') }}">
+
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 {% endblock %}
 
@@ -12,10 +14,117 @@
 <div class="dashboard">
 
     <aside class="sidebar">
-        <div class="sidebar-header">
-            <div class="logo">
-                <img src="{{ asset('assets/images/logo1.png') }}" alt="Learnflex+ Logo" class="nav-logo">
-                <span>LearnFlex</span><span class="highlight">+</span>
+
+      <div class="sidebar-header">
+       <div class="logo">
+      <img src="{{ asset('assets/images/logo1.png') }}" alt="Learnflex+ Logo" class="nav-logo">
+      <span>LearnFlex</span><span class="highlight">+</span>
+  </a>
+</div>
+
+        <button class="sidebar-toggle">
+          <i class="fas fa-bars"></i>
+        </button>
+      </div>
+      
+      <div class="sidebar-content">
+        <nav class="sidebar-menu">
+          <ul>
+            <li class="active">
+              <a href="{{path('dashboard')}}">
+                <i class="fas fa-tachometer-alt"></i>
+                <span>Dashboard</span>
+              </a>
+            </li>
+            <li>
+              <a href="{{path('app_users')}}">
+                <i class="fas fa-users"></i>
+                <span>Utilisateurs</span>
+              </a>
+            </li>
+            <li>
+              <a href="#">
+                <i class="fas fa-book-open"></i>
+                <span>contenu pédagogique</span>
+              </a>
+            </li>
+            <li class="has-submenu">
+    <a href="#">
+        <i class="fas fa-graduation-cap"></i>
+        <span>Evaluation</span>
+        <i class="fas fa-chevron-down submenu-toggle"></i>
+    </a>
+    <ul class="submenu">
+        <li>
+            <a href="{{ path('admin_examen') }}">Examen</a>
+        </li>
+        <li>
+            <a href="{{ path('app_challenges') }}">Challenge</a>
+        </li>
+    </ul>
+</li>
+
+            <li>
+              <a href="#">
+                <i class="fas fa-question-circle"></i>
+                <span>Questionnaire</span>
+              </a>
+            </li>
+            <li>
+              <a href="#">
+                <i class="fas fa-directions"></i>
+                <span>Orientation</span>
+              </a>
+            </li>
+            <li>
+              <a href="#">
+                <i class="fas fa-comments"></i>
+                <span>Forum</span>
+              </a>
+            </li>
+          </ul>
+        </nav>
+      </div>
+      
+      <div class="sidebar-footer">
+        <a href="#" class="user-profile">
+          <img src="{{ asset('assets/images/placeholder-admin.png') }}" alt="Admin" class="user-img">
+          <div class="user-info">
+            <h4>Admin User</h4>
+            <p>Administrateur</p>
+          </div>
+        </a>
+        <a href="#" class="logout">
+          <i class="fas fa-sign-out-alt"></i>
+          <span>Déconnexion</span>
+        </a>
+      </div>
+    </aside>
+    
+    <main class="main-content">
+      <header class="dashboard-header">
+        <div class="header-left">
+          <h1>Dashboard</h1>
+    <p>Bienvenue sur la plateforme d’apprentissage LearnFlex+</p>
+        </div>
+        <div class="header-right">
+          <div class="search-bar">
+            <input type="text" placeholder="Rechercher...">
+            <button><i class="fas fa-search"></i></button>
+          </div>
+          <button class="notification-btn">
+            <i class="fas fa-bell"></i>
+            <span class="badge">3</span>
+          </button>
+        </div>
+      </header>
+      
+      <div class="dashboard-content">
+        <!-- Stats Cards -->
+        <div class="stats-cards">
+          <div class="stat-card">
+            <div class="stat-icon users">
+              <i class="fas fa-users"></i>
             </div>
             <button class="sidebar-toggle">
                 <i class="fas fa-bars"></i>
@@ -557,6 +666,16 @@ document.addEventListener('DOMContentLoaded', function() {
             mainContent.classList.toggle('expanded');
         });
     }
+// Submenu toggle
+const submenuToggles = document.querySelectorAll('.has-submenu > a');
+
+submenuToggles.forEach(toggle => {
+    toggle.addEventListener('click', function(e) {
+        e.preventDefault(); // empêcher le # de faire remonter en haut
+        const parent = this.parentElement;
+        parent.classList.toggle('open'); // ajoute/enlève la classe open
+    });
+});
 
     // Report Tabs
     const reportTabs = document.querySelectorAll('.report-tab');

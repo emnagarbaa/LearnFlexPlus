@@ -1,0 +1,15 @@
+knp_snappy:
+    pdf:
+        enabled: true
+        binary: 'C:\PROGRA~1\WKHTML~1\bin\WKHTML~2.EXE'
+        options:
+            page-size: A4
+            encoding: UTF-8
+            margin-top: 10mm
+            margin-bottom: 10mm
+            margin-left: 10mm
+            margin-right: 10mm
+    image:
+        enabled: true
+        binary: 'C:\PROGRA~1\WKHTML~1\bin\WKHTML~2.EXE'
+        options: {}

@@ -9,7 +9,12 @@
     <link rel="stylesheet" href="{{ asset('assets/css/main.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/css/auth.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+
     <style>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700&display=swap" rel="stylesheet">
+    <style>
+     
         .cooldown-timer {
             background: #ff4444;
             color: white;
@@ -20,9 +25,17 @@
             animation: pulse 1s infinite;
         }
 
+
         @keyframes pulse {
             0% { transform: scale(1); }
             50% { transform: scale(1.02); }
+            100% { transform: scale(1); }
+        }
+
+
+        @keyframes pulse {
+            0%   { transform: scale(1); }
+            50%  { transform: scale(1.02); }
             100% { transform: scale(1); }
         }
 
@@ -41,8 +54,188 @@
             width: 100%;
             transition: width 1s linear;
         }
-    </style>
+    
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700&display=swap" rel="stylesheet">
+
+        /* ── Social login buttons ── */
+        .social-login {
+            margin-top: 20px;
+            text-align: center;
+        }
+        .social-login p {
+            color: #999;
+            font-size: 0.88rem;
+            margin-bottom: 12px;
+            position: relative;
+        }
+        .social-login p::before,
+        .social-login p::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            width: 35%;
+            height: 1px;
+            background: #e0e0e0;
+        }
+        .social-login p::before { left: 0; }
+        .social-login p::after  { right: 0; }
+
+        .social-buttons {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .social-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            text-decoration: none;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s, filter 0.2s;
+            border: none;
+        }
+        .social-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0,0,0,0.15);
+            text-decoration: none;
+        }
+
+        /* Face ID button — teal/slate theme matching the brand */
+        .social-btn.faceid {
+            background: linear-gradient(135deg, #1f4f65 0%, #2e7d9f 100%);
+            color: #ffffff;
+            box-shadow: 0 4px 12px rgba(31, 79, 101, 0.35);
+            min-width: 170px;
+        }
+        .social-btn.faceid i {
+            font-size: 1rem;
+        }
+        .social-btn.faceid:hover {
+            filter: brightness(1.1);
+            color: #ffffff;
+        }
+
+        /* Google button */
+        .social-btn.google {
+            background: #fff;
+            color: #555;
+            border: 1.5px solid #e0e0e0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            padding: 10px 18px;
+            font-size: 1.1rem;
+        }
+        .social-btn.google:hover {
+            background: #f5f5f5;
+            color: #333;
+        }
+
+        /* ── Face Auth Modal ── */
+        .modal-custom {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.55);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1050;
+            backdrop-filter: blur(6px);
+            animation: fadeIn 0.3s;
+        }
+        .modal-content-custom {
+            background: #fff;
+            padding: 32px 28px 24px;
+            border-radius: 22px;
+            width: 90%;
+            max-width: 560px;
+            text-align: center;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.22);
+            animation: zoomIn 0.3s forwards;
+        }
+        @keyframes zoomIn {
+            from { transform: scale(0.82); opacity: 0; }
+            to   { transform: scale(1);   opacity: 1; }
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to   { opacity: 1; }
+        }
+        .modal-content-custom h5 {
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: #1f4f65;
+        }
+        .modal-content-custom > p {
+            margin-bottom: 18px;
+            color: #78909c;
+            font-size: 0.9rem;
+        }
+        .modal-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 14px;
+            margin-top: 20px;
+        }
+        .modal-btn {
+            padding: 11px 26px;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.25s;
+            border: none;
+            font-size: 0.9rem;
+        }
+        .modal-btn-danger {
+            background: #ef5350;
+            color: white;
+        }
+        .modal-btn-danger:hover {
+            background: #e53935;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(239,83,80,0.4);
+        }
+        .status-text {
+            color: #2e7d9f;
+            font-weight: 600;
+            margin: 14px 0;
+            min-height: 22px;
+            font-size: 0.92rem;
+        }
+
+        /* Video inside modal */
+        #video {
+            width: 100%;
+            max-width: 460px;
+            border-radius: 14px;
+            margin: 0 auto 16px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+            display: block;
+            aspect-ratio: 4/3;
+            object-fit: cover;
+            background: #000;
+        }
+        #canvas { display: none; }
+
+        .spinner {
+            display: none;
+            width: 72px;
+            height: 72px;
+            border: 5px solid rgba(46,125,159,0.2);
+            border-radius: 50%;
+            border-top-color: #2e7d9f;
+            animation: spin 0.85s linear infinite;
+            margin: 18px auto;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+    </style>
 </head>
 
 <body>
@@ -58,6 +251,9 @@
                     <p>Bienvenue sur LearnFlexPlus. Veuillez vous connecter pour continuer.</p>
                 </div>
 
+
+                <div id="alerts-container"></div>
+
                 <form class="auth-form" method="post">
                     {% if error %}
                         <div class="alert alert-danger">{{ error|e }}</div>
@@ -69,6 +265,12 @@
                             <i class="fas fa-envelope"></i>
                             <input type="email" id="email" name="_username" placeholder="Entrez votre email" required
                                 value="{{ last_username|e }}">
+
+
+                            <input type="email" id="email" name="_username"
+                                   placeholder="Entrez votre email" required
+                                   value="{{ last_username|e }}">
+
                         </div>
                     </div>
 
@@ -76,11 +278,22 @@
                         <label for="password">Mot de passe</label>
                         <div class="input-with-icon">
                             <i class="fas fa-lock"></i>
+
                             <input type="password" id="password" name="_password" required placeholder="Entrez votre mot de passe">
                         </div>
                         <div class="text-right" style="margin-top: 5px;">
                             <a href="{{ path('app_reset_password') }}" class="forgot-password"
                                style="color: #86b391; text-decoration: none; font-size: 0.9em;">Mot de passe oublié ?</a>
+
+                            <input type="password" id="password" name="_password"
+                                   required placeholder="Entrez votre mot de passe">
+                        </div>
+                        <div class="text-right" style="margin-top:5px;">
+                            <a href="{{ path('app_reset_password') }}" class="forgot-password"
+                               style="color:#86b391;text-decoration:none;font-size:0.9em;">
+                                Mot de passe oublié ?
+                            </a>
+
                         </div>
                     </div>
 
@@ -95,10 +308,17 @@
                     <div class="social-login">
                         <p>Ou connectez-vous avec</p>
                         <div class="social-buttons">
+
                             <button type="button" id="faceIdBtn" class="social-btn faceid">
                                 <i class="fas fa-face-smile"></i>
                             </button>
                             <a href="#" class="social-btn google">
+
+                            <a href="#" id="faceAuthLink" class="social-btn faceid">
+                                <i class="fas fa-camera"></i> Face ID
+                            </a>
+                            <a href="{{ path('connect_google_start') }}" class="social-btn google">
+
                                 <i class="fab fa-google"></i>
                             </a>
                         </div>
@@ -141,6 +361,133 @@
     <script defer src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"></script>
     <script defer src="{{ asset('js/face-login.js') }}"></script>
     <script src="https://js.hcaptcha.com/1/api.js" async defer></script>
+</body>
+
+
+    <!-- ── Face Auth Modal ── -->
+    <div id="faceAuthModal" class="modal-custom">
+        <div class="modal-content-custom">
+            <h5><i class="fas fa-camera" style="margin-right:8px;"></i>Face Authentication</h5>
+            <p>Position your face in front of the camera for identification.</p>
+            <video id="video" autoplay playsinline></video>
+            <canvas id="canvas"></canvas>
+            <div class="spinner" id="faceAuthSpinner"></div>
+            <p class="status-text" id="faceAuthStatus">Initializing camera…</p>
+            <div class="modal-buttons">
+                <button id="cancelFaceAuth" class="modal-btn modal-btn-danger">
+                    <i class="fas fa-times"></i> Cancel
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://js.hcaptcha.com/1/api.js" async defer></script>
+
+    <script>
+        $(document).ready(function () {
+            let stream = null;
+            let faceCheckInterval = null;
+            const video           = document.getElementById('video');
+            const canvas          = document.getElementById('canvas');
+            const cancelFaceAuth  = document.getElementById('cancelFaceAuth');
+            const faceAuthModal   = $('#faceAuthModal');
+            const faceAuthStatus  = document.getElementById('faceAuthStatus');
+            const spinner         = document.getElementById('faceAuthSpinner');
+            const CHECK_INTERVAL  = 3000;
+
+            // Open modal and start camera
+            $('#faceAuthLink').click(function (e) {
+                e.preventDefault();
+                faceAuthModal.css('display', 'flex').hide().fadeIn(250);
+                startVideo();
+            });
+
+            function startVideo() {
+                faceAuthStatus.textContent = 'Requesting camera access…';
+                navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' } })
+                    .then(function (mediaStream) {
+                        stream = mediaStream;
+                        video.srcObject = stream;
+                        faceAuthStatus.textContent = 'Scanning for your face…';
+                        startFaceChecking();
+                    })
+                    .catch(function () {
+                        stopFaceChecking();
+                        faceAuthModal.fadeOut();
+                        $('#alerts-container').html(
+                            '<div class="alert alert-danger"><i class="fas fa-exclamation-circle"></i> Camera access denied or unavailable.</div>'
+                        );
+                    });
+            }
+
+            function startFaceChecking() {
+                stopFaceChecking();
+                faceCheckInterval = setInterval(checkFace, CHECK_INTERVAL);
+            }
+
+            function stopFaceChecking() {
+                if (faceCheckInterval) {
+                    clearInterval(faceCheckInterval);
+                    faceCheckInterval = null;
+                }
+            }
+
+            function checkFace() {
+                if (!stream || !faceAuthModal.is(':visible')) {
+                    stopFaceChecking();
+                    return;
+                }
+                canvas.width  = video.videoWidth;
+                canvas.height = video.videoHeight;
+                canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
+                const imageData = canvas.toDataURL('image/png');
+
+                spinner.style.display = 'block';
+
+                $.ajax({
+                    url: '{{ path("face_auth") }}',
+                    method: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({ image: imageData }),
+                    success: function (response) {
+                        spinner.style.display = 'none';
+                        if (response.success && response.redirectUrl) {
+                            stopFaceChecking();
+                            stopVideoStream();
+                            faceAuthModal.fadeOut();
+                            window.location.href = response.redirectUrl;
+                        } else {
+                            faceAuthStatus.textContent = 'Face not recognized, retrying…';
+                        }
+                    },
+                    error: function (xhr) {
+                        spinner.style.display = 'none';
+                        faceAuthStatus.textContent = 'Error ' + xhr.status + ' — retrying…';
+                        console.error('[FaceAuth] ❌', xhr.status, xhr.responseText);
+                    }
+                });
+            }
+
+            function stopVideoStream() {
+                if (stream) {
+                    stream.getTracks().forEach(track => track.stop());
+                    stream = null;
+                }
+            }
+
+            cancelFaceAuth.addEventListener('click', function () {
+                stopFaceChecking();
+                stopVideoStream();
+                faceAuthModal.fadeOut();
+            });
+
+            faceAuthModal.on('hidden', function () {
+                stopFaceChecking();
+                stopVideoStream();
+            });
+        });
+    </script>
 </body>
 
 </html>

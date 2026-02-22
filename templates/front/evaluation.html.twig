@@ -1,0 +1,161 @@
+{% extends 'front/home.html.twig' %}
+
+{% block title %}Évaluations & Challenges - LearnFlex+{% endblock %}
+{% block stylesheets %}
+<link rel="stylesheet" href="{{ asset('assets/css/styles.css') }}">
+<link rel="stylesheet" href="{{ asset('assets/css/dashboard.css') }}">
+<link rel="stylesheet" href="{{ asset('assets/css/crud.css') }}">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+{% endblock %}
+{% block header %}
+<header class="landing-header">
+    <div class="container">
+        <div class="header-left">
+            <div class="logo">
+                <img src="{{ asset('assets/images/logo1.png') }}" alt="Learnflexplus Logo" class="main-logo">
+                <span class="logo-text">LearnFlex +</span>
+            </div>
+        </div>
+        <nav class="main-nav">
+            <ul>
+                <li class="active"><a href="#">Accueil</a></li>
+                <li><a href="#">Contenus pédagogiques</a></li>
+<li><a href="{{ path('front_evaluation') }}">Evaluation</a></li>
+                <li><a href="#">Questionnaire</a></li>
+                <li><a href="#">Orientation</a></li>
+                <li><a href="#">Forum </a></li>
+            </ul>
+        </nav>
+        <div class="header-right">
+{% if app.user and app.user.role != 'client' %}
+                <a href="#" class="btn btn-outline dashboard-btn">Dashboard</a>
+            {% endif %}
+            {% if app.user %}
+                <a href="#" class="btn btn-primary logout-btn">Déconnexion</a>
+            {% else %}
+                <a href="#" class="btn btn-primary">Connexion</a>
+            {% endif %}
+            <button class="mobile-menu-btn">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+    </div>
+</header>
+{% endblock %}
+
+{% block body %}
+
+<main class="evaluation-page">
+ 
+    <div class="container">
+    
+        <h1 class="page-title">Évaluations & Challenges</h1>
+
+        <div class="challenges-list">
+            {% for challenge in challenges %}
+                <div class="challenge-card">
+                    <div class="card-front">
+                        <div class="challenge-image">
+                            {% if challenge.images %}
+                                <img src="{{ asset('uploads/photos/' ~ challenge.images) }}" alt="{{ challenge.titrec }}">
+                            {% else %}
+                                <div class="placeholder-image">No Image</div>
+                            {% endif %}
+                            <span class="badge {{ challenge.etat|lower }}">{{ challenge.etat }}</span>
+                        </div>
+                        <div class="challenge-info">
+                            <h2>{{ challenge.titrec }}</h2>
+                            <p>{{ challenge.descriptionc|length > 80 ? challenge.descriptionc[:80] ~ '...' : challenge.descriptionc }}</p>
+                            <div class="circular-progress" data-progress="{{ challenge.progressionactuelle }}">
+                                <span>{{ challenge.progressionactuelle }}%</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card-back">
+                        <h3>Objectifs & Récompenses</h3>
+                        <ul>
+                            <li>🎯 Objectif: {{ challenge.objectifscore }}%</li>
+                            <li>🏆 Niveau atteint: {{ challenge.niveauatteint }}</li>
+                            <li>🎁 Récompense: {{ challenge.typerecomponse }}</li>
+                        </ul>
+                        <div class="back-actions">
+                            <a href="{{ path('front_challenge', {'id': challenge.id}) }}" class="btn btn-primary">Commencer</a>
+                            <a href="#" class="btn btn-outline">PDF</a>
+                        </div>
+                    </div>
+                </div>
+            {% else %}
+                <p class="no-challenge">Aucun challenge disponible pour le moment.</p>
+            {% endfor %}
+        </div>
+    </div>
+</main>
+
+<style>
+.evaluation-page {
+    background: linear-gradient(135deg,#f0f4f8,#dff6ff);
+    padding: 2rem 0;
+    font-family: 'Poppins', sans-serif;
+}
+
+.container { max-width: 1200px; margin: auto; padding: 0 1rem; }
+.page-title { text-align: center; font-size: 2.8rem; color:#1f4f65; font-weight:800; margin-bottom:3rem; }
+
+.challenges-list { display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:2rem; perspective:1200px; }
+
+.challenge-card {
+    width:100%; height:400px; position:relative;
+    transform-style: preserve-3d; transition: transform 0.8s;
+}
+.challenge-card:hover { transform: rotateY(180deg); }
+
+.card-front, .card-back {
+    position:absolute; width:100%; height:100%; border-radius:15px; overflow:hidden;
+    backface-visibility: hidden; display:flex; flex-direction:column; background:#fff; box-shadow:0 10px 20px rgba(0,0,0,0.12);
+}
+.card-back { transform: rotateY(180deg); padding:1rem; background:#1f4f65; color:#fff; justify-content:center; align-items:center; text-align:center; }
+
+.challenge-image { position:relative; height:180px; overflow:hidden; }
+.challenge-image img, .placeholder-image { width:100%; height:100%; object-fit:cover; display:block; }
+.placeholder-image { display:flex; align-items:center; justify-content:center; background:#ddd; color:#555; font-weight:bold; }
+
+.badge {
+    position:absolute; top:10px; left:10px; padding:0.4rem 0.8rem; border-radius:20px; color:#fff;
+    font-weight:700; font-size:0.8rem; text-transform:uppercase; box-shadow:0 0 8px rgba(0,0,0,0.3); transition:all 0.3s;
+}
+.badge.planifié{background:#f39c12;} .badge.actif{background:#27ae60;} .badge.terminé{background:#3498db;} .badge.annulé{background:#e74c3c;}
+
+.challenge-info { padding:1rem; flex:1; display:flex; flex-direction:column; justify-content:space-between; }
+.challenge-info h2{ font-size:1.4rem; margin-bottom:0.5rem; color:#1f4f65; }
+.challenge-info p{ font-size:0.95rem; color:#555; flex:1; }
+
+.circular-progress {
+    position: relative; width:60px; height:60px; margin:1rem auto;
+    border-radius:50%; background:conic-gradient(#1f4f65 calc(var(--p,0)*1%),#e0e0e0 0);
+    display:flex; align-items:center; justify-content:center; font-weight:700; color:#1f4f65;
+}
+.circular-progress span { position:absolute; font-size:0.8rem; }
+
+.card-back h3 { margin-bottom:1rem; }
+.card-back ul { list-style:none; padding:0; margin-bottom:1rem; }
+.card-back ul li { margin-bottom:0.5rem; }
+.back-actions { display:flex; gap:0.5rem; justify-content:center; }
+.btn { padding:0.5rem 1rem; border-radius:6px; font-weight:600; text-decoration:none; transition:all 0.3s; }
+.btn-primary { background:#97c3a2; color:#fff; }
+.btn-primary:hover { background:#1f4f65; color:#fff; }
+.btn-outline { border:2px solid #fff; color:#fff; background:transparent; }
+.btn-outline:hover { background:#fff; color:#1f4f65; background:#fff; }
+
+.no-challenge { text-align:center; font-size:1.2rem; color:#888; grid-column:1/-1; }
+</style>
+
+<script>
+// Circular progress animation
+document.querySelectorAll('.circular-progress').forEach(el => {
+    let value = el.dataset.progress;
+    el.style.setProperty('--p', value);
+});
+</script>
+{% endblock %}

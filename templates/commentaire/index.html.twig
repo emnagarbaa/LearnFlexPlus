@@ -1,0 +1,127 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Commentaires de {{ examen.titre }}{% endblock %}
+
+{% block stylesheets %}
+<link rel="stylesheet" href="{{ asset('assets/css/styles.css') }}">
+<link rel="stylesheet" href="{{ asset('assets/css/dashboard.css') }}">
+<link rel="stylesheet" href="{{ asset('assets/css/crud.css') }}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+{% endblock %}
+
+{% block body %}
+<div class="dashboard">
+
+    {# ===== SIDEBAR ===== #}
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <div class="logo">
+                <img src="{{ asset('assets/images/logo1.png') }}" class="nav-logo">
+                <span>LearnFlex</span><span class="highlight">+</span>
+            </div>
+        </div>
+
+        <nav class="sidebar-menu">
+            <ul>
+                <li>
+                    <a href="#">
+                        <i class="fas fa-tachometer-alt"></i>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+
+                <li class="active has-submenu">
+                    <a href="#">
+                        <i class="fas fa-graduation-cap"></i>
+                        <span>Evaluation</span>
+                    </a>
+                    <ul class="submenu">
+                        <li>
+                            <a href="{{ path('admin_examen') }}">Examen</a>
+                        </li>
+                        <li>
+                            <a href="#">Challenge</a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </nav>
+    </aside>
+
+    {# ===== MAIN CONTENT ===== #}
+    <main class="main-content">
+
+        {# ===== HEADER ===== #}
+        <header class="dashboard-header">
+            <div class="header-left">
+                <h1>Commentaires pour l’examen : {{ examen.titre }}</h1>
+                <p>Liste des commentaires postés</p>
+            </div>
+            <div class="header-right">
+                <a href="{{ path('admin_examen') }}" class="btn secondary">
+                    <i class="fas fa-arrow-left"></i> Retour aux examens
+                </a>
+            </div>
+        </header>
+
+    
+        {# ===== TABLE DES COMMENTAIRES EXISTANTS ===== #}
+        <div class="dashboard-content">
+            <div class="crud-container">
+                <div class="crud-header">
+                    <h2>Commentaires existants</h2>
+                </div>
+
+                <div class="crud-body">
+                  {# ===== FORMULAIRE FILTRAGE AU-DESSUS DE LA TABLE ===== #}
+            <form method="get" action="{{ path('app_examen_commentaires', {id: examen.id}) }}" class="filters" style="margin-bottom: 20px; display: flex; gap: 15px; align-items: flex-end;">
+                <div class="form-group">
+                    <label for="auteur">Filtrer par professeur :</label>
+                    <input type="text" id="auteur" name="auteur" value="{{ auteur_selectionne|default('') }}">
+                </div>
+
+                <div class="form-group">
+                    <label for="date">Filtrer à partir de la date :</label>
+                    <input type="date" id="date" name="date" value="{{ date_selectionnee|default('') }}">
+                </div>
+
+                <button type="submit" class="btn primary" style="height: 36px;">
+                    <i class="fas fa-filter"></i> Filtrer
+                </button>
+            </form>
+                    <table class="buses-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Contenu</th>
+                                <th>Date création</th>
+                                <th>Auteur</th>
+                                <th>Nombre de vues</th>
+                                <th>Likes</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for commentaire in commentaires %}
+                                <tr>
+                                    <td>{{ commentaire.id }}</td>
+                                    <td>{{ commentaire.contenu }}</td>
+                                    <td>{{ commentaire.datecre ? commentaire.datecre|date('d/m/Y H:i') : '-' }}</td>
+                                    <td>{{ commentaire.auteur }}</td>
+                                    <td>{{ commentaire.nbvue }}</td>
+                                    <td>{{ commentaire.likes }}</td>
+                                  
+                                </tr>
+                            {% else %}
+                                <tr>
+                                    <td colspan="7" class="text-center">Aucun commentaire pour cet examen</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </main>
+</div>
+{% endblock %}

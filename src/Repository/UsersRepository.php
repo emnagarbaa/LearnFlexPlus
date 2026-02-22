@@ -48,4 +48,16 @@ class UsersRepository extends ServiceEntityRepository
 
         return $qb->getQuery()->getResult();
     }
+
+    public function findEtudiantsByExamen(int $examenId): array
+{
+    return $this->createQueryBuilder('u')
+        ->join('u.inscriptions', 'i')
+        ->join('i.examen', 'e')
+        ->where('e.id = :id')
+        ->setParameter('id', $examenId)
+        ->getQuery()
+        ->getResult();
+}
+
 }

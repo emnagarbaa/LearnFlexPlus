@@ -1,0 +1,155 @@
+
+{% extends 'base.html.twig' %}
+
+{% block title %}Ajouter un Examen{% endblock %}
+
+{% block stylesheets %}
+<link rel="stylesheet" href="{{ asset('assets/css/styles.css') }}">
+<link rel="stylesheet" href="{{ asset('assets/css/dashboard.css') }}">
+<link rel="stylesheet" href="{{ asset('assets/css/crud.css') }}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+{% endblock %}
+
+{% block body %}
+<div class="dashboard">
+
+    {# ===== SIDEBAR ===== #}
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <div class="logo">
+                <a href="{{ path('app_front') }}">
+                    <img src="{{ asset('assets/images/logo1.png') }}" alt="LearnFlexPlus Logo" class="nav-logo">
+                    <span>LearnFlex</span><span class="highlight">+</span>
+                </a>
+            </div>
+            <button class="sidebar-toggle"><i class="fas fa-bars"></i></button>
+        </div>
+
+        <div class="sidebar-content">
+            <nav class="sidebar-menu">
+                <ul>
+                    <li>
+                        <a href="{{ path('dashboard') }}">
+                            <i class="fas fa-tachometer-alt"></i>
+                            <span>Dashboard</span>
+                        </a>
+                    </li>
+
+                    <li class="active">
+                        <a href="{{ path('app_users') }}">
+                            <i class="fas fa-users"></i>
+                            <span>Utilisateurs</span>
+                        </a>
+                    </li>
+
+                    <li><a href="#"><i class="fas fa-book-open"></i><span>Contenu pédagogique</span></a></li>
+<li class="has-submenu">
+    <a href="#">
+        <i class="fas fa-graduation-cap"></i>
+        <span>Evaluation</span>
+        <i class="fas fa-chevron-down submenu-toggle"></i>
+    </a>
+    <ul class="submenu">
+        <li>
+            <a href="{{ path('admin_examen') }}">Examen</a>
+        </li>
+        <li>
+            <a href="{{ path('app_challenges') }}">Challenge</a>
+        </li>
+    </ul>
+</li>
+                    <li><a href="#"><i class="fas fa-question-circle"></i><span>Questionnaire</span></a></li>
+                    <li><a href="#"><i class="fas fa-directions"></i><span>Orientation</span></a></li>
+                    <li><a href="#"><i class="fas fa-comments"></i><span>Forum</span></a></li>
+                </ul>
+            </nav>
+        </div>
+
+                <div class="sidebar-footer">
+            <a href="#" class="user-profile">
+                <img src="{{ asset('assets/images/placeholder-admin.png') }}" 
+                    alt="{{ app.user.nom }} {{ app.user.prenom }}" class="user-img">
+                <div class="user-info">
+                    <h4>{{ app.user.nom }} {{ app.user.prenom }}</h4>
+                    <p>{{ app.user.getRole() }}</p>
+                </div>
+            </a>
+            <a href="{{ path('app_logout') }}" class="logout">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Déconnexion</span>
+            </a>
+        </div>
+    </aside>
+    {# ===== MAIN CONTENT ===== #}
+    <main class="main-content">
+
+        {# ===== HEADER ===== #}
+        <header class="dashboard-header">
+            <div class="header-left">
+               <h1>
+    {{ isEdit ? 'Modifier un Examen' : 'Ajouter un Examen' }}
+</h1>
+
+<p>
+    {{ isEdit ? 'Modification des informations de l’examen' : 'Création d’un nouvel examen' }}
+</p>
+
+            </div>
+            <div class="header-right">
+                <a href="{{ path('admin_examen') }}" class="btn secondary">
+                    <i class="fas fa-arrow-left"></i> Retour
+                </a>
+            </div>
+        </header>
+
+        {# ===== FORM CARD ===== #}
+        <div class="dashboard-content">
+            <div class="crud-container">
+                <div class="crud-header">
+<h2>
+    {{ isEdit ? 'Modifier l’examen' : 'Informations de l’examen' }}
+</h2>
+                </div>
+
+                <div class="crud-body">
+                    {{ form_start(form, {'attr': {'class': 'crud-form'}}) }}
+
+                    <div class="form-grid">
+                        {{ form_row(form.titre) }}
+
+{{ form_row(form.description) }}
+
+                        {{ form_row(form.matiere) }}
+                        {{ form_row(form.niveauexamen) }}
+                        {{ form_row(form.typeexamen) }}
+
+                        {{ form_row(form.datedebut) }}
+                        {{ form_row(form.datefin) }}
+                        {{ form_row(form.duree) }}
+                        {{ form_row(form.nbquestion) }}
+
+                        {{ form_row(form.scoretotal) }}
+                        {{ form_row(form.coefficient) }}
+                        {{ form_row(form.etat) }}
+                    </div>
+
+                    <div class="form-actions">
+                       <button class="btn primary">
+    <i class="fas fa-save"></i>
+    {{ isEdit ? 'Modifier' : 'Enregistrer' }}
+</button>
+
+
+                        <a href="{{ path('admin_examen') }}" class="btn secondary">
+                            Annuler
+                        </a>
+                    </div>
+
+                    {{ form_end(form) }}
+                </div>
+            </div>
+        </div>
+
+    </main>
+</div>
+{% endblock %}

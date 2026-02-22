@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 import './bootstrap.js';
+=======
+>>>>>>> origin/user
+import './stimulus_bootstrap.js';
 /*
  * Welcome to your app's main JavaScript file!
  *

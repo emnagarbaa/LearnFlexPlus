@@ -13,11 +13,30 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+use Symfony\Component\Form\Extension\Core\Type\FileType;
+use Symfony\Component\Validator\Constraints\File;
+
 class UserType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
+
+
+            ->add('profileImageFile', FileType::class, [
+                'label' => 'Photo de profil (optionnel)',
+                'mapped' => false,
+                'required' => false,
+                'constraints' => [
+                 new File([
+                'maxSize' => '2M',
+                'mimeTypes' => ['image/jpeg', 'image/png', 'image/webp'],
+                'mimeTypesMessage' => 'Veuillez choisir une image valide (JPG, PNG, WEBP).',
+            
+                        ]),
+                    ],
+                ])
+
             ->add('nom', TextType::class, [
                 'label' => 'Nom',
                 'required' => true,

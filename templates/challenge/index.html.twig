@@ -1,0 +1,468 @@
+{% extends 'base.html.twig' %}
+
+{% block stylesheets %}
+<link rel="stylesheet" href="{{ asset('assets/css/styles.css') }}">
+<link rel="stylesheet" href="{{ asset('assets/css/dashboard.css') }}">
+<link rel="stylesheet" href="{{ asset('assets/css/crud.css') }}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+{% endblock %}
+
+{% block body %}
+<div class="dashboard">
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <div class="logo">
+                <img src="{{ asset('assets/images/logo1.png') }}" alt="Learnflex+ Logo" class="nav-logo">
+                <span>LearnFlex</span><span class="highlight">+</span>
+            </div>
+            <button class="sidebar-toggle">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+
+        <div class="sidebar-content">
+            <nav class="sidebar-menu">
+                <ul>
+                    <li class="active"><a href="{{path('dashboard')}}"><i class="fas fa-tachometer-alt"></i><span>Dashboard</span></a></li>
+                    <li><a href="{{path('app_users')}}"><i class="fas fa-users"></i><span>Utilisateurs</span></a></li>
+                    <li><a href="#"><i class="fas fa-book-open"></i><span>Contenu pédagogique</span></a></li>
+                    <li class="has-submenu">
+                        <a href="#"><i class="fas fa-graduation-cap"></i><span>Evaluation</span><i class="fas fa-chevron-down submenu-toggle"></i></a>
+                        <ul class="submenu">
+                            <li><a href="{{ path('admin_examen') }}">Examen</a></li>
+                            <li><a href="{{ path('app_challenges') }}">Challenge</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="#"><i class="fas fa-question-circle"></i><span>Questionnaire</span></a></li>
+                    <li><a href="#"><i class="fas fa-directions"></i><span>Orientation</span></a></li>
+                    <li><a href="#"><i class="fas fa-comments"></i><span>Forum</span></a></li>
+                </ul>
+            </nav>
+        </div>
+
+        <div class="sidebar-footer">
+            <a href="#" class="user-profile">
+                <img src="{{ asset('assets/images/placeholder-admin.png') }}" alt="Admin" class="user-img">
+                <div class="user-info">
+                    <h4>Admin User</h4>
+                    <p>Administrateur</p>
+                </div>
+            </a>
+            <a href="#" class="logout">
+                <i class="fas fa-sign-out-alt"></i><span>Déconnexion</span>
+            </a>
+        </div>
+    </aside>
+
+    <main class="main-content">
+        <header class="dashboard-header">
+            <div class="header-left">
+                <h1>Gestion des Challenges</h1>
+                <p>Ajouter, modifier et gérer les challenges</p>
+            </div>
+            <div class="header-right">
+                <form method="get" action="{{ path('admin_challenge_index') }}" class="search-bar">
+                    <input type="text" name="q" placeholder="Rechercher un challenge" value="{{ app.request.get('q') }}" aria-label="Rechercher un challenge">
+                    <button type="submit"><i class="fas fa-search"></i></button>
+                </form>
+                <div class="actions" style="display:flex; gap:8px; align-items:center;">
+                    <a href="{{ path('app_addformchallenge') }}" class="btn primary"><i class="fas fa-plus"></i> Ajouter un Challenge</a>
+
+                    {# ══ 3 boutons statistiques ══ #}
+                    <button id="btn-etat-stats" style="background:#1f4f65; color:#fff; border:none; border-radius:8px; padding:8px 14px; font-weight:500; cursor:pointer; display:flex; align-items:center; gap:6px; font-size:13px;">
+                        <i class="fas fa-chart-pie"></i> Stats par État
+                    </button>
+                    <button id="btn-niveau-stats" style="background:#6f42c1; color:#fff; border:none; border-radius:8px; padding:8px 14px; font-weight:500; cursor:pointer; display:flex; align-items:center; gap:6px; font-size:13px;">
+                        <i class="fas fa-chart-pie"></i> Stats par Niveau
+                    </button>
+                    <button id="btn-score-stats" style="background:#0f766e; color:#fff; border:none; border-radius:8px; padding:8px 14px; font-weight:500; cursor:pointer; display:flex; align-items:center; gap:6px; font-size:13px;">
+                        <i class="fas fa-chart-bar"></i> Score moyen
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <div class="crud-container">
+            <div class="crud-header">
+                <div class="tabs" style="justify-content: center;">
+                    <a href="{{ path('app_challenges') }}" class="tab-btn {% if etat_selectionne|default('all') == 'all' %}active{% endif %}">Tous</a>
+                    <a href="{{ path('app_challenges', { etat: 'planifié' }) }}" class="tab-btn {% if etat_selectionne|default(null) == 'planifié' %}active{% endif %}">Planifiés</a>
+                    <a href="{{ path('app_challenges', { etat: 'actif' }) }}" class="tab-btn {% if etat_selectionne|default(null) == 'actif' %}active{% endif %}">Actifs</a>
+                    <a href="{{ path('app_challenges', { etat: 'terminé' }) }}" class="tab-btn {% if etat_selectionne|default(null) == 'terminé' %}active{% endif %}">Terminés</a>
+                    <a href="{{ path('app_challenges', { etat: 'annulé' }) }}" class="tab-btn {% if etat_selectionne|default(null) == 'annulé' %}active{% endif %}">Annulés</a>
+                </div>
+            </div>
+
+            <div class="view-container table-view active">
+                <div class="buses-table-container">
+                    <table class="buses-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Titre</th>
+                                <th>Description</th>
+                                <th>Examen associé</th>
+                                <th>Objectif</th>
+                                <th>Question</th>
+                                <th>Progression</th>
+                                <th>Niveau</th>
+                                <th>Récompense</th>
+                                <th>État</th>
+                                <th>Date début</th>
+                                <th>Date fin</th>
+                                <th>Date limite</th>
+                                <th>Alerte</th>
+                                <th>Dernier Score</th>
+                                <th>Dernier Niveau</th>
+                                <th>Dernières Réponses</th>
+                                <th>Iteracty</th>
+                                <th>Actions</th>
+                                <th>Image</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for challenge in challenges %}
+                                <tr data-statut="{{ challenge.etat|lower }}">
+                                    <td>{{ challenge.id }}</td>
+                                    <td>{{ challenge.titrec }}</td>
+                                    <td>{{ challenge.descriptionc }}</td>
+                                    <td>{{ challenge.examen.titre }}</td>
+                                    <td>{{ challenge.objectifscore }}</td>
+                                    <td><pre>{{ challenge.question is iterable ? challenge.question|json_encode(constant('JSON_PRETTY_PRINT')) : challenge.question }}</pre></td>
+                                    <td>{{ challenge.progressionactuelle }}</td>
+                                    <td>{{ challenge.niveauatteint }}</td>
+                                    <td>{{ challenge.typerecomponse }}<br>{{ challenge.contenurecompense }}</td>
+                                    <td><span class="status {{ challenge.etat|lower }}">{{ challenge.etat }}</span></td>
+                                    <td>{{ challenge.dated ? challenge.dated|date('d/m/Y') : '-' }}</td>
+                                    <td>{{ challenge.datef ? challenge.datef|date('d/m/Y') : '-' }}</td>
+                                    <td>{{ challenge.datelimite ? challenge.datelimite|date('d/m/Y') : '-' }}</td>
+                                    <td>{{ challenge.alerte ? 'Oui' : 'Non' }}</td>
+                                    <td>{{ challenge.dernierScore ?: '-' }}</td>
+                                    <td>{{ challenge.dernierNiveau ?: '-' }}</td>
+                                    <td>{% if challenge.reponses %}{{ challenge.reponses|join(', ') }}{% else %}-{% endif %}</td>
+                                    <td>{{ challenge.interactyHash ?: '-' }}</td>
+                                    <td class="actions">
+                                        <a href="{{ path('app_edit_challenge', {'id': challenge.id}) }}" class="action-btn edit" title="Modifier"><i class="fas fa-edit"></i></a>
+                                        <form method="post" action="{{ path('app_delete_challenge', {'id': challenge.id}) }}" style="display:inline;" onsubmit="return confirm('Voulez-vous vraiment supprimer ce challenge ?');">
+                                            <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ challenge.id) }}">
+                                            <button class="action-btn delete" title="Supprimer"><i class="fas fa-trash"></i></button>
+                                        </form>
+                                        <a href="{{ path('app_challenge_pdf', {'id': challenge.id}) }}" class="action-btn pdf" title="Télécharger PDF"><i class="fas fa-file-pdf"></i></a>
+                                        <a href="{{ path('challenge_generate_form', {'id': challenge.id}) }}" class="action-btn" title="Générer questions IA" style="background:#6f42c1; color:white;">
+                                            <i class="fas fa-robot"></i>
+                                        </a>
+                                    </td>
+                                    <td>
+                                        {% if challenge.images %}
+                                            <img src="{{ asset('uploads/photos/' ~ challenge.images) }}" alt="Photo du challenge" style="max-width:200px;">
+                                        {% else %}-{% endif %}
+                                    </td>
+                                </tr>
+                            {% else %}
+                                <tr><td colspan="20" class="text-center">Aucun challenge trouvé</td></tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+
+{# ══ Données Twig → JS ══ #}
+<script>
+const rawChallenges = [
+    {% for c in challenges %}
+    {
+        etat:       {{ c.etat|json_encode|raw }},
+        niveau:     {{ c.niveauatteint|json_encode|raw }},
+        score:      {{ c.dernierScore ?? 0 }},
+        alerte:     {{ c.alerte ? 'true' : 'false' }},
+        recompense: {{ c.typerecomponse|json_encode|raw }}
+    }{{ loop.last ? '' : ',' }}
+    {% endfor %}
+];
+</script>
+
+{# ══════════════════════════════════════════════
+   MODAL 1 — Stats par ÉTAT
+══════════════════════════════════════════════ #}
+<div id="etatStatsModal" class="stats-modal-backdrop" style="display:none;">
+    <div class="stats-modal">
+        <div class="stats-header" style="background:#1f4f65;">
+            <h3><i class="fas fa-chart-pie"></i> Statistiques par État</h3>
+            <button class="close-modal-btn" data-modal="etatStatsModal">&times;</button>
+        </div>
+        <div class="stats-body">
+            <div class="stats-chart-wrap">
+                <p class="stats-chart-title" style="color:#1f4f65;">Répartition des challenges par état</p>
+                <div id="gc-etat-chart" style="width:100%; height:300px;"></div>
+            </div>
+            <div class="stats-highlight-card" style="border-color:#4DB6AC;">
+                <p class="stats-label" style="color:#1f4f65;">État dominant</p>
+                <h4 id="top-etat-name">—</h4>
+                <p id="top-etat-value" class="stats-value" style="color:#1f4f65;">—</p>
+                <p id="etat-total" class="stats-meta"></p>
+                <p id="etat-nb" class="stats-meta"></p>
+            </div>
+        </div>
+    </div>
+</div>
+
+{# ══════════════════════════════════════════════
+   MODAL 2 — Stats par NIVEAU
+══════════════════════════════════════════════ #}
+<div id="niveauStatsModal" class="stats-modal-backdrop" style="display:none;">
+    <div class="stats-modal">
+        <div class="stats-header" style="background:#6f42c1;">
+            <h3><i class="fas fa-chart-pie"></i> Statistiques par Niveau</h3>
+            <button class="close-modal-btn" data-modal="niveauStatsModal">&times;</button>
+        </div>
+        <div class="stats-body">
+            <div class="stats-chart-wrap">
+                <p class="stats-chart-title" style="color:#6f42c1;">Répartition des challenges par niveau atteint</p>
+                <div id="gc-niveau-chart" style="width:100%; height:300px;"></div>
+            </div>
+            <div class="stats-highlight-card" style="border-color:#c4b5fd;">
+                <p class="stats-label" style="color:#6f42c1;">Niveau dominant</p>
+                <h4 id="top-niveau-name">—</h4>
+                <p id="top-niveau-value" class="stats-value" style="color:#6f42c1;">—</p>
+                <p id="niveau-total" class="stats-meta"></p>
+                <p id="niveau-nb" class="stats-meta"></p>
+            </div>
+        </div>
+    </div>
+</div>
+
+{# ══════════════════════════════════════════════
+   MODAL 3 — Score moyen par Niveau
+══════════════════════════════════════════════ #}
+<div id="scoreStatsModal" class="stats-modal-backdrop" style="display:none;">
+    <div class="stats-modal">
+        <div class="stats-header" style="background:#0f766e;">
+            <h3><i class="fas fa-chart-bar"></i> Score moyen par Niveau</h3>
+            <button class="close-modal-btn" data-modal="scoreStatsModal">&times;</button>
+        </div>
+        <div class="stats-body">
+            <div class="stats-chart-wrap">
+                <p class="stats-chart-title" style="color:#0f766e;">Score moyen par niveau atteint</p>
+                <div id="gc-score-chart" style="width:100%; height:300px;"></div>
+            </div>
+            <div class="stats-highlight-card" style="border-color:#5eead4;">
+                <p class="stats-label" style="color:#0f766e;">Meilleur niveau</p>
+                <h4 id="top-score-name">—</h4>
+                <p id="top-score-value" class="stats-value" style="color:#0f766e;">—</p>
+                <p id="score-total" class="stats-meta"></p>
+                <p id="score-alerte" class="stats-meta"></p>
+            </div>
+        </div>
+    </div>
+</div>
+
+{# ══ CSS ══ #}
+<style>
+.stats-modal-backdrop {
+    position: fixed; inset: 0;
+    background: rgba(15,23,42,.55);
+    z-index: 2400;
+    display: flex; align-items: center; justify-content: center;
+    backdrop-filter: blur(4px);
+}
+.stats-modal {
+    width: min(920px, 95vw);
+    background: linear-gradient(140deg, #f8fffc, #ecfeff);
+    border-radius: 18px;
+    border: 1px solid #c6f6d5;
+    box-shadow: 0 20px 45px rgba(15,118,110,.18);
+    overflow: hidden;
+}
+.stats-header {
+    color: #fff; padding: 16px 20px;
+    display: flex; justify-content: space-between; align-items: center;
+}
+.stats-header h3 { margin: 0; font-size: 1.1rem; display: flex; align-items: center; gap: 8px; }
+.close-modal-btn { background: transparent; border: none; color: #fff; font-size: 1.5rem; cursor: pointer; line-height: 1; }
+.close-modal-btn:hover { opacity: .7; }
+.stats-body {
+    padding: 20px;
+    display: grid; grid-template-columns: minmax(0,1fr) 260px; gap: 18px; align-items: start;
+}
+.stats-chart-wrap { background: #fff; border: 1px solid #e5e7eb; border-radius: 14px; padding: 14px; }
+.stats-chart-title { margin: 0 0 8px; font-size: .95rem; font-weight: 600; }
+.stats-highlight-card { background: #fff; border: 2px solid #e5e7eb; border-radius: 14px; padding: 18px; }
+.stats-label { margin: 0 0 8px; font-weight: 600; font-size: .88rem; text-transform: uppercase; letter-spacing: .03em; }
+.stats-highlight-card h4 { margin: 0 0 10px; font-size: 1.2rem; line-height: 1.3; color: #1e293b; }
+.stats-value { margin: 0 0 10px; font-weight: 700; font-size: 1.1rem; }
+.stats-meta { margin: 4px 0; color: #334155; font-size: .92rem; }
+@media(max-width:860px) { .stats-body { grid-template-columns: 1fr; } }
+</style>
+
+{# ══ Google Charts + JS ══ #}
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+<script type="text/javascript">
+google.charts.load('current', { packages: ['corechart'] });
+
+/* ── Fermeture générique des modals ── */
+document.querySelectorAll('.close-modal-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+        document.getElementById(btn.dataset.modal).style.display = 'none';
+    });
+});
+window.addEventListener('click', e => {
+    document.querySelectorAll('.stats-modal-backdrop').forEach(b => {
+        if (e.target === b) b.style.display = 'none';
+    });
+});
+
+/* ══════════════════════════════════════════════
+   MODAL 1 — Par ÉTAT → PieChart
+══════════════════════════════════════════════ */
+(function() {
+    const btn   = document.getElementById('btn-etat-stats');
+    const modal = document.getElementById('etatStatsModal');
+    let drawn   = false;
+
+    function draw() {
+        const counts = {};
+        rawChallenges.forEach(c => {
+            const k = c.etat || 'Inconnu';
+            counts[k] = (counts[k] || 0) + 1;
+        });
+        const entries = Object.entries(counts).sort((a, b) => b[1] - a[1]);
+        const top = entries[0] || ['—', 0];
+
+        document.getElementById('top-etat-name').textContent  = top[0];
+        document.getElementById('top-etat-value').textContent = top[1] + ' challenge(s)';
+        document.getElementById('etat-total').textContent     = rawChallenges.length + ' challenges au total';
+        document.getElementById('etat-nb').textContent        = entries.length + ' état(s) différent(s)';
+
+        const data = new google.visualization.DataTable();
+        data.addColumn('string', 'État');
+        data.addColumn('number', 'Nombre');
+        entries.forEach(([k, v]) => data.addRow([k, v]));
+
+        new google.visualization.PieChart(document.getElementById('gc-etat-chart')).draw(data, {
+            pieHole: 0.38,
+            backgroundColor: 'transparent',
+            legend: { position: 'labeled', labeledValueText: 'both' },
+            pieSliceText: 'percentage',
+            chartArea: { width: '85%', height: '88%' },
+            colors: ['#1f4f65', '#4DB6AC', '#90A4AE', '#f39c12', '#e74c3c', '#3498db'],
+            tooltip: { showColorCode: true }
+        });
+        drawn = true;
+    }
+
+    btn.addEventListener('click', () => {
+        modal.style.display = 'flex';
+        if (!drawn) {
+            if (typeof google.visualization !== 'undefined') draw();
+            else google.charts.setOnLoadCallback(draw);
+        }
+    });
+})();
+
+/* ══════════════════════════════════════════════
+   MODAL 2 — Par NIVEAU → PieChart
+══════════════════════════════════════════════ */
+(function() {
+    const btn   = document.getElementById('btn-niveau-stats');
+    const modal = document.getElementById('niveauStatsModal');
+    let drawn   = false;
+
+    function draw() {
+        const counts = {};
+        rawChallenges.forEach(c => {
+            const k = c.niveau || 'Inconnu';
+            counts[k] = (counts[k] || 0) + 1;
+        });
+        const entries = Object.entries(counts).sort((a, b) => b[1] - a[1]);
+        const top = entries[0] || ['—', 0];
+
+        document.getElementById('top-niveau-name').textContent  = top[0];
+        document.getElementById('top-niveau-value').textContent = top[1] + ' challenge(s)';
+        document.getElementById('niveau-total').textContent     = rawChallenges.length + ' challenges au total';
+        document.getElementById('niveau-nb').textContent        = entries.length + ' niveau(x) différent(s)';
+
+        const data = new google.visualization.DataTable();
+        data.addColumn('string', 'Niveau');
+        data.addColumn('number', 'Nombre');
+        entries.forEach(([k, v]) => data.addRow([k, v]));
+
+        new google.visualization.PieChart(document.getElementById('gc-niveau-chart')).draw(data, {
+            pieHole: 0.38,
+            backgroundColor: 'transparent',
+            legend: { position: 'labeled', labeledValueText: 'both' },
+            pieSliceText: 'percentage',
+            chartArea: { width: '85%', height: '88%' },
+            colors: ['#8b5cf6', '#a78bfa', '#6d28d9', '#c4b5fd', '#7c3aed', '#ddd6fe'],
+            tooltip: { showColorCode: true }
+        });
+        drawn = true;
+    }
+
+    btn.addEventListener('click', () => {
+        modal.style.display = 'flex';
+        if (!drawn) {
+            if (typeof google.visualization !== 'undefined') draw();
+            else google.charts.setOnLoadCallback(draw);
+        }
+    });
+})();
+
+/* ══════════════════════════════════════════════
+   MODAL 3 — Score moyen par Niveau → BarChart
+══════════════════════════════════════════════ */
+(function() {
+    const btn   = document.getElementById('btn-score-stats');
+    const modal = document.getElementById('scoreStatsModal');
+    let drawn   = false;
+
+    function draw() {
+        const totals = {}, counts = {};
+        rawChallenges.forEach(c => {
+            const k = c.niveau || 'Inconnu';
+            totals[k] = (totals[k] || 0) + Number(c.score);
+            counts[k] = (counts[k] || 0) + 1;
+        });
+        const entries = Object.entries(totals)
+            .map(([k, v]) => [k, Math.round((v / counts[k]) * 10) / 10])
+            .sort((a, b) => b[1] - a[1]);
+        const top = entries[0] || ['—', 0];
+        const avecAlerte = rawChallenges.filter(c => c.alerte).length;
+
+        document.getElementById('top-score-name').textContent  = top[0];
+        document.getElementById('top-score-value').textContent = 'Score moyen : ' + top[1];
+        document.getElementById('score-total').textContent     = rawChallenges.length + ' challenges au total';
+        document.getElementById('score-alerte').textContent    = avecAlerte + ' avec alerte activée';
+
+        const data = new google.visualization.DataTable();
+        data.addColumn('string', 'Niveau');
+        data.addColumn('number', 'Score moyen');
+        entries.forEach(([k, v]) => data.addRow([k, v]));
+
+        new google.visualization.BarChart(document.getElementById('gc-score-chart')).draw(data, {
+            backgroundColor: 'transparent',
+            legend: { position: 'none' },
+            hAxis: { title: 'Score moyen', minValue: 0, textStyle: { fontSize: 11 } },
+            vAxis: { textStyle: { fontSize: 11 } },
+            chartArea: { width: '65%', height: '84%' },
+            colors: ['#0f766e'],
+            bar: { groupWidth: '60%' },
+            tooltip: { showColorCode: true }
+        });
+        drawn = true;
+    }
+
+    btn.addEventListener('click', () => {
+        modal.style.display = 'flex';
+        if (!drawn) {
+            if (typeof google.visualization !== 'undefined') draw();
+            else google.charts.setOnLoadCallback(draw);
+        }
+    });
+})();
+</script>
+
+<script src="{{ asset('assets/js/main.js') }}"></script>
+{% endblock %}

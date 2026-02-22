@@ -1,0 +1,279 @@
+{% extends 'base.html.twig' %}
+{% block title %}Leaderboard{% endblock %}
+
+{% block body %}
+
+<style>
+
+/* BACKGROUND */
+body{
+    background:linear-gradient(120deg,#0f2027,#203a43,#2c5364);
+    color:white;
+    font-family:Segoe UI;
+}
+
+/* TITLE */
+.title{
+    text-align:center;
+    font-size:3rem;
+    margin-top:30px;
+    animation:fade 1s ease;
+}
+@keyframes fade{
+    from{opacity:0; transform:translateY(-30px);}
+    to{opacity:1; transform:translateY(0);}
+}
+
+/* PODIUM */
+.podium-container{
+    display:flex;
+    justify-content:center;
+    align-items:flex-end;
+    gap:50px;
+    margin:80px 0;
+    perspective:1000px;
+}
+
+.podium{
+    width:170px;
+    text-align:center;
+    border-radius:20px 20px 0 0;
+    transform:rotateX(20deg) translateY(100px);
+    opacity:0;
+    animation:rise 1s forwards;
+    box-shadow:0 30px 50px rgba(0,0,0,.6);
+    position:relative;
+}
+
+@keyframes rise{
+    to{ transform:rotateX(0) translateY(0); opacity:1;}
+}
+
+.first{
+    height:260px;
+    background:linear-gradient(45deg,#FFD700,#ffb700);
+    animation-delay:.4s;
+    box-shadow:0 0 40px gold;
+}
+.second{
+    height:200px;
+    background:linear-gradient(45deg,#C0C0C0,#9e9e9e);
+    animation-delay:.2s;
+}
+.third{
+    height:160px;
+    background:linear-gradient(45deg,#cd7f32,#a55d22);
+    animation-delay:.6s;
+}
+
+.podium:hover{
+    transform:scale(1.05) rotateX(0);
+    transition:.4s;
+}
+
+.podium h2{
+    margin-top:20px;
+    font-size:1.4rem;
+}
+
+.score{
+    font-size:2rem;
+    margin-top:15px;
+}
+
+/* TABLE */
+table{
+    width:85%;
+    margin:auto;
+    border-collapse:collapse;
+    background:white;
+    color:black;
+    border-radius:15px;
+    overflow:hidden;
+}
+
+th{
+    background:#111;
+    color:white;
+}
+
+th,td{
+    padding:14px;
+    text-align:center;
+}
+
+tr{
+    transition:.3s;
+}
+
+tr:hover{
+    background:#ffe082;
+    transform:scale(1.01);
+}
+
+/* BADGE */
+.badge{
+    padding:6px 14px;
+    border-radius:20px;
+    font-weight:bold;
+    animation:pulse 2s infinite;
+}
+@keyframes pulse{
+    0%{transform:scale(1)}
+    50%{transform:scale(1.1)}
+    100%{transform:scale(1)}
+}
+
+/* BUTTON */
+.btn-back{
+    display:inline-block;
+    margin-top:40px;
+    padding:14px 30px;
+    background:linear-gradient(45deg,#000,#333);
+    color:white;
+    border-radius:12px;
+    text-decoration:none;
+    transition:.4s;
+}
+.btn-back:hover{
+    transform:scale(1.1);
+    background:linear-gradient(45deg,#ff9800,#ff5722);
+}
+
+canvas{
+    position:fixed;
+    top:0;
+    left:0;
+    pointer-events:none;
+}
+
+</style>
+
+
+<h1 class="title">🏆 TOP PLAYERS</h1>
+
+{% set top = scores|slice(0,3) %}
+
+<div class="podium-container">
+
+{% if top[1] is defined %}
+<div class="podium second">
+🥈
+<h2>{{ top[1].user.prenom }}</h2>
+<div class="score" data-score="{{ top[1].score }}">0</div>
+</div>
+{% endif %}
+
+{% if top[0] is defined %}
+<div class="podium first">
+👑
+<h2>{{ top[0].user.prenom }}</h2>
+<div class="score" data-score="{{ top[0].score }}">0</div>
+</div>
+{% endif %}
+
+{% if top[2] is defined %}
+<div class="podium third">
+🥉
+<h2>{{ top[2].user.prenom }}</h2>
+<div class="score" data-score="{{ top[2].score }}">0</div>
+</div>
+{% endif %}
+
+</div>
+
+
+<table>
+<tr>
+<th>Étudiant</th>
+<th>Score</th>
+<th>Challenge</th>
+<th>Badge</th>
+</tr>
+
+{% for score in scores %}
+<tr>
+<td>{{ score.user.prenom }} {{ score.user.nom }}</td>
+<td>{{ score.score }}%</td>
+
+<td>
+{% if score.challenge %}
+<a href="{{ path('front_challenge', {'id': score.challenge.id}) }}">Voir</a>
+{% else %}N/A{% endif %}
+</td>
+
+<td>
+{% for seuil, badge in badges %}
+{% if score.score >= seuil %}
+<span class="badge">{{ badge }}</span>
+{% endif %}
+{% endfor %}
+</td>
+</tr>
+{% endfor %}
+</table>
+
+
+<div style="text-align:center">
+<a href="{{ path('front_evaluation') }}" class="btn-back">⬅ Retour</a>
+</div>
+
+
+<canvas id="confetti"></canvas>
+
+<script>
+// SCORE COUNTER
+document.querySelectorAll(".score").forEach(el=>{
+let target=parseInt(el.dataset.score);
+let i=0;
+let inter=setInterval(()=>{
+el.textContent=i+"%";
+i++;
+if(i>target) clearInterval(inter);
+},20);
+});
+
+
+// CONFETTI
+const canvas=document.getElementById("confetti");
+const ctx=canvas.getContext("2d");
+canvas.width=window.innerWidth;
+canvas.height=window.innerHeight;
+
+let pieces=[];
+for(let i=0;i<150;i++){
+pieces.push({
+x:Math.random()*canvas.width,
+y:Math.random()*canvas.height,
+r:Math.random()*6+2,
+d:Math.random()*50
+});
+}
+
+function draw(){
+ctx.clearRect(0,0,canvas.width,canvas.height);
+ctx.fillStyle="rgba(255,215,0,.9)";
+pieces.forEach(p=>{
+ctx.beginPath();
+ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+ctx.fill();
+});
+update();
+}
+
+function update(){
+pieces.forEach(p=>{
+p.y+=Math.cos(p.d)+1;
+p.x+=Math.sin(p.d);
+
+if(p.y>canvas.height){
+p.y=0;
+p.x=Math.random()*canvas.width;
+}
+});
+}
+
+setInterval(draw,20);
+</script>
+
+{% endblock %}

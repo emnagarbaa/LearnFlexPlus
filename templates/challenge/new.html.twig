@@ -1,0 +1,163 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    {{ isEdit ? 'Modifier un Challenge' : 'Ajouter un Challenge' }}
+{% endblock %}
+
+{% block stylesheets %}
+<link rel="stylesheet" href="{{ asset('assets/css/styles.css') }}">
+<link rel="stylesheet" href="{{ asset('assets/css/dashboard.css') }}">
+<link rel="stylesheet" href="{{ asset('assets/css/crud.css') }}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+{% endblock %}
+
+{% block body %}
+<div class="dashboard">
+
+    {# ===== SIDEBAR ===== #}
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <div class="logo">
+                <a href="{{ path('app_front') }}">
+                    <img src="{{ asset('assets/images/logo1.png') }}" alt="LearnFlexPlus Logo" class="nav-logo">
+                    <span>LearnFlex</span><span class="highlight">+</span>
+                </a>
+            </div>
+            <button class="sidebar-toggle"><i class="fas fa-bars"></i></button>
+        </div>
+
+        <div class="sidebar-content">
+            <nav class="sidebar-menu">
+                <ul>
+                    <li>
+                        <a href="{{ path('dashboard') }}">
+                            <i class="fas fa-tachometer-alt"></i>
+                            <span>Dashboard</span>
+                        </a>
+                    </li>
+
+                    <li class="active">
+                        <a href="{{ path('app_users') }}">
+                            <i class="fas fa-users"></i>
+                            <span>Utilisateurs</span>
+                        </a>
+                    </li>
+
+                    <li><a href="#"><i class="fas fa-book-open"></i><span>Contenu pédagogique</span></a></li>
+<li class="has-submenu">
+    <a href="#">
+        <i class="fas fa-graduation-cap"></i>
+        <span>Evaluation</span>
+        <i class="fas fa-chevron-down submenu-toggle"></i>
+    </a>
+    <ul class="submenu">
+        <li>
+            <a href="{{ path('admin_examen') }}">Examen</a>
+        </li>
+        <li>
+            <a href="{{ path('app_challenges') }}">Challenge</a>
+        </li>
+    </ul>
+</li>
+                    <li><a href="#"><i class="fas fa-question-circle"></i><span>Questionnaire</span></a></li>
+                    <li><a href="#"><i class="fas fa-directions"></i><span>Orientation</span></a></li>
+                    <li><a href="#"><i class="fas fa-comments"></i><span>Forum</span></a></li>
+                </ul>
+            </nav>
+        </div>
+
+                <div class="sidebar-footer">
+            <a href="#" class="user-profile">
+                <img src="{{ asset('assets/images/placeholder-admin.png') }}" 
+                    alt="{{ app.user.nom }} {{ app.user.prenom }}" class="user-img">
+                <div class="user-info">
+                    <h4>{{ app.user.nom }} {{ app.user.prenom }}</h4>
+                    <p>{{ app.user.getRole() }}</p>
+                </div>
+            </a>
+            <a href="{{ path('app_logout') }}" class="logout">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Déconnexion</span>
+            </a>
+        </div>
+    </aside>
+
+    {# ===== MAIN CONTENT ===== #}
+    <main class="main-content">
+
+        {# ===== HEADER ===== #}
+        <header class="dashboard-header">
+            <div class="header-left">
+                <h1>
+                    {{ isEdit ? 'Modifier un Challenge' : 'Ajouter un Challenge' }}
+                </h1>
+                <p>
+                    {{ isEdit
+                        ? 'Modification des informations du challenge'
+                        : 'Création d’un nouveau challenge pédagogique'
+                    }}
+                </p>
+            </div>
+
+            <div class="header-right">
+                <a href="{{ path('app_challenges') }}" class="btn secondary">
+                    <i class="fas fa-arrow-left"></i> Retour
+                </a>
+            </div>
+        </header>
+
+        {# ===== FORM CARD ===== #}
+        <div class="dashboard-content">
+            <div class="crud-container">
+
+                <div class="crud-header">
+                    <h2>
+                        {{ isEdit ? 'Modifier le Challenge' : 'Informations du Challenge' }}
+                    </h2>
+                </div>
+
+                <div class="crud-body">
+                    {{ form_start(form, {'attr': {'class': 'crud-form'}, 'method': 'POST'}) }}
+
+                    <div class="form-grid">
+                        {{ form_row(form.titrec) }}
+                        {{ form_row(form.niveaudifficulte) }}
+                        {{ form_row(form.objectifscore) }}
+                        {{ form_row(form.question) }}
+                        {{ form_row(form.images) }}
+
+                        {{ form_row(form.niveauatteint) }}
+                        {{ form_row(form.typerecomponse) }}
+                        {{ form_row(form.contenurecompense) }}
+
+                        {{ form_row(form.dated) }}
+                        {{ form_row(form.datef) }}
+                        {{ form_row(form.datelimite) }}
+
+                        {{ form_row(form.etat) }}
+                        {{ form_row(form.alerte) }}
+                        {{ form_row(form.examen) }}
+    {{ form_row(form.interactyHash) }}
+
+                        {{ form_row(form.descriptionc) }}
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn primary">
+                            <i class="fas fa-save"></i>
+                            {{ isEdit ? 'Modifier' : 'Enregistrer' }}
+                        </button>
+
+                        <a href="{{ path('app_challenges') }}" class="btn secondary">
+                            Annuler
+                        </a>
+                    </div>
+
+                    {{ form_end(form) }}
+                </div>
+            </div>
+        </div>
+
+    </main>
+</div>
+{% endblock %}

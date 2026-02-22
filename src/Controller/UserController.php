@@ -6,6 +6,9 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\HttpFoundation\Request;
+
+use Symfony\Component\String\Slugger\SluggerInterface;
+
 use Doctrine\Persistence\ManagerRegistry;
 use App\Repository\UsersRepository;
 use Dompdf\Dompdf;
@@ -50,7 +53,10 @@ final class UserController extends AbstractController
 
 
     #[Route('/adduser', name: 'app_adduser')]
-    public function addUser(Request $request, ManagerRegistry $doctrine): Response
+
+
+    public function addUser(Request $request, ManagerRegistry $doctrine, SluggerInterface $slugger): Response
+
     {
         $em = $doctrine->getManager();
         $user = new Users();
@@ -58,7 +64,20 @@ final class UserController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            // Hash password
+
+            
+            /** @var UploadedFile|null $file */
+        $file = $form->get('profileImageFile')->getData();
+        if ($file) {
+            $original = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
+            $safeName = $slugger->slug($original);
+            $newFilename = $safeName.'-'.uniqid().'.'.$file->guessExtension();
+
+            $file->move($this->getParameter('kernel.project_dir').'/public/uploads/users', $newFilename);
+            $user->setProfileImage($newFilename);
+        }
+
+
             $user->setPassword(password_hash($user->getPassword(), PASSWORD_BCRYPT));
             $user->setCreatedAt(new \DateTime());
 
@@ -75,7 +94,9 @@ final class UserController extends AbstractController
     }
 
     #[Route('/edituser/{id}', name: 'app_edituser')]
-    public function editUser($id, Request $request, UsersRepository $usersRepository, ManagerRegistry $doctrine): Response
+
+    public function editUser($id, Request $request, UsersRepository $usersRepository, ManagerRegistry $doctrine, SluggerInterface $slugger): Response
+
     {
         $em = $doctrine->getManager();
         $user = $usersRepository->find($id);
@@ -84,10 +105,36 @@ final class UserController extends AbstractController
             throw $this->createNotFoundException("Utilisateur introuvable pour l'id $id");
         }
 
+
+          $oldImage = $user->getProfileImage();
+
         $form = $this->createForm(UserType::class, $user, ['is_registration' => false]);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+
+            /** @var UploadedFile|null $file */
+        $file = $form->get('profileImageFile')->getData();
+        if ($file) {
+            // delete old image
+            if ($oldImage) {
+                $oldPath = $this->getParameter('kernel.project_dir').'/public/uploads/users/'.$oldImage;
+                if (is_file($oldPath)) {
+                    @unlink($oldPath);
+                }
+            }
+
+            $original = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
+            $safeName = $slugger->slug($original);
+            $newFilename = $safeName.'-'.uniqid().'.'.$file->guessExtension();
+
+            $file->move($this->getParameter('kernel.project_dir').'/public/uploads/users', $newFilename);
+            $user->setProfileImage($newFilename);
+        } else {
+            // keep previous image (important if your form logic clears it)
+            $user->setProfileImage($oldImage);
+        }
+
             $user->setUpdatedAt(new \DateTime());
             $em->persist($user);
             $em->flush();

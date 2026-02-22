@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Rapport Challenge — {{ challenge.titrec }}</title>
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body { font-family:'DejaVu Sans', sans-serif; color:#1f4f65; font-size:13px; background:#f3f4f6; }
+
+        /* ── HEADER ── */
+        .header {
+            background: #6f42c1;
+            color: white;
+            padding: 30px 40px 25px;
+        }
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 18px;
+        }
+        .logo-area { display:flex; align-items:center; gap:12px; }
+        .logo-text  { font-size:22px; font-weight:700; letter-spacing:1px; }
+        .logo-text span { color:#c4b5fd; }
+        .header-date { font-size:11px; opacity:.85; }
+
+        .header h1 { font-size:26px; font-weight:700; margin-bottom:5px; }
+        .header p  { opacity:.85; font-size:13px; }
+
+        /* ── BADGES ── */
+        .badge {
+            display:inline-block;
+            padding:4px 14px;
+            border-radius:20px;
+            font-size:11px;
+            font-weight:700;
+            text-transform:uppercase;
+            margin-bottom:10px;
+        }
+        .badge-facile     { background:#d1fae5; color:#065f46; }
+        .badge-moyen      { background:#fef3c7; color:#92400e; }
+        .badge-difficile  { background:#fee2e2; color:#991b1b; }
+        .badge-default    { background:#ede9fe; color:#5b21b6; }
+
+        .etat-badge {
+            display:inline-block;
+            padding:3px 12px;
+            border-radius:20px;
+            font-size:11px;
+            font-weight:600;
+        }
+        .planifié  { background:#dbeafe; color:#1e40af; }
+        .actif     { background:#d1fae5; color:#065f46; }
+        .terminé   { background:#f3f4f6; color:#374151; }
+        .annulé    { background:#fee2e2; color:#991b1b; }
+
+        /* ── SECTIONS ── */
+        .section {
+            margin:20px 25px;
+            background:#fff;
+            border-radius:14px;
+            padding:18px 22px;
+            border:1px solid #e5e7eb;
+            box-shadow:0 2px 8px rgba(0,0,0,0.05);
+        }
+        .section-title {
+            font-size:15px;
+            font-weight:700;
+            color:#6f42c1;
+            border-bottom:2px solid #c4b5fd;
+            padding-bottom:7px;
+            margin-bottom:14px;
+        }
+
+        /* ── STATS GRID ── */
+        .stats-grid { display:flex; gap:12px; flex-wrap:wrap; }
+        .stat-box {
+            flex:1;
+            min-width:90px;
+            background:#faf5ff;
+            border-radius:12px;
+            padding:14px;
+            text-align:center;
+            border:1px solid #e9d5ff;
+        }
+        .stat-box .val { font-size:20px; font-weight:700; color:#6f42c1; }
+        .stat-box .lbl { font-size:11px; color:#6b7280; margin-top:4px; }
+
+        /* ── TABLE ── */
+        table { width:100%; border-collapse:collapse; font-size:12px; }
+        thead tr { background:#6f42c1; color:white; }
+        thead th { padding:9px 12px; text-align:left; }
+        tbody tr:nth-child(even) { background:#faf5ff; }
+        tbody tr:nth-child(odd)  { background:#ffffff; }
+        tbody td { padding:8px 12px; border-bottom:1px solid #e5e7eb; }
+
+        /* ── PROGRESSION ── */
+        .progress-bar-wrap {
+            background:#e9d5ff;
+            border-radius:20px;
+            height:14px;
+            width:100%;
+            overflow:hidden;
+        }
+        .progress-bar-fill {
+            background:#6f42c1;
+            height:100%;
+            border-radius:20px;
+        }
+
+        /* ── BADGE ETUDIANT ── */
+        .badge-expert     { color:#d97706; font-weight:700; }
+        .badge-competent  { color:#059669; font-weight:700; }
+        .badge-apprenti   { color:#2563eb; font-weight:700; }
+        .badge-novice     { color:#6b7280; font-weight:700; }
+
+        /* ── QUESTIONS ── */
+        .question-item {
+            background:#faf5ff;
+            border-left:3px solid #6f42c1;
+            border-radius:0 10px 10px 0;
+            padding:10px 14px;
+            margin-bottom:10px;
+        }
+        .question-item strong { color:#6f42c1; font-size:12px; }
+        .question-item p      { margin-top:4px; color:#374151; font-size:12px; }
+
+        /* ── IMAGE CHALLENGE ── */
+        .challenge-image {
+            width:100%;
+            max-height:200px;
+            object-fit:cover;
+            border-radius:12px;
+            margin-bottom:16px;
+        }
+
+        /* ── INFO TABLE ── */
+        .info-table td { padding:6px 10px; font-size:12px; }
+        .info-table td:first-child { font-weight:700; color:#6f42c1; width:140px; }
+
+        /* ── ALERTE ── */
+        .alerte-oui { color:#dc2626; font-weight:700; }
+        .alerte-non { color:#059669; font-weight:700; }
+
+        /* ── FOOTER ── */
+        .footer {
+            margin:15px 25px 10px;
+            text-align:center;
+            font-size:11px;
+            color:#9ca3af;
+            border-top:1px solid #e5e7eb;
+            padding-top:10px;
+        }
+
+        /* ── RECOMPENSE BOX ── */
+        .recompense-box {
+            background:#fef3c7;
+            border:1px solid #fde68a;
+            border-radius:12px;
+            padding:12px 16px;
+            display:flex;
+            align-items:center;
+            gap:10px;
+        }
+        .recompense-box .icon { font-size:24px; }
+        .recompense-box .type { font-weight:700; color:#92400e; font-size:13px; }
+        .recompense-box .contenu { color:#78350f; font-size:12px; }
+    </style>
+</head>
+<body>
+
+{# ── HEADER ── #}
+<div class="header">
+    <div class="header-top">
+        <div class="logo-area">
+            {% if logoBase64 %}
+                <img src="data:image/png;base64,{{ logoBase64 }}"
+                     style="height:42px; width:auto;" alt="Logo">
+            {% endif %}
+            <div class="logo-text">LearnFlex<span>+</span></div>
+        </div>
+        <div class="header-date">Généré le {{ dateGeneration|date('d/m/Y à H:i') }}</div>
+    </div>
+    <span class="badge badge-{{ challenge.niveaudifficulte|lower|default('default') }}">
+        {{ challenge.niveaudifficulte }}
+    </span>
+    <h1>{{ challenge.titrec }}</h1>
+    <p>{{ challenge.descriptionc }}</p>
+</div>
+
+{# ── IMAGE DU CHALLENGE ── #}
+{% if imageBase64 %}
+<div style="margin:20px 25px 0;">
+    <img src="{{ imageBase64 }}" class="challenge-image" alt="Image du challenge">
+</div>
+{% endif %}
+
+{# ── INFORMATIONS GÉNÉRALES ── #}
+<div class="section">
+    <div class="section-title">📋 Informations générales</div>
+
+    <div class="stats-grid" style="margin-bottom:16px;">
+        <div class="stat-box">
+            <div class="val">{{ challenge.objectifscore }}</div>
+            <div class="lbl">Objectif Score</div>
+        </div>
+        <div class="stat-box">
+            <div class="val">{{ challenge.progressionactuelle }}%</div>
+            <div class="lbl">Progression</div>
+        </div>
+        <div class="stat-box">
+            <div class="val">{{ challenge.dernierScore }}</div>
+            <div class="lbl">Dernier Score</div>
+        </div>
+        <div class="stat-box">
+            <div class="val">{{ challenge.dernierNiveau }}</div>
+            <div class="lbl">Dernier Niveau</div>
+        </div>
+        <div class="stat-box">
+            <div class="val">
+                <span class="etat-badge {{ challenge.etat|lower }}">{{ challenge.etat }}</span>
+            </div>
+            <div class="lbl">État</div>
+        </div>
+    </div>
+
+    {# Barre de progression #}
+    <div style="margin-bottom:16px;">
+        <div style="font-size:12px; margin-bottom:5px; color:#6b7280;">
+            Progression : {{ challenge.progressionactuelle }}%
+        </div>
+        <div class="progress-bar-wrap">
+            <div class="progress-bar-fill" style="width:{{ challenge.progressionactuelle }}%;"></div>
+        </div>
+    </div>
+
+    <table class="info-table">
+        <tr>
+            <td>Examen associé</td>
+            <td>{{ challenge.examen.titre }}</td>
+            <td>Niveau difficulté</td>
+            <td>{{ challenge.niveaudifficulte }}</td>
+        </tr>
+        <tr>
+            <td>Niveau atteint</td>
+            <td>{{ challenge.niveauatteint }}</td>
+            <td>Alerte</td>
+            <td class="{{ challenge.alerte ? 'alerte-oui' : 'alerte-non' }}">
+                {{ challenge.alerte ? '⚠️ Oui' : '✅ Non' }}
+            </td>
+        </tr>
+        <tr>
+            <td>Date début</td>
+            <td>{{ challenge.dated ? challenge.dated|date('d/m/Y') : '-' }}</td>
+            <td>Date fin</td>
+            <td>{{ challenge.datef ? challenge.datef|date('d/m/Y') : '-' }}</td>
+        </tr>
+        <tr>
+            <td>Date limite</td>
+            <td>{{ challenge.datelimite ? challenge.datelimite|date('d/m/Y') : '-' }}</td>
+            <td>Interacty Hash</td>
+            <td>{{ challenge.interactyHash ?: '-' }}</td>
+        </tr>
+    </table>
+</div>
+
+{# ── RÉCOMPENSE ── #}
+<div class="section">
+    <div class="section-title">🏆 Récompense</div>
+    <div class="recompense-box">
+        <div class="icon">🎁</div>
+        <div>
+            <div class="type">{{ challenge.typerecomponse }}</div>
+            <div class="contenu">{{ challenge.contenurecompense }}</div>
+        </div>
+    </div>
+</div>
+
+{# ── RÉSULTATS ÉTUDIANTS ── #}
+<div class="section">
+    <div class="section-title">👨‍🎓 Résultats des étudiants</div>
+    {% if statsEtudiants is empty %}
+        <p style="color:#6b7280; font-style:italic;">Aucun résultat enregistré pour ce challenge.</p>
+    {% else %}
+        <table>
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Étudiant</th>
+                    <th>Score</th>
+                    <th>Badge</th>
+                    <th>Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for i, s in statsEtudiants %}
+                <tr>
+                    <td>{{ i + 1 }}</td>
+                    <td>{{ s.nom }}</td>
+                    <td>
+                        <strong>{{ s.score }}/100</strong>
+                    </td>
+                    <td>{{ s.badge }}</td>
+                    <td>{{ s.derniere ? s.derniere|date('d/m/Y H:i') : '-' }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+</div>
+
+{# ── QUESTIONS ── #}
+<div class="section">
+    <div class="section-title">❓ Questions du challenge</div>
+    {% set questions = challenge.question %}
+    {% if questions is empty %}
+        <p style="color:#6b7280; font-style:italic;">Aucune question définie.</p>
+    {% else %}
+        {% set qList = questions.questions is defined ? questions.questions : questions %}
+        {% for i, q in qList %}
+        <div class="question-item">
+            <strong>Question {{ i + 1 }}</strong>
+            {% if q.question is defined %}
+                <p>{{ q.question }}</p>
+                {% if q.options is defined %}
+                    <ul style="margin-top:6px; padding-left:16px; font-size:11px; color:#6b7280;">
+                        {% for opt in q.options %}
+                            <li>{{ opt }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+                {% if q.answer is defined %}
+                    <p style="margin-top:5px; font-size:11px; color:#059669;">
+                        ✅ Réponse : {{ q.answer }}
+                    </p>
+                {% endif %}
+            {% else %}
+                <p>{{ q }}</p>
+            {% endif %}
+        </div>
+        {% endfor %}
+    {% endif %}
+</div>
+
+{# ── FOOTER ── #}
+<div class="footer">
+    LearnFlex+ — Rapport Challenge généré le {{ dateGeneration|date('d/m/Y à H:i') }}
+    | Challenge ID : {{ challenge.id }}
+    | Examen : {{ challenge.examen.titre }}
+</div>
+
+</body>
+</html>

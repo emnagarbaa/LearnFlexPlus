@@ -1,31 +1,32 @@
+# config/packages/security.yaml
 security:
-    # https://symfony.com/doc/current/security.html#registering-the-user-hashing-passwords
     password_hashers:
-        'Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface': 'auto'
-        'App\Entity\Users':
+        App\Entity\Users:
             algorithm: auto
 
-    # https://symfony.com/doc/current/security.html#loading-the-user-the-user-provider
     providers:
         app_user_provider:
             entity:
-                class: 'App\Entity\Users'
+                class: App\Entity\Users
                 property: email
 
     firewalls:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
+
         main:
             lazy: true
             provider: app_user_provider
 
+            custom_authenticators:
+            - App\Security\GoogleAuthenticator
+
             form_login:
                 login_path: app_login
                 check_path: app_login
-                # default_target_path: app_front
-                # always_use_default_target_path: true
-                success_handler: App\Security\LoginSuccessHandler
+                default_target_path: app_front
+                always_use_default_target_path: true
 
             logout:
                 path: app_logout
@@ -33,42 +34,18 @@ security:
 
             entry_point: form_login
 
-            # activate different ways to authenticate
-            # https://symfony.com/doc/current/security.html#the-firewall
-
-            # https://symfony.com/doc/current/security/impersonating_user.html
-            # switch_user: true
-
-    # Easy way to control access for large sections of your site
-    # Note: Only the *first* access control that matches will be used
     access_control:
-    # BACK OFFICE (admin + enseignant uniquement)
-    - { path: ^/back, roles: [ROLE_ADMIN, ROLE_ENSEIGNANT] }
+    # Public routes (keep what you actually have)
+    - { path: ^/login, roles: PUBLIC_ACCESS }
+    - { path: ^/register, roles: PUBLIC_ACCESS }
+    - { path: ^/front, roles: PUBLIC_ACCESS }
+    - { path: ^/reset-password, roles: PUBLIC_ACCESS }
+    - { path: ^/connect/google, roles: PUBLIC_ACCESS }
+    - { path: ^/connect/google/check, roles: PUBLIC_ACCESS }
+    - { path: ^/verify/email, roles: PUBLIC_ACCESS }
 
-    # partie étudiant
-    - { path: ^/etudiant, roles: ROLE_ETUDIANT }
-    - { path: ^/quiz/\d+$, roles: ROLE_ETUDIANT }
+    # Dashboard: only Enseignant + Admin
+    - { path: ^/dashboard, roles: [ROLE_ENSEIGNANT, ROLE_ADMIN] }
 
-    # partie enseignant
-    - { path: ^/quiz/admin, roles: ROLE_ENSEIGNANT }
-    - { path: ^/reponse, roles: ROLE_ENSEIGNANT }
-
-when@test:
-    security:
-        password_hashers:
-            # By default, password hashers are resource intensive and take time. This is
-            # important to generate secure password hashes. In tests however, secure hashes
-            # are not important, waste resources and increase test times. The following
-            # reduces the work factor to the lowest possible values.
-            'Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface':
-                algorithm: auto
-                cost: 4 # Lowest possible value for bcrypt
-                time_cost: 3 # Lowest possible value for argon
-                memory_cost: 10 # Lowest possible value for argon
-parameters:
-    groq_api_key: '%env(GROQ_API_KEY)%'
-
-services:
-    App\Service\IaService:
-        arguments:
-            $apiKey: '%groq_api_key%'
+    # Everything else: must be logged in (any of the 3)
+    - { path: ^/, roles: [ROLE_ETUDIANT, ROLE_ENSEIGNANT, ROLE_ADMIN] }

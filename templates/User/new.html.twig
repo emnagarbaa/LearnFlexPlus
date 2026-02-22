@@ -42,6 +42,23 @@
 
                     <li><a href="#"><i class="fas fa-book-open"></i><span>Contenu pédagogique</span></a></li>
                     <li><a href="#"><i class="fas fa-graduation-cap"></i><span>Evaluation</span></a></li>
+
+<li class="has-submenu">
+    <a href="#">
+        <i class="fas fa-graduation-cap"></i>
+        <span>Evaluation</span>
+        <i class="fas fa-chevron-down submenu-toggle"></i>
+    </a>
+    <ul class="submenu">
+        <li>
+            <a href="{{ path('admin_examen') }}">Examen</a>
+        </li>
+        <li>
+            <a href="{{ path('app_challenges') }}">Challenge</a>
+        </li>
+    </ul>
+</li>
+
                     <li><a href="#"><i class="fas fa-question-circle"></i><span>Questionnaire</span></a></li>
                     <li><a href="#"><i class="fas fa-directions"></i><span>Orientation</span></a></li>
                     <li><a href="#"><i class="fas fa-comments"></i><span>Forum</span></a></li>
@@ -49,10 +66,14 @@
             </nav>
         </div>
 
-                <div class="sidebar-footer">
+
+               
+                 <div class="sidebar-footer">
             <a href="#" class="user-profile">
-                <img src="{{ asset('assets/images/placeholder-admin.png') }}" 
-                    alt="{{ app.user.nom }} {{ app.user.prenom }}" class="user-img">
+                <img src="{{ asset('uploads/users/' ~ app.user.profileImage) }}" 
+                    alt="{{ app.user.nom }} {{ app.user.prenom }}" class="user-img"
+                    class="user-img">
+
                 <div class="user-info">
                     <h4>{{ app.user.nom }} {{ app.user.prenom }}</h4>
                     <p>{{ app.user.getRole() }}</p>
@@ -92,6 +113,7 @@
                 {{ form_start(form, {'attr': {'class': 'auth-form', 'novalidate': 'novalidate'}}) }}
 
                 <div class="form-row">
+
                     <div class="form-group">
                         <label>Prénom</label>
                         <div class="input-with-icon">
@@ -168,6 +190,17 @@
                     </div>
                     {{ form_errors(form.adresseResidence) }}
                 </div>
+
+
+                <div class="form-group">
+                        <label>Photo de profil (optionnel)</label>
+                         <div class="input-with-icon">
+                             <i class="fas fa-image"></i>
+                            {{ form_widget(form.profileImageFile) }}
+                        </div>
+                        {{ form_errors(form.profileImageFile) }}
+                    </div>
+
 
                 <div class="form-actions" style="margin-top: 1rem;">
                     <button class="btn btn-primary btn-block">

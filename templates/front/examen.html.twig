@@ -1,0 +1,1361 @@
+{% extends 'front/home.html.twig' %}
+
+{% block title %}{{ examen.titre }} | LearnFlex+{% endblock %}
+
+{% block header %}
+<header class="landing-header">
+    <div class="container">
+        <div class="header-left">
+            <div class="logo">
+                {% if app.user and ('ROLE_ADMIN' in app.user.roles or 'ROLE_ENSEIGNANT' in app.user.roles) %}
+                    <a href="{{ path('dashboard') }}">
+                        <img src="{{ asset('assets/images/logo1.png') }}" alt="LearnFlexPlus Logo" class="main-logo">
+                        <span class="logo-text">LearnFlexPlus</span>
+                    </a>
+                {% else %}
+                    <img src="{{ asset('assets/images/logo1.png') }}" alt="LearnFlexPlus Logo" class="main-logo">
+                    <span class="logo-text">LearnFlexPlus</span>
+                {% endif %}
+            </div>
+        </div>
+        <nav class="main-nav">
+            <ul>
+                <li class="active"><a href="{{ path('app_front') }}">Accueil</a></li>
+                <li><a href="#">Contenus pédagogiques</a></li>
+                <li><a href="{{path('front_evaluation')}}">Evaluation</a></li>
+                <li><a href="#">Questionnaire</a></li>
+                <li><a href="#">Orientation</a></li>
+                <li><a href="#">Forum </a></li>
+            </ul>
+        </nav>
+
+        <div class="header-right">
+            {% if app.user and ('ROLE_ADMIN' in app.user.roles or 'ROLE_ENSEIGNANT' in app.user.roles) %}
+                <a href="{{ path('dashboard') }}" class="btn btn-outline dashboard-btn">Dashboard</a>
+            {% endif %}
+
+            {% if app.user %}
+                <form action="{{ path('app_logout') }}" method="post" style="display:inline;">
+                    <button type="submit" class="btn btn-primary logout-btn">Déconnexion</button>
+                </form>
+            {% else %}
+                <a href="{{ path('app_login') }}" class="btn btn-primary">Connexion</a>
+            {% endif %}
+
+            <button class="mobile-menu-btn">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+    </div>
+</header>
+{% endblock %}
+
+{% block body %}
+<main class="exam-page">
+
+    <!-- ===== EXAM HEADER ===== -->
+    <section class="exam-header">
+        <div class="container">
+
+            <span class="badge">Examen</span>
+            <h1>{{ examen.titre }}</h1>
+            <p class="exam-description">{{ examen.description }}</p>
+
+            <div class="exam-meta">
+                <div class="meta-item">
+                    <div class="meta-icon bg-blue"><i class="fas fa-book"></i></div>
+                    <div><span>Matière</span><strong>{{ examen.matiere }}</strong></div>
+                </div>
+                <div class="meta-item">
+                    <div class="meta-icon bg-orange"><i class="fas fa-layer-group"></i></div>
+                    <div><span>Niveau</span><strong>{{ examen.niveauexamen|capitalize }}</strong></div>
+                </div>
+                <div class="meta-item">
+                    <div class="meta-icon bg-green"><i class="fas fa-clock"></i></div>
+                    <div><span>Durée</span><strong>{{ examen.duree }} min</strong></div>
+                </div>
+                <div class="meta-item">
+                    <div class="meta-icon bg-gray"><i class="fas fa-question-circle"></i></div>
+                    <div><span>Questions</span><strong>{{ examen.nbquestion }}</strong></div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- ===== EXAM CONTENT ===== -->
+    <section class="exam-content">
+        <div class="container grid">
+
+            <!-- GAUCHE : PDF + FORM + COMMENTAIRES -->
+            <div id="examContainer" style="display:none;">
+
+                <h2>Support de l’examen</h2>
+                {% if examen.pdf %}
+                    <div class="pdf-actions" style="margin-bottom:20px;">
+                        {{ pdf_bundle_render(examen.pdf) }}
+                    </div>
+
+                 {% if examen.pdf %}
+    <div style="text-align:center; margin-top:20px;">
+        <a href="{{ path('examen_pdf', {id: examen.id}) }}"
+           style="display:inline-flex; align-items:center; gap:10px; padding:14px 24px; background:#1f4f65; color:#fff; border-radius:14px; font-weight:600; text-decoration:none; font-size:1rem; box-shadow:0 4px 15px rgba(31,79,101,0.3); transition:all 0.3s ease;"
+           onmouseover="this.style.background='#4DB6AC'; this.style.transform='translateY(-2px)';"
+           onmouseout="this.style.background='#1f4f65'; this.style.transform='translateY(0)';">
+            <i class="fas fa-download"></i> Télécharger le PDF
+        </a>
+    </div>
+{% endif %}
+                {% else %}
+                    <div class="alert alert-warning">Aucun support PDF disponible pour cet examen.</div>
+                {% endif %}
+
+                <div id="timerBox">
+                    <span class="timer-icon">⏱️</span>
+                    <span id="timer">00:00</span>
+                </div>
+
+                <!-- FORMULAIRE QUESTIONS -->
+                <form id="examForm" style="margin-top:30px; display:none;">
+                    <input type="hidden" name="_token" value="bc057383e6b9262.DtOkZKmoZhRJgCBhWq59M7DdqHtCoYuzVvxJmSv4yS8.S_7BCe3vK1Ez0RcOMvEqSeWJ7DYulLzyILkxzUOas0NZu9I-y_8CZXzwaQ">
+
+                    <div class="question-card">
+                        <div class="question-header">
+                            <span>Question 1</span>
+                        </div>
+                        <div class="question-body">
+                            <input type="text" name="q1" id="q1" placeholder="Écrivez votre réponse ici..." required>
+                        </div>
+                    </div>
+                    <div class="question-card">
+                        <div class="question-header">
+                            <span>Question 2</span>
+                        </div>
+                        <div class="question-body">
+                            <input type="text" name="q2" id="q2" placeholder="Écrivez votre réponse ici..." required>
+                        </div>
+                    </div>
+                    <div class="question-card">
+                        <div class="question-header">
+                            <span>Question 3</span>
+                        </div>
+                        <div class="question-body">
+                            <input type="text" name="q3" id="q3" placeholder="Écrivez votre réponse ici..." required>
+                        </div>
+                    </div>
+                    <div class="question-card">
+                        <div class="question-header">
+                            <span>Question 4</span>
+                        </div>
+                        <div class="question-body">
+                            <input type="text" name="q4" id="q4" placeholder="Écrivez votre réponse ici..." required>
+                        </div>
+                    </div>
+                    <div class="question-card">
+                        <div class="question-header">
+                            <span>Question 5</span>
+                        </div>
+                        <div class="question-body">
+                            <input type="text" name="q5" id="q5" placeholder="Écrivez votre réponse ici..." required>
+                        </div>
+                    </div>
+
+                    <button type="button" id="submitExamBtn" class="btn btn-success" style="display:none;">Soumettre l’examen</button>
+
+                    <div id="teacherComments" style="display:none; margin-top:20px;">
+                        <h3>Commentaires de l'enseignant</h3>
+                        <div id="teacherCommentList"></div>
+                    </div>
+                </form>
+
+            </div>
+
+            <!-- DROITE : ACTIONS + IA + COMMENTAIRES -->
+            <aside class="exam-actions">
+                {% if is_granted('ROLE_ETUDIANT') %}
+                    <button id="startExamBtn" class="btn btn-block">▶ Commencer l’examen</button>
+                {% elseif is_granted('ROLE_ENSEIGNANT') %}
+                    <button id="accessResponsesBtn" class="btn btn-block">Voir les réponses des étudiants</button>
+
+                    <div id="studentResponses" style="display:none; margin-top:20px;">
+                        <h2>Réponses des étudiants</h2>
+                        <div id="responsesList"></div>
+
+                        <div id="commentSection" style="margin-top:30px;">
+                            <input type="hidden" id="examenId" value="{{ examen.id }}">
+
+                            <h3>Ajouter un commentaire</h3>
+                            <textarea id="commentContent" rows="4" class="form-control" placeholder="Écrire un commentaire..."></textarea>
+                            <button id="submitCommentBtn" class="btn btn-primary" style="margin-top:10px;">Ajouter</button>
+
+                            <div id="commentList" style="margin-top:20px;">
+                                <h4>Commentaires existants</h4>
+                                {% for commentaire in commentaires %}
+                                    <div class="comment-item" data-id="{{ commentaire.id }}">
+                                        <strong>{{ commentaire.auteur }}</strong>
+                                        <p>{{ commentaire.contenu }}</p>
+                                        <button class="edit-btn btn btn-outline btn-sm" data-url="{{ path('commentaire_edit', {'id': commentaire.id}) }}">
+                                            ✏️ Modifier
+                                        </button>
+                                        <button class="delete-btn btn btn-outline btn-sm" data-url="{{ path('commentaire_delete', {'id': commentaire.id}) }}">
+                                            🗑️ Supprimer
+                                        </button>
+                                    </div>
+                                {% else %}
+                                    <p>Aucun commentaire pour le moment.</p>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+
+                    {# === BLOC ANALYSE IA DE LA RÉPONSE === #}
+                   {# Remplacez votre div#aiAnalyzer par ceci #}
+<div id="aiAnalyzer" style="margin-top:25px; background:#fff; border-radius:20px; padding:25px; box-shadow:0 6px 20px rgba(0,0,0,0.08);">
+    
+    <h3 style="color:var(--primary); font-size:18px; margin-bottom:15px; display:flex; align-items:center; gap:8px;">
+        <i class="fas fa-robot" style="color:#6f42c1;"></i> Analyse IA d'une réponse
+    </h3>
+
+    <textarea 
+        id="aiStudentAnswer" 
+        rows="4" 
+        placeholder="Collez ici la réponse de l'étudiant à analyser..."
+        style="width:100%; padding:14px 16px; border-radius:14px; border:1px solid #d1d5db; font-size:14px; resize:vertical; transition:all 0.3s ease; box-sizing:border-box; font-family:'Poppins',sans-serif;"
+        onfocus="this.style.borderColor='var(--primary)'; this.style.boxShadow='0 0 10px rgba(31,79,101,0.25)';"
+        onblur="this.style.borderColor='#d1d5db'; this.style.boxShadow='none';">
+    </textarea>
+
+    <button 
+        id="aiAnalyzeBtn" 
+        style="margin-top:12px; padding:10px 20px; background:var(--primary); color:#fff; border:none; border-radius:12px; cursor:pointer; font-weight:500; font-family:'Poppins',sans-serif; display:flex; align-items:center; gap:8px; transition:all 0.3s ease;"
+        onmouseover="this.style.background='var(--accent)'; this.style.transform='translateY(-2px)';"
+        onmouseout="this.style.background='var(--primary)'; this.style.transform='translateY(0)';">
+        <i class="fas fa-robot"></i> Analyser avec l'IA
+    </button>
+
+    <div 
+        id="aiAnalysisResult" 
+        class="d-none"
+        style="margin-top:14px; padding:14px 18px; border-radius:14px; background:#f0f7ff; border-left:4px solid var(--primary); color:#1f4f65; font-size:14px; line-height:1.6; display:none;">
+    </div>
+
+</div>
+                {% else %}
+                    <button class="btn btn-block" disabled>Accès réservé</button>
+                {% endif %}
+
+                <p class="exam-lock" id="examLock">Vérification de la disponibilité de l’examen...</p>
+                <div class="exam-progress">
+                    <span>Progression</span>
+                    <div class="progress-bar">
+                        <div id="progressFill" class="progress-fill" style="width:0%">0%</div>
+                    </div>
+                </div>
+            </aside>
+
+        </div>
+    </section>
+
+</main>
+
+
+<style>
+/* ===== PALETTE ===== */
+:root {
+    --primary: #1f4f65;    /* bleu foncé */
+    --secondary: #1f4f65;  /* orange clair */
+    --accent: #4DB6AC;     /* vert menthe */
+    --highlight: #90A4AE;  /* gris clair */
+}
+
+/* ===== GLOBAL ===== */
+body, .exam-page {
+    font-family: 'Poppins', sans-serif;
+    background: #f3f4f6;
+    color: #1f4f65;
+}
+
+h1, h2, h3 {
+    font-weight: 600;
+}
+
+a { text-decoration: none; transition: all 0.2s; }
+
+/* ===== EXAM HEADER ===== */
+.exam-header {
+    padding: 80px 20px 60px;
+    background: linear-gradient(135deg, #397693 0%, #397693 50%, #397693 100%);
+    color: #fff;
+    border-radius: 20px;
+    box-shadow: 0 12px 36px rgba(0,0,0,0.18);
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Ajouter un léger motif ou overlay pour moderniser */
+.exam-header::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at top left, rgba(255,255,255,0.05), transparent 70%);
+    pointer-events: none;
+}
+
+/* Bloc commentaire général */
+#teacherComments, #commentSection {
+    background-color: #f8f9fa;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+}
+
+/* Chaque commentaire */
+.comment-item, .teacher-comment {
+    background-color: #ffffff;
+    border-left: 4px solid #007bff;
+    padding: 15px 20px;
+    margin-bottom: 15px;
+    border-radius: 8px;
+    position: relative;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+/* Hover effet */
+.comment-item:hover, .teacher-comment:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+}
+
+/* Auteur + date */
+.comment-item strong, .teacher-comment strong {
+    color: #007bff;
+    font-weight: 600;
+}
+
+.comment-item span, .teacher-comment span {
+    color: #6c757d;
+    font-size: 0.9em;
+    margin-left: 10px;
+}
+
+/* Contenu */
+.comment-item p, .teacher-comment p {
+    margin: 8px 0 0 0;
+    line-height: 1.5;
+}
+
+/* Boutons */
+.comment-item button, .teacher-comment button {
+    font-size: 0.8em;
+    padding: 3px 8px;
+    margin-right: 5px;
+    margin-top: 5px;
+}
+
+/* Couleurs différentes pour Modifier/Supprimer */
+.comment-item .edit-btn, .teacher-comment .edit-btn {
+    background-color: #ffc107;
+    color: #fff;
+    border: none;
+}
+
+.comment-item .delete-btn, .teacher-comment .delete-btn {
+    background-color: #dc3545;
+    color: #fff;
+    border: none;
+}
+
+/* Boutons hover */
+.comment-item button:hover, .teacher-comment button:hover {
+    opacity: 0.85;
+    cursor: pointer;
+}
+
+.exam-header .badge {
+    background: rgba(255,255,255,0.25);
+    color: #fff;
+    padding: 8px 20px;
+    border-radius: 30px;
+    font-weight: 700;
+    font-size: 14px;
+}
+
+.exam-header h1 {
+    font-size: 50px;
+    margin: 20px 0 10px;
+    letter-spacing: 1px;
+}
+
+.exam-description {
+    font-size: 18px;
+    max-width: 700px;
+    margin: 0 auto;
+    color: rgba(255,255,255,0.85);
+}
+
+.exam-meta {
+    margin-top: 40px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 25px;
+}
+
+.meta-item {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    background: rgba(255,255,255,0.15);
+    padding: 20px;
+    border-radius: 18px;
+    transition: all 0.3s ease;
+}
+
+.meta-item:hover {
+    transform: translateY(-3px);
+    background: rgba(255,255,255,0.25);
+}
+
+.meta-icon {
+    width: 55px;
+    height: 55px;
+    border-radius: 50%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    color:#fff;
+    font-size:22px;
+}
+
+.bg-blue { background: var(--primary); }
+.bg-orange { background: var(--secondary); }
+.bg-green { background: var(--accent); }
+.bg-gray { background: var(--highlight); }
+
+.meta-item span { font-size: 13px; color: rgba(255,255,255,0.75); }
+.meta-item strong { display:block; font-size:16px; color:#fff; }
+
+/* ===== EXAM CONTENT ===== */
+.exam-content .grid { display: grid; grid-template-columns: 2.2fr 1fr; gap: 40px; }
+@media (max-width:992px) { .exam-content .grid { grid-template-columns:1fr; } }
+
+.pdf-viewer {
+    border-radius: 20px;
+    overflow:hidden;
+    background:#fff;
+    border:1px solid #e5e7eb;
+    height:500px;
+    box-shadow: 0 10px 28px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+}
+.pdf-viewer iframe { width:100%; height:100%; border:none; }
+.pdf-actions { margin-top:15px; }
+.btn-download {
+    background: var(--primary);
+    color:white;
+}
+.btn-download:hover { background: var(--accent); transform: translateY(-2px); }
+
+/* ===== TIMER ===== */
+#timerBox {
+    display:flex;
+    align-items:center;
+    gap:10px;
+    font-size:18px;
+    font-weight:600;
+    color:#1f4f65;
+    margin-top:20px;
+}
+#timerBox .timer-icon { font-size:24px; color: var(--primary); }
+
+/* ===== QUESTION FORM ===== */
+.question-card {
+    background: #fff;
+    border-radius: 20px;
+    padding: 25px;
+    margin-bottom: 20px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.question-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 28px rgba(0,0,0,0.15);
+}
+.question-header { font-weight: 600; font-size: 16px; color: var(--primary); margin-bottom:10px; }
+.question-body input {
+    width:100%;
+    padding:14px 16px;
+    border-radius:14px;
+    border:1px solid #d1d5db;
+    font-size:15px;
+}
+.question-body input:focus {
+    border-color: var(--primary);
+    box-shadow:0 0 12px rgba(31,79,101,0.25);
+    outline:none;
+}
+.submit-btn {
+    padding:14px 0;
+    width:100%;
+    font-size:16px;
+    border-radius:14px;
+    margin-top:12px;
+    background: var(--primary);
+    color:#fff;
+}
+.submit-btn:hover { background: var(--accent); transform: translateY(-2px); }
+
+/* ===== EXAM ACTIONS ===== */
+.exam-actions {
+    background:#fff;
+    border-radius:20px;
+    padding:30px;
+    border:1px solid #e5e7eb;
+    box-shadow:0 6px 20px rgba(0,0,0,0.08);
+}
+.exam-actions h3 { margin-bottom:20px; }
+.btn-block {
+    width:100%;
+    padding:12px 0;
+    font-size:16px;
+    border-radius:14px;
+    background: var(--primary);
+    color:white;
+}
+.btn-block:hover { background: var(--accent); transform: translateY(-2px); }
+.exam-lock { margin-top:15px; font-size:14px; color: var(--highlight); }
+
+.exam-progress { margin-top:30px; }
+.progress-bar { background:#e5e7eb; height:16px; border-radius:30px; overflow:hidden; }
+.progress-fill {
+    background: linear-gradient(90deg, var(--primary), var(--accent));
+    height:100%;
+    font-size:13px;
+    text-align:center;
+    color:white;
+    transition: width 0.5s ease-in-out;
+}
+
+/* ===== COMMENTAIRES ===== */
+.comment-block {
+    background:#fff;
+    border-radius:16px;
+    padding:20px;
+    box-shadow:0 6px 20px rgba(0,0,0,0.08);
+    margin-bottom:18px;
+}
+.comment-block:hover { transform: translateY(-3px); box-shadow:0 12px 32px rgba(0,0,0,0.12); }
+
+.comment-header { display:flex; justify-content:space-between; margin-bottom:8px; }
+.comment-header strong { color: var(--primary); }
+.comment-header .comment-date { color: var(--highlight); font-size:13px; }
+
+.comment-meta {
+    font-size:13px;
+    color:#374151;
+    display:flex;
+    align-items:center;
+    gap:10px;
+    margin-top:5px;
+}
+.comment-meta .views i { color: var(--secondary); }
+.comment-meta .likes i { color: var(--accent); }
+
+.comment-meta span i { margin-right:5px; transition: all 0.3s ease; }
+.comment-meta .views:hover i { transform: scale(1.2); color: var(--primary); }
+.comment-meta .likes:hover i { transform: scale(1.3); color: var(--primary); }
+
+/* ===== BOUTON LIKE AVEC CŒUR PULSE ===== */
+.comment-meta button.like-btn {
+    margin-left:auto;
+    border:1px solid var(--primary);
+    background:#fff;
+    color: var(--primary);
+    border-radius:10px;
+    padding:4px 10px;
+    cursor:pointer;
+    display:flex;
+    align-items:center;
+    gap:5px;
+    transition: all 0.3s ease;
+    overflow:hidden;
+}
+
+.comment-meta button.like-btn i {
+    font-size:16px;
+    transition: transform 0.3s ease, color 0.3s ease;
+}
+
+.comment-meta button.like-btn:hover {
+    background: var(--accent);
+    color:white;
+    transform: translateY(-2px);
+}
+
+.comment-meta button.like-btn:hover i {
+    transform: scale(1.2);
+}
+
+.comment-meta button.like-btn.liked i {
+    color: var(--accent);
+    animation: pulseHeart 0.5s ease forwards;
+}
+
+@keyframes pulseHeart {
+    0% { transform: scale(1); }
+    25% { transform: scale(1.4); }
+    50% { transform: scale(1.2); }
+    75% { transform: scale(1.3); }
+    100% { transform: scale(1); }
+}
+
+/* ===== FORMULAIRE AJOUT COMMENTAIRE ===== */
+#addCommentForm textarea {
+    width:100%;
+    padding:14px;
+    border-radius:14px;
+    border:1px solid #d1d5db;
+}
+#addCommentForm textarea:focus {
+    border-color: var(--primary);
+    box-shadow:0 0 12px rgba(31,79,101,0.25);
+}
+#addCommentForm button {
+    border-radius:14px;
+    background: var(--primary);
+    color:white;
+    padding:10px 20px;
+}
+#addCommentForm button:hover:enabled { background: var(--accent); transform: translateY(-2px); }
+#addCommentForm button:disabled { background:#d1d5db; cursor:not-allowed; }
+#charCount { color: var(--highlight); font-size:13px; text-align:right; margin-top:2px; }
+
+/* ===== RESPONSIVE ===== */
+@media (max-width:768px){
+    .exam-header h1 { font-size:38px; }
+    .exam-description { font-size:16px; }
+    .exam-content .grid { grid-template-columns:1fr; gap:20px; }
+    #timerBox { font-size:16px; }
+}
+
+#studentResponses {
+    margin-top: 20px;
+}
+
+.response-card {
+    background-color: #f8f9fa; /* couleur claire */
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 10px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.response-card strong {
+    color: #343a40;
+}
+
+.response-card em {
+    color: #6c757d;
+}
+
+.response-card p {
+    margin: 5px 0;
+}
+
+.response-card small {
+    color: #adb5bd;
+}
+/* ===== BLOC COMMENTAIRES ===== */
+#commentSection {
+    margin-top: 30px;
+}
+
+#commentSection h3 { 
+    font-size: 20px; 
+    color: var(--primary); 
+    margin-bottom: 15px; 
+}
+
+/* FORMULAIRE */
+#commentContent {
+    width: 100%;
+    padding: 14px 16px;
+    border-radius: 14px;
+    border: 1px solid #d1d5db;
+    font-size: 14px;
+    resize: vertical;
+    transition: all 0.3s ease;
+}
+#commentContent:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 10px rgba(31,79,101,0.25);
+    outline: none;
+}
+
+#submitCommentBtn {
+    margin-top: 10px;
+    padding: 10px 18px;
+    background: var(--primary);
+    color: #fff;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.3s ease;
+}
+#submitCommentBtn i { font-size:16px; }
+#submitCommentBtn:hover {
+    background: var(--accent);
+    transform: translateY(-2px);
+}
+
+/* LISTE DES COMMENTAIRES */
+.comment-item {
+    display: flex;
+    gap: 12px;
+    background: #fff;
+    border-radius: 16px;
+    padding: 15px 20px;
+    margin-bottom: 12px;
+    box-shadow: 0 4px 18px rgba(0,0,0,0.08);
+    transition: all 0.3s ease;
+}
+.comment-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 22px rgba(0,0,0,0.12);
+}
+
+/* AVATAR */
+.comment-avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: var(--highlight);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    color: var(--primary);
+    font-size: 18px;
+    flex-shrink: 0;
+}
+
+/* CONTENU */
+.comment-content {
+    flex: 1;
+}
+.comment-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.comment-header strong { color: var(--primary); font-size: 14px; }
+.comment-header span { font-size: 12px; color: #6b7280; }
+
+.comment-text {
+    margin: 6px 0 10px;
+    font-size: 14px;
+    line-height: 1.5;
+    color: #374151;
+}
+
+/* BOUTONS ACTION */
+.comment-actions {
+    display: flex;
+    gap: 6px;
+}
+
+.comment-actions button {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 10px;
+    font-size: 12px;
+    border-radius: 10px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.comment-actions button i { font-size:14px; }
+
+/* DELETE */
+.comment-actions .delete-btn {
+    background: #ef4444;
+    color: #fff;
+}
+.comment-actions .delete-btn:hover { background: #dc2626; transform: translateY(-2px); }
+
+/* EDIT */
+.comment-actions .edit-btn {
+    background: #6b7280;
+    color: #fff;
+}
+.comment-actions .edit-btn:hover { background: #4b5563; transform: translateY(-2px); }
+
+/* LIKE */
+.comment-actions .like-btn {
+    background: #fff;
+    color: var(--primary);
+    border: 1px solid var(--primary);
+}
+.comment-actions .like-btn.liked {
+    color: #ef4444;
+}
+.comment-actions .like-btn:hover {
+    background: var(--accent);
+    color: #fff;
+    transform: translateY(-2px);
+}
+.comment-actions .like-btn i {
+    transition: all 0.3s ease;
+}
+.comment-actions .like-btn.liked i {
+    animation: pulseHeart 0.5s ease forwards;
+}
+
+@keyframes pulseHeart {
+    0% { transform: scale(1); }
+    25% { transform: scale(1.4); }
+    50% { transform: scale(1.2); }
+    75% { transform: scale(1.3); }
+    100% { transform: scale(1); }
+}
+/* COMMENTAIRES - SOCIAL MEDIA STYLE */
+.comment-item {
+    display: flex;
+    gap: 12px;
+    background: #fff;
+    border-radius: 16px;
+    padding: 15px 20px;
+    margin-bottom: 12px;
+    box-shadow: 0 4px 18px rgba(0,0,0,0.08);
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+.comment-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 22px rgba(0,0,0,0.12);
+}
+
+/* AVATAR */
+.comment-avatar {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: var(--highlight);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    color: var(--primary);
+    font-size: 18px;
+    flex-shrink: 0;
+}
+
+/* CONTENU */
+.comment-content {
+    flex: 1;
+}
+.comment-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.comment-header strong { color: var(--primary); font-size: 14px; }
+.comment-header span { font-size: 12px; color: #6b7280; }
+.comment-text {
+    margin: 6px 0 10px;
+    font-size: 14px;
+    line-height: 1.5;
+    color: #374151;
+}
+
+/* BOUTONS ACTION */
+.comment-actions {
+    display: flex;
+    gap: 8px;
+}
+.comment-actions button {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 10px;
+    font-size: 12px;
+    border-radius: 12px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.comment-actions i { font-size:14px; transition: transform 0.3s ease; }
+
+/* DELETE */
+.comment-actions .delete-btn { background:#ef4444; color:#fff; }
+.comment-actions .delete-btn:hover { background:#dc2626; transform:translateY(-2px); }
+
+/* EDIT */
+.comment-actions .edit-btn { background:#6b7280; color:#fff; }
+.comment-actions .edit-btn:hover { background:#4b5563; transform:translateY(-2px); }
+
+/* LIKE */
+.comment-actions .like-btn {
+    background:#fff;
+    color: var(--primary);
+    border: 1px solid var(--primary);
+    position: relative;
+}
+.comment-actions .like-btn.liked {
+    color:#ef4444;
+}
+.comment-actions .like-btn:hover { background: var(--accent); color:#fff; transform:translateY(-2px); }
+
+/* PULSE + FLOATING HEART */
+@keyframes pulseHeart {
+    0% { transform: scale(1); opacity:1; }
+    25% { transform: scale(1.4); opacity:1; }
+    50% { transform: scale(1.2); opacity:1; }
+    75% { transform: scale(1.3); opacity:1; }
+    100% { transform: scale(1); opacity:1; }
+}
+@keyframes floatHeart {
+    0% { transform: translateY(0); opacity:1; }
+    50% { transform: translateY(-20px); opacity:0.7; }
+    100% { transform: translateY(-40px); opacity:0; }
+}
+.floating-heart {
+    position: absolute;
+    font-size: 18px;
+    color: #ef4444;
+    animation: floatHeart 1s ease forwards;
+    pointer-events: none;
+}
+
+</style>
+
+
+{% block javascripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+
+    // ===== VARIABLES GLOBALES =====
+    let interval = null; // Important pour timer et finishExam
+    const startBtn = document.getElementById('startExamBtn');
+    const examForm = document.getElementById('examForm');
+    const commentList = document.getElementById('commentList');
+    const submitExamBtn = document.getElementById('submitExamBtn');
+    const teacherCommentsDiv = document.getElementById('teacherComments');
+    const teacherCommentList = document.getElementById('teacherCommentList');
+    const commentsDiv = document.getElementById('commentSection');
+    const examContainer = document.getElementById('examContainer');
+    const examLock = document.getElementById('examLock');
+    const progressFill = document.getElementById('progressFill');
+    const timerEl = document.getElementById('timer');
+// ===== ANTI-TRICHE =====
+let cheatCount = 0;
+const cheatWarningEl = document.createElement('div');
+cheatWarningEl.style.cssText = `
+    display:none; position:fixed; top:20px; right:20px; z-index:9999;
+    background:#ef4444; color:#fff; padding:14px 20px; border-radius:14px;
+    font-weight:600; font-size:14px; box-shadow:0 4px 20px rgba(239,68,68,0.4);
+    animation: slideIn 0.3s ease;
+`;
+document.body.appendChild(cheatWarningEl);
+
+function showCheatWarning(message) {
+    cheatWarningEl.textContent = `⚠️ ${message} (infraction n°${cheatCount})`;
+    cheatWarningEl.style.display = 'block';
+    setTimeout(() => cheatWarningEl.style.display = 'none', 3000);
+}
+
+function reportCheat(type) {
+    cheatCount++;
+    const examenId = {{ examen.id }};
+    fetch(`/examen/${examenId}/cheat`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'X-Requested-With': 'XMLHttpRequest'
+        },
+        body: new URLSearchParams({ type: type, count: cheatCount })
+    });
+
+    if (cheatCount >= 3) {
+        finishExam("🚫 Examen terminé pour comportement suspect.");
+    }
+}
+
+// Détecter quitter la fenêtre
+document.addEventListener('visibilitychange', function () {
+    if (document.hidden && examForm && examForm.style.display !== 'none') {
+        showCheatWarning("Vous avez quitté l'onglet !");
+        reportCheat('tab_switch');
+    }
+});
+
+// Détecter copier-coller
+document.addEventListener('copy', function (e) {
+    if (examForm && examForm.style.display !== 'none') {
+        e.preventDefault();
+        showCheatWarning("Copier est interdit pendant l'examen !");
+        reportCheat('copy');
+    }
+});
+
+document.addEventListener('paste', function (e) {
+    if (examForm && examForm.style.display !== 'none') {
+        e.preventDefault();
+        showCheatWarning("Coller est interdit pendant l'examen !");
+        reportCheat('paste');
+    }
+});
+
+document.addEventListener('cut', function (e) {
+    if (examForm && examForm.style.display !== 'none') {
+        e.preventDefault();
+        showCheatWarning("Couper est interdit pendant l'examen !");
+        reportCheat('cut');
+    }
+});
+
+// Détecter clic droit
+document.addEventListener('contextmenu', function (e) {
+    if (examForm && examForm.style.display !== 'none') {
+        e.preventDefault();
+        showCheatWarning("Clic droit interdit pendant l'examen !");
+    }
+});
+    // === ANALYSE IA DE LA RÉPONSE AVEC GROQ ===
+    const aiAnalyzeBtn = document.getElementById('aiAnalyzeBtn');
+    const aiAnswerInput = document.getElementById('aiStudentAnswer');
+    const aiResultDiv = document.getElementById('aiAnalysisResult');
+
+    if (aiAnalyzeBtn && aiAnswerInput && aiResultDiv) {
+        aiAnalyzeBtn.addEventListener('click', function () {
+            const answer = aiAnswerInput.value.trim();
+            if (!answer) { alert('Veuillez coller une réponse à analyser.'); return; }
+
+            aiAnalyzeBtn.disabled = true;
+            aiAnalyzeBtn.textContent = 'Analyse en cours...';
+
+            fetch('{{ path('analyze_answer') }}', {
+                method: 'POST',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: new URLSearchParams({ answer: answer }),
+            })
+            .then(response => response.json())
+            .then(data => {
+              aiResultDiv.style.display = 'block';
+aiResultDiv.style.borderLeftColor = 'var(--primary)';
+aiResultDiv.style.background = '#f0f7ff';
+aiResultDiv.style.color = '#1f4f65';
+
+                if (!data.success) {
+                    aiResultDiv.classList.remove('alert-info');
+                    aiResultDiv.classList.add('alert-danger');
+                    aiResultDiv.textContent = data.message || "Erreur lors de l’analyse.";
+                } else {
+                    aiResultDiv.textContent = data.analysis;
+                }
+            })
+            .catch(() => {
+                aiResultDiv.classList.remove('d-none', 'alert-info');
+                aiResultDiv.classList.add('alert-danger');
+                aiResultDiv.textContent = "Erreur de communication avec le serveur.";
+            })
+            .finally(() => {
+                aiAnalyzeBtn.disabled = false;
+                aiAnalyzeBtn.textContent = 'Analyser avec l’IA';
+            });
+        });
+    }
+
+    // ===== AFFICHAGE DU FORMULAIRE AU CLIC START =====
+    if(startBtn) {
+        startBtn.addEventListener('click', function() {
+            examForm.style.display = 'block';
+            submitExamBtn.style.display = 'inline-block';
+            startBtn.disabled = true;
+        });
+    }
+
+    // ===== SOUMISSION EXAMEN AJAX =====
+    if(submitExamBtn && examForm){
+        submitExamBtn.addEventListener('click', function(){
+            fetch("/examen/2/submit", { method: "POST", body: new FormData(examForm) })
+            .then(res => res.json())
+            .then(data => {
+                if(data.success){
+                    alert(data.message);
+                    examForm.querySelectorAll('input, button').forEach(el => el.disabled = true);
+                    submitExamBtn.disabled = true;
+
+                    // AFFICHER COMMENTAIRES ENSEIGNANT
+                    if(teacherCommentList && teacherCommentsDiv){
+                        fetch(`/examen/2/comments`)
+                        .then(res => res.json())
+                        .then(comments => {
+                            teacherCommentList.innerHTML = '';
+                            if(comments.length === 0){
+                                teacherCommentList.innerHTML = '<p>Aucun commentaire pour le moment.</p>';
+                            } else {
+                                comments.forEach(c => {
+                                    const div = document.createElement('div');
+                                    div.className = 'teacher-comment';
+                                    div.style.marginBottom = '10px';
+                                    div.innerHTML = `<strong>${c.auteur}</strong> (<span>${c.date}</span>)<p>${c.contenu}</p>`;
+                                    teacherCommentList.appendChild(div);
+                                });
+                            }
+                            teacherCommentsDiv.style.display = 'block';
+                        })
+                        .catch(() => {
+                            teacherCommentList.innerHTML = '<p>Impossible de charger les commentaires.</p>';
+                            teacherCommentsDiv.style.display = 'block';
+                        });
+                    }
+                } else alert(data.message || "Erreur lors de l'envoi de l'examen");
+            })
+            .catch(() => alert("Erreur serveur"));
+        });
+    }
+
+    // ===== AJOUT COMMENTAIRE =====
+    if(!window.commentHandlerAttached){
+        window.commentHandlerAttached = true;
+        const submitBtn = document.getElementById('submitCommentBtn');
+        const commentContent = document.getElementById('commentContent');
+
+        if(submitBtn && commentContent && commentList){
+            submitBtn.addEventListener('click', function(){
+                const content = commentContent.value.trim();
+                if(!content){ alert("Le commentaire ne peut pas être vide."); return; }
+
+                const examenIdEl = document.getElementById('examenId');
+                if(!examenIdEl) return;
+                const examenId = examenIdEl.value;
+
+                fetch('/commentaire/add', {
+                    method:'POST',
+                    headers: { 'Content-Type':'application/x-www-form-urlencoded', 'X-Requested-With':'XMLHttpRequest' },
+                    body: new URLSearchParams({ 'comment': content, 'examenId': examenId })
+                })
+                .then(res => res.json())
+                .then(data => {
+                    if(data.success){
+                        const div = document.createElement('div');
+                        div.className = 'comment-item';
+                        div.dataset.id = data.id;
+                        div.innerHTML = `
+                            <strong>${data.auteur}</strong> (<span>${data.date}</span>)
+                            <p>${data.contenu}</p>
+                            <button class="edit-btn btn btn-outline btn-sm" data-url="/commentaire/${data.id}/edit">✏️ Modifier</button>
+                            <button class="delete-btn btn btn-outline btn-sm" data-url="/commentaire/${data.id}/delete">🗑️ Supprimer</button>
+                        `;
+                        commentList.prepend(div);
+                        commentContent.value = '';
+                    } else alert(data.message || "Erreur lors de l'ajout du commentaire");
+                })
+                .catch(err => console.error(err));
+            });
+        }
+
+        // ===== SUPPRESSION & MODIFICATION COMMENTAIRES =====
+        if(commentList){
+            commentList.addEventListener('click', function(e){
+                const btn = e.target;
+                const commentDiv = btn.closest('.comment-item');
+                if(!commentDiv) return;
+
+                // SUPPRESSION
+                if(btn.classList.contains('delete-btn')){
+                    if(!confirm("Voulez-vous vraiment supprimer ce commentaire ?")) return;
+                    fetch(btn.dataset.url, { method:'POST', headers:{ 'X-Requested-With':'XMLHttpRequest' } })
+                    .then(res => res.json())
+                    .then(data => { if(data.success){ commentDiv.remove(); alert("Commentaire supprimé !"); } else alert(data.message || "Erreur suppression"); })
+                    .catch(() => alert("Erreur réseau"));
+                }
+
+                // MODIFICATION
+                if(btn.classList.contains('edit-btn')){
+                    const p = commentDiv.querySelector('p');
+                    const oldContent = p.textContent;
+                    const newContent = prompt("Modifier le commentaire :", oldContent);
+                    if(!newContent || newContent.trim() === oldContent) return;
+
+                    fetch(btn.dataset.url, {
+                        method:'POST',
+                        headers:{ 'Content-Type':'application/x-www-form-urlencoded', 'X-Requested-With':'XMLHttpRequest' },
+                        body: new URLSearchParams({ contenu: newContent })
+                    })
+                    .then(res => res.json())
+                    .then(data => { if(data.success){ p.textContent = newContent; alert("Commentaire modifié !"); } else alert(data.message || "Erreur modification"); })
+                    .catch(() => alert("Erreur réseau"));
+                }
+            });
+        }
+         // ===== AFFICHAGE REPONSES ETUDIANTS =====
+    const btn = document.getElementById('accessResponsesBtn');
+    const container = document.getElementById('studentResponses');
+    const list = document.getElementById('responsesList');
+
+    if(btn){
+        btn.addEventListener('click', function(){
+            fetch('/examen/2/reponses')
+            .then(res => res.json())
+            .then(data => {
+                list.innerHTML = '';
+                if(data.length === 0){ list.innerHTML = '<p>Aucune réponse soumise.</p>'; container.style.display='block'; return; }
+
+                data.forEach(etudiant => {
+                    const card = document.createElement('div');
+                    card.classList.add('student-card');
+                    card.style.cssText = 'border:1px solid #ccc; padding:15px; margin-bottom:15px; border-radius:8px; background-color:#f9f9f9;';
+                    card.innerHTML = `<h3>Étudiant : ${etudiant.etudiant}</h3><small>Date dernier essai : ${etudiant.date}</small>`;
+
+                    const questionsDiv = document.createElement('div');
+                    questionsDiv.style.marginTop = '10px';
+                    for(const [question, reponse] of Object.entries(etudiant.reponses)){
+                        const qDiv = document.createElement('div');
+                        qDiv.classList.add('response-card');
+                        qDiv.style.marginBottom = '5px';
+                        qDiv.innerHTML = `<strong>${question} :</strong> ${reponse}`;
+                        questionsDiv.appendChild(qDiv);
+                    }
+                    card.appendChild(questionsDiv);
+                    list.appendChild(card);
+                });
+
+                container.style.display = 'block';
+            })
+            .catch(err => { console.error(err); list.innerHTML='<p>Impossible de charger les réponses.</p>'; container.style.display='block'; });
+        });
+    }
+
+    // ===== VERIFICATION DATE ET TIMER =====
+    if(startBtn && examContainer && examForm){
+        const endDate = new Date("2027-02-15 00:00:00");
+        const now = new Date();
+        let isAccessible = now <= endDate;
+
+        if(!isAccessible){
+            startBtn.disabled = true;
+            examLock.textContent = "❌ L’examen a expiré.";
+            examContainer.style.display = 'block';
+            examForm.style.display = 'block';
+            disableForm(examForm);
+            commentsDiv.style.display='block';
+        } else {
+            examLock.textContent = "▶ Cliquez sur « Commencer l’examen »";
+        }
+
+       // ✅ après — durée depuis la base de données (en minutes → secondes)
+let totalTime = {{ examen.duree }} * 60;
+        let elapsed = 0;
+
+        startBtn.addEventListener('click', function(){
+            examContainer.style.display='block';
+            examForm.style.display='block';
+            examLock.style.display='none';
+            startBtn.disabled=true;
+
+            interval = setInterval(function(){
+                elapsed++;
+                let minutes = Math.floor(elapsed/60);
+                let seconds = elapsed % 60;
+                timerEl.textContent = String(minutes).padStart(2,'0') + ':' + String(seconds).padStart(2,'0');
+
+                let progressPercent = Math.min(Math.floor((elapsed/totalTime)*100),100);
+                progressFill.style.width = progressPercent+'%';
+                progressFill.textContent = progressPercent+'%';
+
+                if(elapsed >= totalTime || new Date() >= endDate){
+                    finishExam("⏰ Temps écoulé !");
+                }
+            },1000);
+        }, { once:true });
+    }
+
+    function finishExam(message){
+        clearInterval(interval);
+        disableForm(examForm);
+        progressFill.style.width='100%';
+        progressFill.textContent='100%';
+        commentsDiv.style.display='block';
+        examLock.textContent = message;
+        examLock.style.display='block';
+        alert(message);
+    }
+
+    function disableForm(form){
+        form.querySelectorAll('input, textarea, button, select').forEach(el => el.disabled=true);
+    }
+
+    // ===== LIKE COMMENTAIRES =====
+    if(!window.likeHandlerAttached){
+        window.likeHandlerAttached = true;
+        document.addEventListener('click', function(e){
+            if(!e.target.classList.contains('like-btn')) return;
+
+            const btn = e.target;
+            const meta = btn.closest('.comment-meta');
+            const likesSpan = meta.querySelector('.likes');
+            const commentId = btn.dataset.id;
+
+            if(!commentId){
+                let likes = parseInt(btn.dataset.likes || 0)+1;
+                btn.dataset.likes = likes;
+                likesSpan.textContent = "Likes : "+likes;
+                btn.disabled=true;
+                btn.textContent = "👍 Liké";
+                return;
+            }
+
+            fetch(`/commentaire/like/${commentId}`, { method:'POST', headers:{ 'X-Requested-With':'XMLHttpRequest' } })
+            .then(res=>res.json())
+            .then(data=>{
+                likesSpan.textContent = "Likes : "+data.likes;
+                btn.disabled=true;
+                btn.textContent="👍 Liké";
+            })
+            .catch(()=>alert("Erreur lors du like"));
+        });
+    }
+
+
+    }
+});
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"
+        integrity="sha256-2osqDEbR/CBjLQZQGWpqYHRGMJsBFUDPGn1Xy05TYIU="
+        crossorigin="anonymous"></script>
+<script>
+(function() {
+    var el = document.getElementById('qrcodeExam');
+    if (!el) return;
+
+    // ✅ IP fixe de votre réseau WiFi
+    var url = 'http://192.168.1.115:8000/examen/{{ examen.id }}/voir-pdf';
+
+    new QRCode(el, {
+        text: url,
+        width: 200,
+        height: 200,
+        colorDark: '#1f4f65',
+        colorLight: '#ffffff',
+        correctLevel: QRCode.CorrectLevel.M
+    });
+})();
+</script>
+{% endblock %}
+{% endblock %}

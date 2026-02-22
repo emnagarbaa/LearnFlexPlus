@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Challenge - {{ challenge.titrec }}</title>
+    <style>
+        body {
+            font-family: DejaVu Sans, sans-serif;
+            margin: 30px;
+            color: #333;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+
+        h2 {
+            font-size: 18px;
+            margin-top: 20px;
+            margin-bottom: 10px;
+            border-bottom: 1px solid #ccc;
+            padding-bottom: 5px;
+        }
+
+        p {
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        th, td {
+            border: 1px solid #666;
+            padding: 8px;
+            text-align: left;
+            font-size: 13px;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        .section {
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Challenge : {{ challenge.titrec }}</h1>
+
+    <div class="section">
+        <h2>Description</h2>
+        <p>{{ challenge.descriptionc }}</p>
+    </div>
+
+    <div class="section">
+        <h2>Examen associé</h2>
+        <p>{{ challenge.examen.titre }}</p>
+    </div>
+
+    <div class="section">
+        <h2>Détails du challenge</h2>
+        <table>
+            <tr>
+                <th>Objectif</th>
+                <td>{{ challenge.objectifscore }}</td>
+            </tr>
+            <tr>
+                <th>Progression actuelle</th>
+                <td>{{ challenge.progressionactuelle }}%</td>
+            </tr>
+            <tr>
+                <th>Niveau atteint</th>
+                <td>{{ challenge.niveauatteint }}</td>
+            </tr>
+            <tr>
+                <th>Type de récompense</th>
+                <td>{{ challenge.typerecomponse }}</td>
+            </tr>
+            <tr>
+                <th>Contenu de la récompense</th>
+                <td>{{ challenge.contenurecompense }}</td>
+            </tr>
+            <tr>
+                <th>État</th>
+                <td>{{ challenge.etat }}</td>
+            </tr>
+            <tr>
+                <th>Date début</th>
+                <td>{{ challenge.dated ? challenge.dated|date('d/m/Y') : '-' }}</td>
+            </tr>
+            <tr>
+                <th>Date fin</th>
+                <td>{{ challenge.datef ? challenge.datef|date('d/m/Y') : '-' }}</td>
+            </tr>
+            <tr>
+                <th>Date limite</th>
+                <td>{{ challenge.datelimite ? challenge.datelimite|date('d/m/Y') : '-' }}</td>
+            </tr>
+            <tr>
+                <th>Alerte</th>
+                <td>{{ challenge.alerte ? 'Oui' : 'Non' }}</td>
+            </tr>
+        </table>
+    </div>
+
+</body>
+</html>

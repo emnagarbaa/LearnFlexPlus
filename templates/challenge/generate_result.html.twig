@@ -1,0 +1,221 @@
+{% extends 'base.html.twig' %}
+
+{% block stylesheets %}
+<link rel="stylesheet" href="{{ asset('assets/css/styles.css') }}">
+<link rel="stylesheet" href="{{ asset('assets/css/dashboard.css') }}">
+<link rel="stylesheet" href="{{ asset('assets/css/crud.css') }}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+{% endblock %}
+
+{% block body %}
+<div class="dashboard">
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <div class="logo">
+                <img src="{{ asset('assets/images/logo1.png') }}" alt="Learnflex+ Logo" class="nav-logo">
+                <span>LearnFlex</span><span class="highlight">+</span>
+            </div>
+            <button class="sidebar-toggle">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+
+        <div class="sidebar-content">
+            <nav class="sidebar-menu">
+                <ul>
+                    <li><a href="{{ path('dashboard') }}"><i class="fas fa-tachometer-alt"></i><span>Dashboard</span></a></li>
+                    <li><a href="{{ path('app_users') }}"><i class="fas fa-users"></i><span>Utilisateurs</span></a></li>
+                    <li><a href="#"><i class="fas fa-book-open"></i><span>Contenu pédagogique</span></a></li>
+                    <li class="has-submenu active">
+                        <a href="#"><i class="fas fa-graduation-cap"></i><span>Evaluation</span><i class="fas fa-chevron-down submenu-toggle"></i></a>
+                        <ul class="submenu">
+                            <li><a href="{{ path('admin_examen') }}">Examen</a></li>
+                            <li class="active"><a href="{{ path('app_challenges') }}">Challenge</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="#"><i class="fas fa-question-circle"></i><span>Questionnaire</span></a></li>
+                    <li><a href="#"><i class="fas fa-directions"></i><span>Orientation</span></a></li>
+                    <li><a href="#"><i class="fas fa-comments"></i><span>Forum</span></a></li>
+                </ul>
+            </nav>
+        </div>
+
+        <div class="sidebar-footer">
+            <a href="#" class="user-profile">
+                <img src="{{ asset('assets/images/placeholder-admin.png') }}" alt="Admin" class="user-img">
+                <div class="user-info">
+                    <h4>Admin User</h4>
+                    <p>Administrateur</p>
+                </div>
+            </a>
+            <a href="#" class="logout">
+                <i class="fas fa-sign-out-alt"></i><span>Déconnexion</span>
+            </a>
+        </div>
+    </aside>
+
+    <main class="main-content">
+        <header class="dashboard-header">
+            <div class="header-left">
+                <h1>✅ Questions générées</h1>
+                <p>Sujet : <strong>{{ sujet }}</strong> — Challenge : <strong>{{ challenge.titrec }}</strong></p>
+            </div>
+            <div class="header-right">
+                <div class="actions">
+                    <a href="{{ path('challenge_generate_form', {id: challenge.id}) }}" class="btn primary">
+                        <i class="fas fa-redo"></i> Régénérer
+                    </a>
+                    <a href="{{ path('app_challenges') }}" class="btn primary" style="background:#6c757d; border-color:#6c757d; margin-left:10px;">
+                        <i class="fas fa-arrow-left"></i> Retour
+                    </a>
+                </div>
+            </div>
+        </header>
+
+        <div class="crud-container">
+
+            {% for msg in app.flashes('success') %}
+                <div style="background:#eafaf1; border-left:4px solid #2ecc71; padding:15px 20px; border-radius:8px; margin-bottom:20px; color:#1e8449;">
+                    <i class="fas fa-check-circle"></i> {{ msg }}
+                </div>
+            {% endfor %}
+
+            <div class="view-container table-view active" style="padding: 20px;">
+
+                {# ── QCM ─────────────────────────────────────────── #}
+                {% if result.type == 'qcm' %}
+                    {% for i, q in result.questions %}
+                    <div class="question-card" style="background:#fff; border-radius:12px; padding:24px; margin-bottom:16px; box-shadow:0 2px 10px rgba(0,0,0,0.06); border-left:4px solid #4361ee;">
+                        <p style="font-weight:700; color:#1f2d3d; margin-bottom:14px; font-size:1rem;">
+                            Q{{ i + 1 }}. {{ q.question }}
+                        </p>
+                        <ul style="list-style:none; padding:0; margin:0 0 12px 0;">
+                            {% for choice in q.choices %}
+                            <li style="margin-bottom:8px; display:flex; align-items:center; gap:10px;">
+                                <span style="display:inline-flex; align-items:center; justify-content:center; width:28px; height:28px; border-radius:6px; font-weight:700; font-size:0.85rem;
+                                    {% if choice[0:1] == q.correct_answer %}background:#2ecc71; color:#fff;{% else %}background:#f0f0f0; color:#555;{% endif %}">
+                                    {{ choice[0:1] }}
+                                </span>
+                                <span style="color:#444;">{{ choice[3:] }}</span>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                        {% if q.explanation is defined %}
+                        <div style="background:#f0f7ff; border-radius:8px; padding:10px 14px; font-size:0.88rem; color:#2c5282;">
+                            💡 {{ q.explanation }}
+                        </div>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+
+                {# ── VRAI / FAUX ──────────────────────────────────── #}
+                {% elseif result.type == 'truefalse' %}
+                    {% for i, q in result.questions %}
+                    <div class="question-card" style="background:#fff; border-radius:12px; padding:24px; margin-bottom:16px; box-shadow:0 2px 10px rgba(0,0,0,0.06); border-left:4px solid #f39c12;">
+                        <p style="font-weight:700; color:#1f2d3d; margin-bottom:12px; font-size:1rem;">
+                            Q{{ i + 1 }}. {{ q.question }}
+                        </p>
+                        <span style="display:inline-block; padding:5px 14px; border-radius:20px; font-weight:600; font-size:0.88rem;
+                            {% if q.correct_answer %}background:#2ecc71; color:#fff;{% else %}background:#e74c3c; color:#fff;{% endif %}">
+                            Réponse : {% if q.correct_answer %}✅ Vrai{% else %}❌ Faux{% endif %}
+                        </span>
+                        {% if q.explanation is defined %}
+                        <div style="background:#f0f7ff; border-radius:8px; padding:10px 14px; font-size:0.88rem; color:#2c5282; margin-top:10px;">
+                            💡 {{ q.explanation }}
+                        </div>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+
+                {# ── OUVERTES ─────────────────────────────────────── #}
+                {% elseif result.type == 'open' %}
+                    {% for i, q in result.questions %}
+                    <div class="question-card" style="background:#fff; border-radius:12px; padding:24px; margin-bottom:16px; box-shadow:0 2px 10px rgba(0,0,0,0.06); border-left:4px solid #1abc9c;">
+                        <p style="font-weight:700; color:#1f2d3d; margin-bottom:12px; font-size:1rem;">
+                            Q{{ i + 1 }}. {{ q.question }}
+                        </p>
+                        {% if q.expected_keywords is defined %}
+                        <p style="font-size:0.88rem; color:#6c757d; margin-bottom:8px;">
+                            🔑 Mots-clés :
+                            {% for kw in q.expected_keywords %}
+                                <span style="display:inline-block; background:#e9ecef; padding:2px 10px; border-radius:20px; font-size:0.82rem; margin:2px;">{{ kw }}</span>
+                            {% endfor %}
+                        </p>
+                        {% endif %}
+                        {% if q.model_answer is defined %}
+                        <div style="background:#eafaf1; border-radius:8px; padding:10px 14px; font-size:0.88rem; color:#1e8449;">
+                            📝 {{ q.model_answer }}
+                        </div>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+
+                {# ── MIX ──────────────────────────────────────────── #}
+                {% elseif result.type == 'mixed' %}
+                    {% for i, q in result.questions %}
+                    <div class="question-card" style="background:#fff; border-radius:12px; padding:24px; margin-bottom:16px; box-shadow:0 2px 10px rgba(0,0,0,0.06);
+                        border-left:4px solid {% if q.type == 'qcm' %}#4361ee{% elseif q.type == 'truefalse' %}#f39c12{% else %}#1abc9c{% endif %};">
+
+                        <div style="display:flex; align-items:center; gap:8px; margin-bottom:12px;">
+                            <span style="font-size:0.78rem; font-weight:600; padding:3px 10px; border-radius:20px; background:#f0f0f0; color:#555;">
+                                {% if q.type == 'qcm' %}✅ QCM
+                                {% elseif q.type == 'truefalse' %}⚖️ Vrai / Faux
+                                {% else %}✏️ Ouverte{% endif %}
+                            </span>
+                        </div>
+
+                        <p style="font-weight:700; color:#1f2d3d; margin-bottom:14px; font-size:1rem;">
+                            Q{{ i + 1 }}. {{ q.question }}
+                        </p>
+
+                        {% if q.type == 'qcm' and q.choices is defined %}
+                            <ul style="list-style:none; padding:0; margin:0 0 12px 0;">
+                                {% for choice in q.choices %}
+                                <li style="margin-bottom:8px; display:flex; align-items:center; gap:10px;">
+                                    <span style="display:inline-flex; align-items:center; justify-content:center; width:28px; height:28px; border-radius:6px; font-weight:700; font-size:0.85rem;
+                                        {% if choice[0:1] == q.correct_answer %}background:#2ecc71; color:#fff;{% else %}background:#f0f0f0; color:#555;{% endif %}">
+                                        {{ choice[0:1] }}
+                                    </span>
+                                    <span style="color:#444;">{{ choice[3:] }}</span>
+                                </li>
+                                {% endfor %}
+                            </ul>
+
+                        {% elseif q.type == 'truefalse' %}
+                            <span style="display:inline-block; padding:5px 14px; border-radius:20px; font-weight:600; font-size:0.88rem; margin-bottom:10px;
+                                {% if q.correct_answer %}background:#2ecc71; color:#fff;{% else %}background:#e74c3c; color:#fff;{% endif %}">
+                                {% if q.correct_answer %}✅ Vrai{% else %}❌ Faux{% endif %}
+                            </span>
+
+                        {% elseif q.type == 'open' %}
+                            {% if q.expected_keywords is defined %}
+                            <p style="font-size:0.88rem; color:#6c757d; margin-bottom:8px;">
+                                🔑
+                                {% for kw in q.expected_keywords %}
+                                    <span style="display:inline-block; background:#e9ecef; padding:2px 10px; border-radius:20px; font-size:0.82rem; margin:2px;">{{ kw }}</span>
+                                {% endfor %}
+                            </p>
+                            {% endif %}
+                            {% if q.model_answer is defined %}
+                            <div style="background:#eafaf1; border-radius:8px; padding:10px 14px; font-size:0.88rem; color:#1e8449; margin-bottom:8px;">
+                                📝 {{ q.model_answer }}
+                            </div>
+                            {% endif %}
+                        {% endif %}
+
+                        {% if q.explanation is defined %}
+                        <div style="background:#f0f7ff; border-radius:8px; padding:10px 14px; font-size:0.88rem; color:#2c5282; margin-top:8px;">
+                            💡 {{ q.explanation }}
+                        </div>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                {% endif %}
+
+            </div>
+        </div>
+    </main>
+</div>
+
+<script src="{{ asset('assets/js/main.js') }}"></script>
+{% endblock %}

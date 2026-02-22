@@ -2,19 +2,26 @@
     "type": "project",
     "license": "proprietary",
     "minimum-stability": "stable",
+
     "prefer-stable": true,
     "require": {
         "php": ">=8.1",
         "ext-ctype": "*",
         "ext-iconv": "*",
+        "cmen/google-charts-bundle": "*",
         "doctrine/doctrine-bundle": "^2.18",
         "doctrine/doctrine-migrations-bundle": "^3.7",
         "doctrine/orm": "^3.6",
         "dompdf/dompdf": "^3.1",
         "endroid/qr-code-bundle": "^6.0",
         "knplabs/knp-paginator-bundle": "^6.10",
+        "knplabs/knp-snappy-bundle": "*",
+        "knpuniversity/oauth2-client-bundle": "*",
+        "league/oauth2-google": "*",
         "phpdocumentor/reflection-docblock": "5.3",
+        "phpmailer/phpmailer": "*",
         "phpstan/phpdoc-parser": "^2.3",
+        "stof/doctrine-extensions-bundle": "*",
         "symfony/asset": "6.4.*",
         "symfony/asset-mapper": "6.4.*",
         "symfony/console": "6.4.*",
@@ -46,9 +53,12 @@
         "symfony/validator": "6.4.*",
         "symfony/web-link": "6.4.*",
         "symfony/yaml": "6.4.*",
+        "symfonycasts/verify-email-bundle": "*",
         "twig/extra-bundle": "^2.12|^3.0",
-        "twig/twig": "^2.12|^3.0"
+        "twig/twig": "^2.12|^3.0",
+        "vich/uploader-bundle": "*"
     },
+
     "config": {
         "allow-plugins": {
             "endroid/installer": true,
@@ -106,5 +116,6 @@
         "symfony/maker-bundle": "^1.0",
         "symfony/stopwatch": "6.4.*",
         "symfony/web-profiler-bundle": "6.4.*"
+
     }
 }

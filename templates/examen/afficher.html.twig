@@ -1,0 +1,308 @@
+{# src/templates/examen/index.html.twig #}
+{% block stylesheets %}
+<link rel="stylesheet" href="{{ asset('assets/css/styles.css') }}">
+<link rel="stylesheet" href="{{ asset('assets/css/dashboard.css') }}">
+<link rel="stylesheet" href="{{ asset('assets/css/crud.css') }}">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+{% endblock %}
+<div class="dashboard">
+{% block body %}
+ <div class="dashboard">
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <div class="logo">
+          <img src="{{ asset('assets/images/logo1.png') }}" alt="Learnflex+ Logo" class="nav-logo">
+          <span>LearnFlex</span><span class="highlight">+</span>
+        </div>
+        <button class="sidebar-toggle">
+          <i class="fas fa-bars"></i>
+        </button>
+      </div>
+      
+      <div class="sidebar-content">
+        <nav class="sidebar-menu">
+          <ul>
+            <li class="active">
+              <a href="{{path('dashboard')}}">
+                <i class="fas fa-tachometer-alt"></i>
+                <span>Dashboard</span>
+              </a>
+            </li>
+            <li>
+              <a href="{{path('app_users')}}">
+                <i class="fas fa-users"></i>
+                <span>Utilisateurs</span>
+              </a>
+            </li>
+            <li>
+              <a href="#">
+                <i class="fas fa-book-open"></i>
+                <span>contenu pédagogique</span>
+              </a>
+            </li>
+            <li class="has-submenu">
+    <a href="#">
+        <i class="fas fa-graduation-cap"></i>
+        <span>Evaluation</span>
+        <i class="fas fa-chevron-down submenu-toggle"></i>
+    </a>
+    <ul class="submenu">
+        <li>
+            <a href="{{ path('admin_examen') }}">Examen</a>
+        </li>
+        <li>
+            <a href="{{ path('app_challenges') }}">Challenge</a>
+        </li>
+    </ul>
+</li>
+
+            <li>
+              <a href="#">
+                <i class="fas fa-question-circle"></i>
+                <span>Questionnaire</span>
+              </a>
+            </li>
+            <li>
+              <a href="#">
+                <i class="fas fa-directions"></i>
+                <span>Orientation</span>
+              </a>
+            </li>
+            <li>
+              <a href="#">
+                <i class="fas fa-comments"></i>
+                <span>Forum</span>
+              </a>
+            </li>
+          </ul>
+        </nav>
+      </div>
+      
+      <div class="sidebar-footer">
+        <a href="#" class="user-profile">
+          <img src="{{ asset('assets/images/placeholder-admin.png') }}" alt="Admin" class="user-img">
+          <div class="user-info">
+            <h4>Admin User</h4>
+            <p>Administrateur</p>
+          </div>
+        </a>
+        <a href="#" class="logout">
+          <i class="fas fa-sign-out-alt"></i>
+          <span>Déconnexion</span>
+        </a>
+      </div>
+    </aside>
+    <main class="main-content">
+        <!-- Header -->
+        <header class="dashboard-header">
+            <div class="header-left">
+                <h1>Gestion des Examens</h1>
+                <p>Ajouter, modifier et gérer les examens</p>
+            </div>
+            <div class="header-right">
+                <div class="search-bar">
+        <form action="{{ path('app_examen_list') }}" method="GET">
+    <input type="text" name="search" placeholder="Rechercher un examen" value="{{ search|default('') }}">
+    <button type="submit"><i class="fas fa-search"></i></button>
+</form>
+
+    </div>
+                <div class="actions">
+                    <a href="{{ path('app_addformexamen') }}" class="btn primary"><i class="fas fa-plus"></i> Ajouter un Examen</a>
+                </div>
+            </div>
+        </header>
+
+       <div class="dashboard-content">
+    <!-- Stats Overview -->
+    <div class="dashboard-stats">
+        <div class="stat-box standard">
+            <div class="stat-title">Examens Faciles</div>
+            <div class="stat-value" id="facileCount">{{ examens|filter(e => e.niveauexamen == 'facile')|length }}
+</div>
+            <div class="stat-icon"><i class="fas fa-layer-group"></i></div>
+        </div>
+        <div class="stat-box moyen">
+            <div class="stat-title">Examens Moyens</div>
+            <div class="stat-value" id="moyenCount">{{ examens|filter(e => e.niveauexamen == 'moyen')|length }}</div>
+            <div class="stat-icon"><i class="fas fa-chart-line"></i></div>
+        </div>
+        <div class="stat-box difficile">
+            <div class="stat-title">Examens Difficiles</div>
+            <div class="stat-value" id="difficileCount">{{ examens|filter(e => e.niveauexamen == 'difficile')|length }}</div>
+            <div class="stat-icon"><i class="fas fa-fire"></i></div>
+        </div>
+    </div>
+
+  
+
+<!-- Tabs + Table (filtre par niveau) -->
+<div class="crud-container">
+    <div class="crud-header">
+        <div class="tabs" style="justify-content: center;">
+            <a href="{{ path('app_examen_list') }}" class="tab-btn {% if not niveau_selectionne|default(null) %}active{% endif %}">Tous</a>
+            <a href="{{ path('app_examen_list', { niveau: 'facile' }) }}" class="tab-btn {% if niveau_selectionne|default(null) == 'facile' %}active{% endif %}">Facile</a>
+            <a href="{{ path('app_examen_list', { niveau: 'moyen' }) }}" class="tab-btn {% if niveau_selectionne|default(null) == 'moyen' %}active{% endif %}">Moyen</a>
+            <a href="{{ path('app_examen_list', { niveau: 'difficile' }) }}" class="tab-btn {% if niveau_selectionne|default(null) == 'difficile' %}active{% endif %}">Difficile</a>
+        </div>
+    </div>
+
+                <div class="view-container table-view active">
+                    <div class="buses-table-container">
+                        <table class="buses-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Titre</th>
+                                    <th>Description</th>
+                                    <th>Pdf</th>
+                                    <th>Matière</th>
+                                    <th>Niveau</th>
+                                    <th>Date Début</th>
+                                    <th>Date Fin</th>
+                                    <th>Durée (min)</th>
+                                    <th>Nb Questions</th>
+                                    <th>Score Total</th>
+                                    <th>Coefficient</th>
+                                    <th>Type</th>
+                                    <th>État</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for examen in examens %}
+                                    <tr data-statut="{{ examen.etat|lower }}">
+                                        <td>{{ examen.id }}</td>
+                                        <td>{{ examen.titre }}</td>
+                                        <td>{{ examen.description }}</td>
+                                     <td>
+ <a href="{{ asset('assets/exams/' ~ examen.pdf) }}" target="_blank" class="btn btn-secondary mt-2">
+    {{ examen.pdf }}
+</a>
+
+
+
+</td>
+
+
+                                        <td>{{ examen.matiere }}</td>
+                                        <td>{{ examen.niveauexamen }}</td>
+                                        <td>{{ examen.datedebut ? examen.datedebut|date('d/m/Y H:i') : '-' }}</td>
+                                        <td>{{ examen.datefin ? examen.datefin|date('d/m/Y H:i') : '-' }}</td>
+                                        <td>{{ examen.duree }}</td>
+                                        <td>{{ examen.nbquestion }}</td>
+                                        <td>{{ examen.scoretotal }}</td>
+                                        <td>{{ examen.coefficient }}</td>
+                                        <td>{{ examen.typeexamen }}</td>
+                                        <td>
+                                            <span class="status {{ examen.etat|lower }}">
+                                                {{ examen.etat }}
+                                            </span>
+                                        </td>
+                                        <td class="actions">
+                                            <a href="#"
+                                               class="action-btn view" title="Voir">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+                                            {# Bouton pour ouvrir les stats du graphique #}
+<a href="#" class="action-btn stats-btn" data-id="{{ examen.id }}" title="Statistiques">
+    <i class="fas fa-chart-pie"></i>
+</a>
+
+                                            <a href="{{ path('app_editexamen', { id: examen.id }) }}"
+                                               class="action-btn edit" title="Modifier">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                            <a href="{{ path('app_deleteexamen', {'id': examen.id}) }}"
+                                               class="action-btn delete"
+                                               onclick="return confirm('Voulez-vous vraiment supprimer cet examen ?');"
+                                               title="Supprimer">
+                                                <i class="fas fa-trash"></i>
+                                                                            </a>
+                                                                            {# Nouveau bouton PDF #}
+   <a href="{{ path('examen_rapport_pdf', { id: examen.id }) }}"
+   class="action-btn"
+   title="Rapport PDF complet"
+   style="background:#6f42c1; color:#fff; border-radius:8px; padding:5px 8px;">
+    <i class="fas fa-file-download"></i>
+</a>
+                                                                            {# Nouveau bouton pour les commentaires #}
+                                    <a href="{{ path('app_examen_commentaires', { 'id': examen.id }) }}" class="action-btn view" title="Commentaires">
+                                        <i class="fas fa-comments"></i>
+                                    </a>
+                                        </td>
+                                    </tr>
+                                {% else %}
+                                    <tr>
+                                        <td colspan="14" class="text-center">Aucun examen trouvé</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+</div>
+
+{# Optional modal for deletion like Bus dashboard #}
+<div class="modal" id="delete-modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>Confirmer la suppression</h2>
+            <button class="close-modal"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="modal-body">
+            <p>Êtes-vous sûr de vouloir supprimer cet examen ? Cette action est irréversible.</p>
+            <div class="form-actions">
+                <button type="button" class="btn secondary cancel-btn">Annuler</button>
+                <button type="button" class="btn danger" id="confirm-delete-btn">Supprimer</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Hidden Delete Form -->
+    <form method="POST" action="" style="display:none;" id="delete-form">
+        <input type="hidden" name="id_examen" id="delete-id">
+    </form>
+</div>
+{% block googlecharts %}
+<script src="https://www.gstatic.com/charts/loader.js"></script>
+{% endblock %}
+
+{% block javascripts %}
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    document.querySelectorAll('.stats-btn').forEach(btn => {
+    btn.addEventListener('click', async function(e) {
+        e.preventDefault();
+
+        const res = await fetch(`/examen/${this.dataset.id}/stats`);
+        const html = await res.text();
+
+        const modal = document.createElement("div");
+        modal.innerHTML = html;
+        document.body.appendChild(modal);
+
+        // force exécution scripts
+        modal.querySelectorAll("script").forEach(oldScript => {
+            const newScript = document.createElement("script");
+            newScript.text = oldScript.text;
+            document.body.appendChild(newScript);
+            oldScript.remove();
+        });
+
+        modal.querySelector(".close-modal").onclick = () => modal.remove();
+    });
+});
+
+
+});
+</script>
+{% endblock %}
+
+{% endblock %}

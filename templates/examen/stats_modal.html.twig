@@ -1,0 +1,122 @@
+{# templates/examen/stats_modal.html.twig #}
+<div class="modal-stats-overlay" onclick="if(event.target===this) this.remove()">
+<div class="modal-stats">
+    <button class="close-modal" onclick="this.closest('.modal-stats-overlay').remove()">✖</button>
+    
+    <h2 style="color:#1f4f65; margin-bottom:5px;">📊 Statistiques des Examens</h2>
+    <p style="color:#6c757d; font-size:14px; margin-bottom:20px;">Total : <strong>{{ totalExamens }}</strong> examens</p>
+
+    {# ── CARDS RAPIDES ── #}
+    <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-bottom:24px;">
+        {% for etat, count in parEtat %}
+        <div style="background:#f0f7ff; border-radius:12px; padding:14px; text-align:center; border-left:4px solid #1f4f65;">
+            <div style="font-size:1.6rem; font-weight:700; color:#1f4f65;">{{ count }}</div>
+            <div style="font-size:0.85rem; color:#6c757d;">{{ etat|capitalize }}</div>
+        </div>
+        {% endfor %}
+    </div>
+
+    {# ── GRAPHIQUES ── #}
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px;">
+        <div>
+            <h4 style="text-align:center; color:#1f4f65; margin-bottom:8px;">Par État</h4>
+            <div id="chart_etat" style="height:220px;"></div>
+        </div>
+        <div>
+            <h4 style="text-align:center; color:#1f4f65; margin-bottom:8px;">Par Matière</h4>
+            <div id="chart_matiere" style="height:220px;"></div>
+        </div>
+    </div>
+
+    <div style="margin-top:20px;">
+        <h4 style="text-align:center; color:#1f4f65; margin-bottom:8px;">Durée Moyenne par Matière (min)</h4>
+        <div id="chart_duree" style="height:220px;"></div>
+    </div>
+</div>
+</div>
+
+<style>
+.modal-stats-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.modal-stats {
+    background: #fff;
+    padding: 30px;
+    border-radius: 20px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+    width: 750px;
+    max-width: 95vw;
+    max-height: 90vh;
+    overflow-y: auto;
+    position: relative;
+}
+.close-modal {
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    cursor: pointer;
+    border: none;
+    background: #f0f0f0;
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
+    font-size: 16px;
+    font-weight: bold;
+    color: #555;
+}
+.close-modal:hover { background: #e74c3c; color: #fff; }
+</style>
+
+<script>
+google.charts.load('current', {'packages':['corechart']});
+google.charts.setOnLoadCallback(function() {
+
+    // ── CHART 1 : Par État ──
+    var dataEtat = google.visualization.arrayToDataTable([
+        ['État', 'Nombre'],
+        {% for etat, count in parEtat %}
+        ['{{ etat|capitalize }}', {{ count }}],
+        {% endfor %}
+    ]);
+    new google.visualization.PieChart(document.getElementById('chart_etat')).draw(dataEtat, {
+        colors: ['#1f4f65','#4DB6AC','#90A4AE','#f39c12'],
+        legend: {position: 'bottom'},
+        chartArea: {width:'90%', height:'75%'},
+        backgroundColor: 'transparent',
+    });
+
+    // ── CHART 2 : Par Matière ──
+    var dataMatiere = google.visualization.arrayToDataTable([
+        ['Matière', 'Nombre'],
+        {% for mat, count in parMatiere %}
+        ['{{ mat }}', {{ count }}],
+        {% endfor %}
+    ]);
+    new google.visualization.PieChart(document.getElementById('chart_matiere')).draw(dataMatiere, {
+        colors: ['#397693','#4DB6AC','#6f42c1','#f39c12','#e74c3c'],
+        legend: {position: 'bottom'},
+        chartArea: {width:'90%', height:'75%'},
+        backgroundColor: 'transparent',
+    });
+
+    // ── CHART 3 : Durée Moyenne ──
+    var dataDuree = google.visualization.arrayToDataTable([
+        ['Matière', 'Durée moyenne (min)', {role:'style'}],
+        {% for mat, duree in dureeMoyenne %}
+        ['{{ mat }}', {{ duree }}, '#1f4f65'],
+        {% endfor %}
+    ]);
+    new google.visualization.BarChart(document.getElementById('chart_duree')).draw(dataDuree, {
+        legend: {position: 'none'},
+        chartArea: {width:'70%', height:'75%'},
+        backgroundColor: 'transparent',
+        hAxis: {title: 'Minutes', minValue: 0},
+    });
+});
+</script>

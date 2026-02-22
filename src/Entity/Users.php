@@ -3,8 +3,6 @@
 namespace App\Entity;
 
 use App\Repository\UsersRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -94,17 +92,6 @@ class Users implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: "datetime", nullable: true, name: "updated_at")]
     private ?\DateTimeInterface $updatedAt = null;
 
-    /**
-     * @var Collection<int, Attempt>
-     */
-    #[ORM\OneToMany(targetEntity: Attempt::class, mappedBy: 'relation')]
-    private Collection $attempts;
-
-    public function __construct()
-    {
-        $this->attempts = new ArrayCollection();
-    }
-
     #[ORM\PrePersist]
     public function setCreatedAtValue(): void
     {
@@ -133,6 +120,36 @@ public function getRoles(): array
     {
         // Not needed for now
     }
+
+    #[ORM\Column(type: 'boolean')]
+    private bool $isVerified = false;
+
+    public function isVerified(): bool
+    {
+        return $this->isVerified;
+    }
+
+    public function setIsVerified(bool $isVerified): self
+    {
+     $this->isVerified = $isVerified;
+     return $this;
+    }
+
+
+     #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    private ?string $profileImage = null;
+
+    public function getProfileImage(): ?string
+    {
+        return $this->profileImage;
+    }
+
+    public function setProfileImage(?string $profileImage): self
+    {
+        $this->profileImage = $profileImage;
+        return $this;
+    }
+
 
     // Getters and Setters
     public function getId(): ?int { return $this->id; }
@@ -166,34 +183,4 @@ public function getRoles(): array
 
     public function getUpdatedAt(): ?\DateTimeInterface { return $this->updatedAt; }
     public function setUpdatedAt(?\DateTimeInterface $updatedAt): self { $this->updatedAt = $updatedAt; return $this; }
-
-    /**
-     * @return Collection<int, Attempt>
-     */
-    public function getAttempts(): Collection
-    {
-        return $this->attempts;
-    }
-
-    public function addAttempt(Attempt $attempt): static
-    {
-        if (!$this->attempts->contains($attempt)) {
-            $this->attempts->add($attempt);
-            $attempt->setRelation($this);
-        }
-
-        return $this;
-    }
-
-    public function removeAttempt(Attempt $attempt): static
-    {
-        if ($this->attempts->removeElement($attempt)) {
-            // set the owning side to null (unless already changed)
-            if ($attempt->getRelation() === $this) {
-                $attempt->setRelation(null);
-            }
-        }
-
-        return $this;
-    }
 }
