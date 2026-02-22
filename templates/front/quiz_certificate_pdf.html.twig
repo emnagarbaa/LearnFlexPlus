@@ -1,102 +1,182 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta charset="UTF-8">
-    <title>Certificat - {{ app.user.prenom }} {{ app.user.nom }}</title>
-    <style>
-        body {
-            font-family: 'Arial', sans-serif;
-            margin: 0;
-            padding: 0;
-            background: #f5f5f5;
-        }
+<meta charset="UTF-8">
+<title>Certificat</title>
 
-        .certificate-container {
-            width: 80%;
-            max-width: 800px;
-            margin: 50px auto;
-            padding: 40px;
-            background: #fff;
-            border: 10px solid #4CAF50;
-            border-radius: 15px;
-            box-shadow: 0 0 20px rgba(0,0,0,0.1);
-            text-align: center;
-        }
+<style>
 
-        .certificate-header {
-            border-bottom: 3px solid #4CAF50;
-            padding-bottom: 20px;
-            margin-bottom: 30px;
-        }
+@page {
+    size: A4 landscape;
+    margin: 0;
+}
 
-        .certificate-header img {
-            max-height: 60px;
-        }
+body{
+    margin:0;
+    padding:0;
+    font-family: DejaVu Sans, sans-serif;
+}
 
-        h1 {
-            font-size: 40px;
-            color: #4CAF50;
-            margin: 20px 0 10px 0;
-        }
+/* Taille réelle A4 */
+.page{
+    width:297mm;
+    height:210mm;
+    position:relative;
+}
 
-        h2 {
-            font-size: 32px;
-            color: #333;
-            margin: 20px 0;
-            font-weight: bold;
-        }
+/* Bordure principale */
+.outer-border{
+    position:absolute;
+    top:10mm;
+    left:10mm;
+    right:10mm;
+    bottom:10mm;
+    border:8px solid #2c3e50;
+}
 
-        p {
-            font-size: 18px;
-            color: #555;
-            margin: 10px 0;
-        }
+/* Bordure dorée */
+.inner-border{
+    position:absolute;
+    top:18mm;
+    left:18mm;
+    right:18mm;
+    bottom:18mm;
+    border:2px solid #c9a227;
+}
 
-        .highlight {
-            color: #4CAF50;
-            font-weight: bold;
-        }
+/* Contenu */
+.content{
+    position:absolute;
+    top:40mm;
+    left:25mm;
+    right:25mm;
+    text-align:center;
+}
 
-        .score {
-            font-size: 24px;
-            margin: 20px 0;
-            color: #000;
-        }
+/* Logo */
+.logo img{
+    height:50px;
+    margin-bottom:8mm;
+}
 
-        .footer {
-            margin-top: 40px;
-            font-size: 14px;
-            color: #777;
-        }
+/* Titre */
+.title{
+    font-size:30px;
+    letter-spacing:2px;
+    color:#2c3e50;
+    margin-bottom:6mm;
+}
 
-        .certificate-footer {
-            border-top: 3px solid #4CAF50;
-            margin-top: 30px;
-            padding-top: 10px;
-        }
-    </style>
+/* Sous titre */
+.subtitle{
+    font-size:16px;
+    color:#666;
+    margin-bottom:10mm;
+}
+
+/* Texte */
+.text{
+    font-size:16px;
+    margin:4mm 0;
+}
+
+/* Nom étudiant */
+.name{
+    font-size:28px;
+    font-weight:bold;
+    color:#c9a227;
+    text-transform:uppercase;
+    margin:8mm 0;
+}
+
+/* Quiz */
+.quiz{
+    font-size:20px;
+    font-weight:bold;
+    color:#2c3e50;
+    margin:6mm 0;
+}
+
+/* Score */
+.score{
+    font-size:18px;
+    margin-top:6mm;
+    font-weight:bold;
+}
+
+/* Signature + date */
+.footer{
+    position:absolute;
+    bottom:35mm;
+    left:30mm;
+    right:30mm;
+    display:flex;
+    justify-content:space-between;
+    font-size:14px;
+}
+
+/* ID certificat */
+.cert-id{
+    position:absolute;
+    bottom:15mm;
+    width:100%;
+    text-align:center;
+    font-size:11px;
+    color:#888;
+}
+
+</style>
 </head>
+
 <body>
-    <div class="certificate-container">
-        <div class="certificate-header">
-            <!-- 🔹 Mettre ton logo si disponible -->
-<img src="{{ absolute_url(asset('assets/images/logo1.png')) }}" alt="LearnFlexPlus Logo" style="max-height:60px;">
-            <h1>🎓 Certificat de réussite</h1>
+
+<div class="page">
+
+    <div class="outer-border"></div>
+    <div class="inner-border"></div>
+
+    <div class="content">
+
+        <div class="logo">
+<img src="{{ absolute_url(asset('assets/images/logo1.png')) }}">
         </div>
 
-        <p>Ce certificat est décerné à :</p>
-        <h2 class="highlight">{{ app.user.prenom }} {{ app.user.nom }}</h2>
+        <div class="title">CERTIFICAT DE RÉUSSITE</div>
+        <div class="subtitle">Plateforme E-Learning LearnFlexPlus</div>
 
-        <p>Pour avoir complété avec succès le quiz :</p>
-        <p class="highlight">"{{ quizTitre }}"</p>
+        <div class="text">Ce certificat est décerné à</div>
 
-        <p class="score">Score obtenu : {{ score }} / {{ totalQuestions }}</p>
+        <div class="name">
+            {{ app.user.prenom }} {{ app.user.nom }}
+        </div>
 
-        <p>Félicitations pour vos efforts et votre réussite !</p>
+        <div class="text">Pour avoir validé avec succès le quiz :</div>
 
-        <div class="certificate-footer footer">
-            LearnFlexPlus - Apprends malin, ton bac en main
+        <div class="quiz">"{{ quizTitre }}"</div>
+
+        <div class="score">
+            Score : {{ score }} / {{ totalQuestions }}
+        </div>
+
+    </div>
+
+    <div class="footer">
+        <div>
+            _______________________<br>
+            Responsable pédagogique
+        </div>
+
+        <div>
+            Date : {{ "now"|date("d/m/Y") }}
         </div>
     </div>
+
+    <div class="cert-id">
+Certificat N° {{ certId }}    </div>
+<div style="position:absolute; bottom:30mm; right:25mm;">
+    <img src="data:image/png;base64,{{ qrCode }}" width="130">
+</div>
+</div>
+
 </body>
 </html>

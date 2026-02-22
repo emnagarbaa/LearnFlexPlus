@@ -14,7 +14,10 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Dompdf\Dompdf;
 use Dompdf\Options;
 use App\Service\IaService;
-
+use Symfony\Component\HttpKernel\KernelInterface;
+use Endroid\QrCode\Builder\Builder;
+use Endroid\QrCode\Writer\PngWriter;
+use App\Entity\Resultat;
 #[Route('/quiz')]
 final class QuizController extends AbstractController
 {
@@ -334,29 +337,58 @@ public function certificate(int $quizId, QuizRepository $quizRepository, Session
     ]);
 }
 #[Route('/quiz/certificate/download/{quizId}', name: 'quiz_download_certificate')]
-public function downloadCertificate(int $quizId, QuizRepository $quizRepository, SessionInterface $session): Response
-{
+public function downloadCertificate(
+    int $quizId,
+    QuizRepository $quizRepository,
+    SessionInterface $session
+): Response {
+
     $quiz = $quizRepository->find($quizId);
     if (!$quiz) {
         throw $this->createNotFoundException('Quiz non trouvé');
     }
 
+    $user = $this->getUser();
     $score = $session->get('score', 0);
-    $totalQuestions = count($quizRepository->findBy(['etat' => 'active']));
 
-    // 🔹 Utiliser le template PDF dédié
+    // TON QUIZ = 1 question
+    $totalQuestions = 1;
+
+    $certId = $user->getId() . '-' . date('YmdHis');
+
+    $qrText = "🏆 Certificat LearnFlexPlus\r\n" .
+          "🆔 ID: $certId\r\n" .
+          "👤 Nom: ".$user->getPrenom().' '.$user->getNom()."\r\n" .
+          "📚 Quiz: ".$quiz->getTitre()."\r\n" .
+          "✅ Score: $score/$totalQuestions";
+
+   
+$builder = new Builder(
+    writer: new PngWriter(),
+    data: $qrText,
+    size: 200,
+    margin: 10
+);
+
+$result = $builder->build();
+
+$qrCodeBase64 = base64_encode($result->getString());
+
     $html = $this->renderView('front/quiz_certificate_pdf.html.twig', [
         'quizTitre' => $quiz->getTitre(),
         'score' => $score,
         'totalQuestions' => $totalQuestions,
-        'quizId' => $quiz->getId()
+        'qrCode' => $qrCodeBase64,
+        'certId' => $certId
     ]);
 
-    $options = new \Dompdf\Options();
-    $options->set('defaultFont', 'Poppins');
-    $dompdf = new \Dompdf\Dompdf($options);
+    $options = new Options();
+    $options->set('defaultFont', 'DejaVu Sans');
+    $options->setIsRemoteEnabled(true);
+
+    $dompdf = new Dompdf($options);
     $dompdf->loadHtml($html);
-    $dompdf->setPaper('A4', 'portrait');
+    $dompdf->setPaper('A4', 'landscape');
     $dompdf->render();
 
     return new Response($dompdf->output(), 200, [
@@ -364,7 +396,5 @@ public function downloadCertificate(int $quizId, QuizRepository $quizRepository,
         'Content-Disposition' => 'attachment; filename="certificat_quiz.pdf"'
     ]);
 }
-
-
 
 }
