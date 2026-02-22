@@ -13,11 +13,16 @@
             Recommencer le Quiz
         </a>
 
-        <!-- Bouton pour obtenir le certificat -->
-        <a href="{{ path('quiz_certificate', {'quizId': lastQuizId}) }}" class="btn btn-success" style="margin-top: 15px;">
-            🎓 Obtenir mon certificat
-        </a>
+        <!-- Bouton pour obtenir le certificat uniquement si score >= 50% -->
+        {% if scoreFinal / totalQuestions >= 0.5 %}
+            <a href="{{ path('quiz_certificate', {'quizId': lastQuizId}) }}" class="btn btn-success" style="margin-top: 15px;">
+                🎓 Obtenir mon certificat
+            </a>
+        {% else %}
+            <span class="btn btn-secondary" style="margin-top: 15px; cursor: not-allowed;">
+                🎓 Score insuffisant pour le certificat
+            </span>
+        {% endif %}
     </div>
 </main>
-
 {% endblock %}

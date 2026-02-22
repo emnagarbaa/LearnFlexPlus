@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Repository\ResultatRepository;
 use Doctrine\ORM\Mapping as ORM;
+use App\Entity\Users; // 🔹 CORRECT
 
 #[ORM\Entity(repositoryClass: ResultatRepository::class)]
 class Resultat
@@ -13,10 +14,10 @@ class Resultat
     #[ORM\Column]
     private ?int $id = null;
 
-    // Relation ManyToOne vers User
-    #[ORM\ManyToOne(targetEntity: User::class)]
+    // Relation ManyToOne vers Users
+    #[ORM\ManyToOne(targetEntity: Users::class)]
     #[ORM\JoinColumn(nullable: false)]
-    private ?User $user = null;
+    private ?Users $user = null;
 
     // Relation ManyToOne vers Quiz
     #[ORM\ManyToOne(targetEntity: Quiz::class)]
@@ -33,12 +34,12 @@ class Resultat
         return $this->id;
     }
 
-    public function getUser(): ?User
+    public function getUser(): ?Users
     {
         return $this->user;
     }
 
-    public function setUser(User $user): static
+    public function setUser(Users $user): static
     {
         $this->user = $user;
         return $this;
