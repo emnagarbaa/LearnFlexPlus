@@ -1,0 +1,478 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Météo - LearnFlex+{% endblock %}
+
+{% block stylesheets %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    padding: 2rem;
+}
+
+.weather-container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* ===== HEADER ===== */
+.weather-header {
+    text-align: center;
+    color: white;
+    margin-bottom: 2rem;
+}
+
+.weather-header h1 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+.weather-header p {
+    font-size: 1.1rem;
+    opacity: 0.9;
+}
+
+/* ===== SEARCH BAR ===== */
+.search-container {
+    max-width: 600px;
+    margin: 0 auto 2rem;
+}
+
+.search-form {
+    display: flex;
+    gap: 1rem;
+}
+
+.search-input {
+    flex: 1;
+    padding: 1rem 1.5rem;
+    border: none;
+    border-radius: 50px;
+    font-size: 1rem;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+}
+
+.search-input:focus {
+    outline: none;
+    box-shadow: 0 6px 30px rgba(0,0,0,0.3);
+}
+
+.search-btn {
+    padding: 1rem 2rem;
+    background: white;
+    color: #667eea;
+    border: none;
+    border-radius: 50px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+}
+
+.search-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 30px rgba(0,0,0,0.3);
+}
+
+/* ===== CURRENT WEATHER CARD ===== */
+.current-weather {
+    background: white;
+    border-radius: 30px;
+    padding: 3rem;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+    margin-bottom: 2rem;
+    text-align: center;
+}
+
+.city-name {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #1e293b;
+    margin-bottom: 0.5rem;
+}
+
+.city-country {
+    font-size: 1.2rem;
+    color: #64748b;
+    margin-bottom: 2rem;
+}
+
+.weather-main {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 2rem;
+    margin-bottom: 2rem;
+}
+
+.weather-icon {
+    width: 150px;
+    height: 150px;
+}
+
+.temperature {
+    font-size: 5rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.weather-description {
+    font-size: 1.5rem;
+    color: #64748b;
+    text-transform: capitalize;
+}
+
+/* ===== WEATHER DETAILS ===== */
+.weather-details {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1.5rem;
+    margin-top: 2rem;
+}
+
+.detail-item {
+    background: #f8f9fa;
+    padding: 1.5rem;
+    border-radius: 16px;
+    text-align: center;
+}
+
+.detail-icon {
+    font-size: 2rem;
+    color: #667eea;
+    margin-bottom: 0.5rem;
+}
+
+.detail-label {
+    font-size: 0.85rem;
+    color: #94a3b8;
+    text-transform: uppercase;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+.detail-value {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #1e293b;
+}
+
+/* ===== FORECAST ===== */
+.forecast-section {
+    margin-top: 2rem;
+}
+
+.forecast-title {
+    color: white;
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    text-align: center;
+}
+
+.forecast-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+}
+
+.forecast-card {
+    background: white;
+    border-radius: 20px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+    text-align: center;
+}
+
+.forecast-day {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #1e293b;
+    margin-bottom: 1rem;
+}
+
+.forecast-icon {
+    width: 80px;
+    height: 80px;
+    margin: 0 auto;
+}
+
+.forecast-temp {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #667eea;
+    margin: 1rem 0;
+}
+
+.forecast-desc {
+    font-size: 0.9rem;
+    color: #64748b;
+}
+
+/* ===== LOADING ===== */
+.loading {
+    display: none;
+    text-align: center;
+    padding: 2rem;
+}
+
+.loading.active {
+    display: block;
+}
+
+.spinner {
+    width: 60px;
+    height: 60px;
+    border: 6px solid rgba(255,255,255,0.3);
+    border-top-color: white;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 1rem;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+.loading-text {
+    color: white;
+    font-size: 1.2rem;
+}
+
+/* ===== ERROR ===== */
+.error-message {
+    background: #fee2e2;
+    color: #991b1b;
+    padding: 1rem 1.5rem;
+    border-radius: 12px;
+    margin-bottom: 1rem;
+    text-align: center;
+    display: none;
+}
+
+.error-message.active {
+    display: block;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+    .weather-header h1 { font-size: 2rem; }
+    .temperature { font-size: 3.5rem; }
+    .weather-main { flex-direction: column; }
+    .forecast-container { grid-template-columns: 1fr; }
+}
+</style>
+{% endblock %}
+
+{% block body %}
+<div class="weather-container">
+    <div class="weather-header">
+        <h1>
+            <i class="fas fa-cloud-sun"></i>
+            Météo en Temps Réel
+        </h1>
+        <p>Propulsé par OpenWeatherMap</p>
+    </div>
+
+    <!-- SEARCH -->
+    <div class="search-container">
+        <form class="search-form" id="searchForm">
+            <input 
+                type="text" 
+                class="search-input" 
+                id="cityInput" 
+                placeholder="Entrez une ville (ex: Paris, London, Tokyo...)"
+                required
+            >
+            <button type="submit" class="search-btn">
+                <i class="fas fa-search"></i>
+                Rechercher
+            </button>
+        </form>
+    </div>
+
+    <!-- ERROR MESSAGE -->
+    <div class="error-message" id="errorMessage"></div>
+
+    <!-- LOADING -->
+    <div class="loading" id="loading">
+        <div class="spinner"></div>
+        <p class="loading-text">Chargement de la météo...</p>
+    </div>
+
+    <!-- CURRENT WEATHER -->
+    <div class="current-weather" id="currentWeather" style="display: none;">
+        <h2 class="city-name" id="cityName">--</h2>
+        <p class="city-country" id="cityCountry">--</p>
+
+        <div class="weather-main">
+            <img class="weather-icon" id="weatherIcon" src="" alt="Weather Icon">
+            <div>
+                <div class="temperature" id="temperature">--°C</div>
+                <p class="weather-description" id="weatherDescription">--</p>
+            </div>
+        </div>
+
+        <div class="weather-details">
+            <div class="detail-item">
+                <div class="detail-icon"><i class="fas fa-temperature-high"></i></div>
+                <div class="detail-label">Ressenti</div>
+                <div class="detail-value" id="feelsLike">--°C</div>
+            </div>
+
+            <div class="detail-item">
+                <div class="detail-icon"><i class="fas fa-tint"></i></div>
+                <div class="detail-label">Humidité</div>
+                <div class="detail-value" id="humidity">--%</div>
+            </div>
+
+            <div class="detail-item">
+                <div class="detail-icon"><i class="fas fa-wind"></i></div>
+                <div class="detail-label">Vent</div>
+                <div class="detail-value" id="windSpeed">-- km/h</div>
+            </div>
+
+            <div class="detail-item">
+                <div class="detail-icon"><i class="fas fa-compress-arrows-alt"></i></div>
+                <div class="detail-label">Pression</div>
+                <div class="detail-value" id="pressure">-- hPa</div>
+            </div>
+
+            <div class="detail-item">
+                <div class="detail-icon"><i class="fas fa-sun"></i></div>
+                <div class="detail-label">Lever du soleil</div>
+                <div class="detail-value" id="sunrise">--:--</div>
+            </div>
+
+            <div class="detail-item">
+                <div class="detail-icon"><i class="fas fa-moon"></i></div>
+                <div class="detail-label">Coucher du soleil</div>
+                <div class="detail-value" id="sunset">--:--</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- FORECAST -->
+    <div class="forecast-section" id="forecastSection" style="display: none;">
+        <h3 class="forecast-title">
+            <i class="fas fa-calendar-alt"></i>
+            Prévisions sur 5 jours
+        </h3>
+        <div class="forecast-container" id="forecastContainer"></div>
+    </div>
+</div>
+{% endblock %}
+
+{% block javascripts %}
+<script>
+const searchForm = document.getElementById('searchForm');
+const cityInput = document.getElementById('cityInput');
+const loading = document.getElementById('loading');
+const errorMessage = document.getElementById('errorMessage');
+const currentWeather = document.getElementById('currentWeather');
+const forecastSection = document.getElementById('forecastSection');
+
+// Charger Tunis par défaut au démarrage
+window.addEventListener('load', () => {
+    getWeather('Tunis');
+});
+
+// Recherche
+searchForm.addEventListener('submit', function(e) {
+    e.preventDefault();
+    const city = cityInput.value.trim();
+    if (city) {
+        getWeather(city);
+    }
+});
+
+// Récupérer la météo actuelle
+async function getWeather(city) {
+    loading.classList.add('active');
+    currentWeather.style.display = 'none';
+    forecastSection.style.display = 'none';
+    errorMessage.classList.remove('active');
+
+    try {
+        const response = await fetch(`/weather/api?city=${encodeURIComponent(city)}`);
+        const data = await response.json();
+
+        if (data.error) {
+            throw new Error(data.message);
+        }
+
+        // Afficher les données
+        document.getElementById('cityName').textContent = data.city;
+        document.getElementById('cityCountry').textContent = data.country;
+        document.getElementById('temperature').textContent = data.temp + '°C';
+        document.getElementById('weatherDescription').textContent = data.description;
+        document.getElementById('weatherIcon').src = `https://openweathermap.org/img/wn/${data.icon}@4x.png`;
+        document.getElementById('feelsLike').textContent = data.feels_like + '°C';
+        document.getElementById('humidity').textContent = data.humidity + '%';
+        document.getElementById('windSpeed').textContent = data.wind_speed + ' km/h';
+        document.getElementById('pressure').textContent = data.pressure + ' hPa';
+        document.getElementById('sunrise').textContent = data.sunrise;
+        document.getElementById('sunset').textContent = data.sunset;
+
+        currentWeather.style.display = 'block';
+
+        // Charger les prévisions
+        getForecast(city);
+
+    } catch (error) {
+        errorMessage.textContent = error.message;
+        errorMessage.classList.add('active');
+    } finally {
+        loading.classList.remove('active');
+    }
+}
+
+// Récupérer les prévisions
+async function getForecast(city) {
+    try {
+        const response = await fetch(`/weather/forecast?city=${encodeURIComponent(city)}`);
+        const data = await response.json();
+
+        if (data.error) {
+            return;
+        }
+
+        const forecastContainer = document.getElementById('forecastContainer');
+        forecastContainer.innerHTML = '';
+
+        // Afficher les 5 premiers jours
+        data.forecast.slice(0, 5).forEach(day => {
+            const avgTemp = Math.round(
+                day.temps.reduce((sum, t) => sum + t.temp, 0) / day.temps.length
+            );
+
+            const card = document.createElement('div');
+            card.className = 'forecast-card';
+            card.innerHTML = `
+                <div class="forecast-day">${day.day}</div>
+                <img class="forecast-icon" src="https://openweathermap.org/img/wn/${day.temps[0].icon}@2x.png" alt="">
+                <div class="forecast-temp">${avgTemp}°C</div>
+                <div class="forecast-desc">${day.temps[0].description}</div>
+            `;
+            forecastContainer.appendChild(card);
+        });
+
+        forecastSection.style.display = 'block';
+
+    } catch (error) {
+        console.error('Erreur prévisions:', error);
+    }
+}
+</script>
+{% endblock %}

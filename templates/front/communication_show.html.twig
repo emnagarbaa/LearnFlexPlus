@@ -1,0 +1,802 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ communication.descriptionDetaillee|default('Communication') }} - LearnFlex+{% endblock %}
+
+{% block stylesheets %}
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        font-family: 'Inter', sans-serif;
+        background: linear-gradient(135deg, #f5f7fa 0%, #e4e9f2 100%);
+        min-height: 100vh;
+    }
+
+    /* ===== HEADER ===== */
+    .landing-header {
+        background: white;
+        padding: 1rem 0;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+    }
+
+    .landing-header .container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 0 2rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .header-left {
+        display: flex;
+        align-items: center;
+    }
+
+    .logo {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        text-decoration: none;
+    }
+
+    .main-logo {
+        height: 45px;
+        width: auto;
+    }
+
+    .logo-text {
+        font-size: 1.5rem;
+        font-weight: 700;
+        background: linear-gradient(135deg, #2563eb 0%, #7c3aed 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    .main-nav ul {
+        display: flex;
+        list-style: none;
+        gap: 2rem;
+        align-items: center;
+    }
+
+    .main-nav ul li a {
+        color: #64748b;
+        text-decoration: none;
+        font-weight: 500;
+        transition: color 0.3s;
+        position: relative;
+    }
+
+    .main-nav ul li a:hover,
+    .main-nav ul li.active a {
+        color: #2563eb;
+    }
+
+    .dropdown {
+        position: relative;
+    }
+
+    .dropdown-toggle {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .dropdown-toggle i {
+        font-size: 0.75rem;
+        transition: transform 0.3s;
+    }
+
+    .dropdown:hover .dropdown-toggle i {
+        transform: rotate(180deg);
+    }
+
+    .dropdown-menu {
+        position: absolute;
+        top: 100%;
+        left: 50%;
+        transform: translateX(-50%);
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+        padding: 0.5rem 0;
+        min-width: 220px;
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.3s;
+        margin-top: 1rem;
+        z-index: 1000;
+    }
+
+    .dropdown:hover .dropdown-menu {
+        opacity: 1;
+        visibility: visible;
+        margin-top: 0.5rem;
+    }
+
+    .dropdown-menu li {
+        list-style: none;
+    }
+
+    .dropdown-menu li a {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 0.75rem 1.25rem;
+        color: #475569;
+        transition: all 0.2s;
+    }
+
+    .dropdown-menu li a:hover {
+        background: linear-gradient(135deg, #e0e7ff 0%, #f3e8ff 100%);
+        color: #2563eb;
+    }
+
+    .dropdown-menu::before {
+        content: '';
+        position: absolute;
+        top: -8px;
+        left: 50%;
+        transform: translateX(-50%);
+        border-left: 8px solid transparent;
+        border-right: 8px solid transparent;
+        border-bottom: 8px solid white;
+    }
+
+    .header-right {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .btn {
+        padding: 0.75rem 1.5rem;
+        border-radius: 50px;
+        text-decoration: none;
+        font-weight: 600;
+        transition: all 0.3s;
+        border: none;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .btn-primary {
+        background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+        color: white;
+    }
+
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 20px rgba(37, 99, 235, 0.3);
+    }
+
+    .btn-outline {
+        background: transparent;
+        color: #2563eb;
+        border: 2px solid #2563eb;
+    }
+
+    .btn-outline:hover {
+        background: #2563eb;
+        color: white;
+    }
+
+    /* ===== COMMUNICATION DETAIL ===== */
+    .comm-detail-container {
+        max-width: 900px;
+        margin: 3rem auto;
+        padding: 0 2rem;
+    }
+
+    .back-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: #64748b;
+        text-decoration: none;
+        font-weight: 500;
+        margin-bottom: 2rem;
+        transition: all 0.3s;
+    }
+
+    .back-link:hover {
+        color: #2563eb;
+        transform: translateX(-5px);
+    }
+
+    .comm-detail-card {
+        background: white;
+        border-radius: 24px;
+        padding: 3rem;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+        animation: fadeInUp 0.6s;
+    }
+
+    .comm-title {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #1e293b;
+        margin-bottom: 1.5rem;
+        line-height: 1.3;
+    }
+
+    .comm-badges {
+        display: flex;
+        gap: 0.75rem;
+        margin-bottom: 2rem;
+        flex-wrap: wrap;
+    }
+
+    .badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        font-size: 0.875rem;
+        font-weight: 600;
+    }
+
+    .badge-live {
+        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        color: white;
+    }
+
+    .badge-record {
+        background: #fef3c7;
+        color: #92400e;
+    }
+
+    .badge-termine {
+        background: #e0e7ff;
+        color: #1e40af;
+    }
+
+    .badge-duration {
+        background: #f1f5f9;
+        color: #475569;
+    }
+
+    .comm-section {
+        margin-bottom: 2.5rem;
+        padding-bottom: 2.5rem;
+        border-bottom: 1px solid #f1f5f9;
+    }
+
+    .comm-section:last-child {
+        border-bottom: none;
+        margin-bottom: 0;
+        padding-bottom: 0;
+    }
+
+    .section-title {
+        font-size: 1rem;
+        font-weight: 600;
+        color: #94a3b8;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .section-content {
+        font-size: 1.125rem;
+        color: #475569;
+        line-height: 1.8;
+    }
+
+    .date-display {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        font-size: 1.125rem;
+        color: #475569;
+    }
+
+    .link-box {
+        background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+        border: 2px solid #e0e7ff;
+        border-radius: 12px;
+        padding: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .link-input {
+        flex: 1;
+        background: white;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        padding: 0.75rem;
+        font-family: 'Courier New', monospace;
+        color: #2563eb;
+        font-size: 0.875rem;
+    }
+
+    .btn-copy {
+        background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+        color: white;
+        padding: 0.75rem 1.5rem;
+        border-radius: 8px;
+        border: none;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .btn-copy:hover {
+        box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+    }
+
+    .btn-join-large {
+        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        color: white;
+        padding: 1rem 2rem;
+        border-radius: 12px;
+        text-decoration: none;
+        font-weight: 700;
+        font-size: 1.125rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.75rem;
+        transition: all 0.3s;
+        margin-top: 1rem;
+    }
+
+    .btn-join-large:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 30px rgba(16, 185, 129, 0.3);
+    }
+
+    .publication-preview {
+        background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+        border-radius: 16px;
+        padding: 1.5rem;
+        margin-top: 1rem;
+    }
+
+    .publication-title {
+        font-weight: 600;
+        color: #1e293b;
+        font-size: 1.125rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .publication-category {
+        display: inline-block;
+        padding: 0.25rem 0.75rem;
+        border-radius: 12px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        background: #dbeafe;
+        color: #1e40af;
+        margin-bottom: 1rem;
+    }
+
+    .publication-description {
+        color: #64748b;
+        line-height: 1.6;
+        margin-bottom: 1rem;
+    }
+
+    .btn-view-publication {
+        color: #2563eb;
+        text-decoration: none;
+        font-weight: 600;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition: all 0.3s;
+    }
+
+    .btn-view-publication:hover {
+        gap: 0.75rem;
+    }
+
+    .info-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1.5rem;
+        margin-top: 1rem;
+    }
+
+    .info-item {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    .info-icon {
+        width: 40px;
+        height: 40px;
+        background: linear-gradient(135deg, #e0e7ff 0%, #f3e8ff 100%);
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #2563eb;
+    }
+
+    .info-text {
+        flex: 1;
+    }
+
+    .info-label {
+        font-size: 0.75rem;
+        color: #94a3b8;
+        font-weight: 600;
+        text-transform: uppercase;
+    }
+
+    .info-value {
+        font-size: 1rem;
+        color: #1e293b;
+        font-weight: 600;
+    }
+
+    /* ===== OUTILS RAPIDES ===== */
+    .quick-tools {
+        max-width: 1400px;
+        margin: 3rem auto;
+        padding: 0 2rem;
+        animation: fadeInUp 0.8s ease;
+    }
+    .tool-card {
+        border: none;
+        border-radius: 20px;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        color: #333;
+        background: white;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+        height: 100%;
+        text-decoration: none;
+        display: block;
+    }
+    .tool-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 20px 30px rgba(0,0,0,0.1);
+    }
+    .tool-icon {
+        color: #2563eb;
+    }
+    .chatbot-card .tool-icon { color: #10b981; }
+    .weather-card .tool-icon { color: #f59e0b; }
+    .map-card .tool-icon { color: #ef4444; }
+    .translate-card .tool-icon { color: #8b5cf6; }
+    .tool-card h3 {
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+        color: #1e293b;
+    }
+    .tool-card p {
+        color: #64748b;
+        margin-bottom: 1rem;
+    }
+    .tool-card .btn {
+        border-radius: 50px;
+        padding: 0.5rem 1.5rem;
+        font-weight: 600;
+        background: linear-gradient(135deg, #2563eb 0%, #7c3aed 100%);
+        border: none;
+        transition: all 0.3s;
+        color: white;
+        display: inline-block;
+    }
+    .tool-card .btn:hover {
+        transform: scale(1.05);
+        box-shadow: 0 10px 20px rgba(37,99,235,0.3);
+    }
+
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+</style>
+{% endblock %}
+
+{% block body %}
+<!-- Header Navigation -->
+<header class="landing-header">
+    <div class="container">
+        <div class="header-left">
+            <div class="logo">
+                <img src="{{ asset('assets/images/logo1.png') }}" alt="Learnflexplus Logo" class="main-logo">
+                <span class="logo-text">LearnFlex +</span>
+            </div>
+        </div>
+        <nav class="main-nav">
+            <ul>
+                <li><a href="{{ path('app_front') }}">Accueil</a></li>
+                <li><a href="#">Contenus pédagogiques</a></li>
+                <li><a href="#">Evaluation</a></li>
+                <li><a href="#">Questionnaire</a></li>
+                <li><a href="#">Orientation</a></li>
+                
+                <li class="dropdown active">
+                    <a href="{{ path('forum_index') }}" class="dropdown-toggle">
+                        Forum
+                        <i class="fas fa-chevron-down"></i>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a href="{{ path('forum_index') }}">
+                            <i class="fas fa-comments"></i>
+                            Discussions
+                        </a></li>
+                        <li><a href="{{ path('communication_chat') }}">
+                            <i class="fas fa-message"></i>
+                            Chat en direct
+                        </a></li>
+                        <li><a href="{{ path('forum_communication_index') }}">
+                            <i class="fas fa-bell"></i>
+                            Communications
+                        </a></li>
+                    </ul>
+                </li>
+            </ul>
+        </nav>
+          <div class="header-right">
+            {# Dashboard button now optional, you can even remove it if logo is enough #}
+            {% if app.user and ('ROLE_ADMIN' in app.user.roles or 'ROLE_ENSEIGNANT' in app.user.roles) %}
+                <a href="{{ path('dashboard') }}" class="btn btn-outline dashboard-btn">Dashboard</a>
+            {% endif %}
+
+            {# Logout for logged-in users #}
+            {% if app.user %}
+                <form action="{{ path('app_logout') }}" method="post" style="display:inline;">
+                    <button type="submit" class="btn btn-primary logout-btn">Déconnexion</button>
+                </form>
+            {% else %}
+                <a href="{{ path('app_login') }}" class="btn btn-primary">Connexion</a>
+            {% endif %}
+
+            <button class="mobile-menu-btn">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+    </div>
+</header>
+
+<!-- Communication Detail -->
+<div class="comm-detail-container">
+    <a href="{{ path('communication_chat') }}" class="back-link">
+        <i class="fas fa-arrow-left"></i>
+        Retour au chat
+    </a>
+
+    <div class="comm-detail-card">
+        <!-- Title -->
+        <h1 class="comm-title">{{ communication.descriptionDetaillee|default('Communication sans titre') }}</h1>
+
+        <!-- Badges -->
+        <div class="comm-badges">
+            <span class="badge {% if communication.type == 'live' %}badge-live{% else %}badge-record{% endif %}">
+                <i class="fas fa-{% if communication.type == 'live' %}video{% else %}film{% endif %}"></i>
+                {{ communication.type == 'live' ? 'En direct' : 'Enregistrement' }}
+            </span>
+            
+            <span class="badge {% if communication.etat == 'en_cours' %}badge-live{% else %}badge-termine{% endif %}">
+                {{ communication.etat == 'en_cours' ? 'En cours' : 'Terminé' }}
+            </span>
+            
+            {% if communication.duree %}
+                <span class="badge badge-duration">
+                    <i class="far fa-clock"></i>
+                    {{ communication.duree }} minutes
+                </span>
+            {% endif %}
+        </div>
+
+        <!-- Date et heure -->
+        <div class="comm-section">
+            <div class="section-title">
+                <i class="far fa-calendar"></i>
+                Date et heure
+            </div>
+            <div class="date-display">
+                <i class="fas fa-calendar-day"></i>
+                {{ communication.dateHeure|date('d/m/Y à H:i') }}
+            </div>
+        </div>
+
+        <!-- Lien de participation -->
+        {% if communication.lien %}
+        <div class="comm-section">
+            <div class="section-title">
+                <i class="fas fa-link"></i>
+                Lien de participation
+            </div>
+            <div class="link-box">
+                <input type="text" class="link-input" value="{{ communication.lien }}" readonly id="linkInput">
+                <button class="btn-copy" onclick="copyLink()">
+                    <i class="fas fa-copy"></i>
+                    Copier
+                </button>
+            </div>
+            
+            {% if communication.etat == 'en_cours' %}
+                <a href="{{ path('forum_communication_join', {id: communication.id}) }}" class="btn-join-large">
+                    <i class="fas fa-video"></i>
+                    Rejoindre la communication
+                </a>
+            {% endif %}
+        </div>
+        {% endif %}
+
+        <!-- Publication liée -->
+        {% if communication.publication %}
+        <div class="comm-section">
+            <div class="section-title">
+                <i class="fas fa-newspaper"></i>
+                Publication liée
+            </div>
+            <div class="publication-preview">
+                <h3 class="publication-title">{{ communication.publication.titre }}</h3>
+                <span class="publication-category">{{ communication.publication.categorie }}</span>
+                <p class="publication-description">
+                    {{ communication.publication.description|slice(0, 200) }}...
+                </p>
+                <a href="{{ path('forum_publication_show', {id: communication.publication.id}) }}" class="btn-view-publication">
+                    Voir la publication complète
+                    <i class="fas fa-arrow-right"></i>
+                </a>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Détails / Informations -->
+        <div class="comm-section">
+            <div class="section-title">
+                <i class="fas fa-info-circle"></i>
+                Détails
+            </div>
+            <div class="section-content">
+                {{ communication.descriptionDetaillee }}
+            </div>
+        </div>
+
+        <!-- Informations supplémentaires -->
+        <div class="info-grid">
+            <div class="info-item">
+                <div class="info-icon">
+                    <i class="fas fa-tag"></i>
+                </div>
+                <div class="info-text">
+                    <div class="info-label">Type</div>
+                    <div class="info-value">{{ communication.type == 'live' ? 'En direct' : 'Enregistrement' }}</div>
+                </div>
+            </div>
+
+            <div class="info-item">
+                <div class="info-icon">
+                    <i class="fas fa-signal"></i>
+                </div>
+                <div class="info-text">
+                    <div class="info-label">État</div>
+                    <div class="info-value">{{ communication.etat == 'en_cours' ? 'En cours' : 'Terminé' }}</div>
+                </div>
+            </div>
+
+            {% if communication.duree %}
+            <div class="info-item">
+                <div class="info-icon">
+                    <i class="far fa-clock"></i>
+                </div>
+                <div class="info-text">
+                    <div class="info-label">Durée</div>
+                    <div class="info-value">{{ communication.duree }} min</div>
+                </div>
+            </div>
+            {% endif %}
+
+            <div class="info-item">
+                <div class="info-icon">
+                    <i class="fas fa-calendar"></i>
+                </div>
+                <div class="info-text">
+                    <div class="info-label">Date</div>
+                    <div class="info-value">{{ communication.dateHeure|date('d/m/Y') }}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- OUTILS RAPIDES -->
+<div class="quick-tools">
+    <h2 class="text-center mb-4">Nos outils</h2>
+    <div class="row g-4">
+        <div class="col-md-3">
+            <a href="{{ path('app_chatbot') }}" class="text-decoration-none">
+                <div class="card tool-card chatbot-card text-center p-4">
+                    <div class="tool-icon mb-3">
+                        <i class="fas fa-robot fa-3x"></i>
+                    </div>
+                    <h3>Chatbot</h3>
+                    <p>Posez vos questions à notre assistant intelligent</p>
+                    <span class="btn btn-primary mt-2">Discuter</span>
+                </div>
+            </a>
+        </div>
+        <div class="col-md-3">
+            <a href="{{ path('app_weather') }}" class="text-decoration-none">
+                <div class="card tool-card weather-card text-center p-4">
+                    <div class="tool-icon mb-3">
+                        <i class="fas fa-cloud-sun fa-3x"></i>
+                    </div>
+                    <h3>Météo</h3>
+                    <p>Consultez la météo en temps réel</p>
+                    <span class="btn btn-primary mt-2">Voir la météo</span>
+                </div>
+            </a>
+        </div>
+        <div class="col-md-3">
+            <a href="{{ path('app_map') }}" class="text-decoration-none">
+                <div class="card tool-card map-card text-center p-4">
+                    <div class="tool-icon mb-3">
+                        <i class="fas fa-map-marked-alt fa-3x"></i>
+                    </div>
+                    <h3>Carte</h3>
+                    <p>Explorez notre carte interactive</p>
+                    <span class="btn btn-primary mt-2">Ouvrir la carte</span>
+                </div>
+            </a>
+        </div>
+        <div class="col-md-3">
+            <a href="{{ path('app_translate') }}" class="text-decoration-none">
+                <div class="card tool-card translate-card text-center p-4">
+                    <div class="tool-icon mb-3">
+                        <i class="fas fa-language fa-3x"></i>
+                    </div>
+                    <h3>Traduction</h3>
+                    <p>Traduisez vos textes instantanément</p>
+                    <span class="btn btn-primary mt-2">Traduire</span>
+                </div>
+            </a>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block javascripts %}
+<script>
+function copyLink() {
+    const input = document.getElementById('linkInput');
+    input.select();
+    document.execCommand('copy');
+    
+    const btn = event.target.closest('.btn-copy');
+    const originalText = btn.innerHTML;
+    btn.innerHTML = '<i class="fas fa-check"></i> Copié !';
+    
+    setTimeout(() => {
+        btn.innerHTML = originalText;
+    }, 2000);
+}
+</script>
+{% endblock %}

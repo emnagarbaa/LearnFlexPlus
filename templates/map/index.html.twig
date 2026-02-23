@@ -1,0 +1,456 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Géolocalisation - LearnFlex+{% endblock %}
+
+{% block stylesheets %}
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: #f8f9fa;
+    overflow: hidden;
+}
+
+.map-container {
+    display: flex;
+    height: 100vh;
+}
+
+/* ===== SIDEBAR ===== */
+.map-sidebar {
+    width: 350px;
+    background: white;
+    box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+    display: flex;
+    flex-direction: column;
+    z-index: 1000;
+}
+
+.sidebar-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 1.5rem;
+}
+
+.sidebar-header h2 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+.sidebar-header p {
+    font-size: 0.9rem;
+    opacity: 0.9;
+}
+
+.sidebar-content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 1.5rem;
+}
+
+.info-card {
+    background: #f8f9fa;
+    border-radius: 12px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+}
+
+.info-card h3 {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #1e293b;
+    margin-bottom: 0.75rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.info-card p {
+    font-size: 0.9rem;
+    color: #64748b;
+    line-height: 1.6;
+}
+
+.location-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.location-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem;
+    background: white;
+    border-radius: 8px;
+    border-left: 3px solid #667eea;
+}
+
+.location-icon {
+    width: 36px;
+    height: 36px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 0.9rem;
+}
+
+.location-details {
+    flex: 1;
+}
+
+.location-label {
+    font-size: 0.75rem;
+    color: #94a3b8;
+    font-weight: 500;
+}
+
+.location-value {
+    font-size: 0.95rem;
+    color: #1e293b;
+    font-weight: 600;
+}
+
+.btn-locate {
+    width: 100%;
+    padding: 0.875rem;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.btn-locate:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(102,126,234,0.4);
+}
+
+.btn-locate:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* ===== MAP ===== */
+.map-wrapper {
+    flex: 1;
+    position: relative;
+}
+
+#map {
+    width: 100%;
+    height: 100%;
+}
+
+.map-controls {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.control-btn {
+    width: 44px;
+    height: 44px;
+    background: white;
+    border: none;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    color: #667eea;
+    transition: all 0.3s;
+}
+
+.control-btn:hover {
+    background: #667eea;
+    color: white;
+    transform: scale(1.05);
+}
+
+/* ===== LOADING ===== */
+.loading {
+    display: none;
+    text-align: center;
+    padding: 1rem;
+    color: #667eea;
+}
+
+.loading.active {
+    display: block;
+}
+
+.spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid #e2e8f0;
+    border-top-color: #667eea;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 0.5rem;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+    .map-sidebar {
+        width: 100%;
+        max-height: 50vh;
+    }
+    
+    .map-container {
+        flex-direction: column;
+    }
+}
+</style>
+{% endblock %}
+
+{% block body %}
+<div class="map-container">
+    <!-- SIDEBAR -->
+    <aside class="map-sidebar">
+        <div class="sidebar-header">
+            <h2>
+                <i class="fas fa-map-marker-alt"></i>
+                Géolocalisation
+            </h2>
+            <p>OpenStreetMap + Leaflet.js</p>
+        </div>
+        
+        <div class="sidebar-content">
+            <button class="btn-locate" id="locateBtn">
+                <i class="fas fa-crosshairs"></i>
+                Me localiser
+            </button>
+            
+            <div class="loading" id="loading">
+                <div class="spinner"></div>
+                <p>Localisation en cours...</p>
+            </div>
+            
+            <div class="info-card">
+                <h3>
+                    <i class="fas fa-info-circle"></i>
+                    Vos coordonnées
+                </h3>
+                <div class="location-info" id="locationInfo">
+                    <div class="location-item">
+                        <div class="location-icon">
+                            <i class="fas fa-crosshairs"></i>
+                        </div>
+                        <div class="location-details">
+                            <div class="location-label">Latitude</div>
+                            <div class="location-value" id="latitude">--</div>
+                        </div>
+                    </div>
+                    
+                    <div class="location-item">
+                        <div class="location-icon">
+                            <i class="fas fa-crosshairs"></i>
+                        </div>
+                        <div class="location-details">
+                            <div class="location-label">Longitude</div>
+                            <div class="location-value" id="longitude">--</div>
+                        </div>
+                    </div>
+                    
+                    <div class="location-item">
+                        <div class="location-icon">
+                            <i class="fas fa-map-pin"></i>
+                        </div>
+                        <div class="location-details">
+                            <div class="location-label">Adresse</div>
+                            <div class="location-value" id="address">Cliquez sur "Me localiser"</div>
+                        </div>
+                    </div>
+                    
+                    <div class="location-item">
+                        <div class="location-icon">
+                            <i class="fas fa-bullseye"></i>
+                        </div>
+                        <div class="location-details">
+                            <div class="location-label">Précision</div>
+                            <div class="location-value" id="accuracy">--</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="info-card">
+                <h3>
+                    <i class="fas fa-lightbulb"></i>
+                    Fonctionnalités
+                </h3>
+                <p>
+                    ✅ Géolocalisation GPS en temps réel<br>
+                    ✅ Affichage sur carte OpenStreetMap<br>
+                    ✅ Récupération de l'adresse<br>
+                    ✅ Marqueur personnalisé<br>
+                    ✅ Zoom et navigation
+                </p>
+            </div>
+        </div>
+    </aside>
+    
+    <!-- MAP -->
+    <div class="map-wrapper">
+        <div id="map"></div>
+        
+        <div class="map-controls">
+            <button class="control-btn" id="zoomIn" title="Zoom +">
+                <i class="fas fa-plus"></i>
+            </button>
+            <button class="control-btn" id="zoomOut" title="Zoom -">
+                <i class="fas fa-minus"></i>
+            </button>
+            <button class="control-btn" id="fullscreen" title="Plein écran">
+                <i class="fas fa-expand"></i>
+            </button>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block javascripts %}
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+// ===== INITIALISATION DE LA CARTE =====
+const map = L.map('map').setView([36.8065, 10.1815], 13); // Tunis par défaut
+
+// Ajouter la couche OpenStreetMap
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 19,
+    attribution: '© OpenStreetMap contributors'
+}).addTo(map);
+
+let marker = null;
+let circle = null;
+
+// ===== BOUTON LOCALISATION =====
+document.getElementById('locateBtn').addEventListener('click', function() {
+    if (!navigator.geolocation) {
+        alert('La géolocalisation n\'est pas supportée par votre navigateur.');
+        return;
+    }
+    
+    const loading = document.getElementById('loading');
+    const btn = this;
+    
+    loading.classList.add('active');
+    btn.disabled = true;
+    
+    navigator.geolocation.getCurrentPosition(
+        // Succès
+        function(position) {
+            const lat = position.coords.latitude;
+            const lng = position.coords.longitude;
+            const accuracy = position.coords.accuracy;
+            
+            // Mettre à jour les coordonnées
+            document.getElementById('latitude').textContent = lat.toFixed(6);
+            document.getElementById('longitude').textContent = lng.toFixed(6);
+            document.getElementById('accuracy').textContent = accuracy.toFixed(0) + ' m';
+            
+            // Centrer la carte
+            map.setView([lat, lng], 16);
+            
+            // Supprimer ancien marqueur
+            if (marker) map.removeLayer(marker);
+            if (circle) map.removeLayer(circle);
+            
+            // Ajouter nouveau marqueur
+            marker = L.marker([lat, lng], {
+                icon: L.divIcon({
+                    className: 'custom-marker',
+                    html: '<div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); width: 30px; height: 30px; border-radius: 50%; border: 3px solid white; box-shadow: 0 2px 8px rgba(0,0,0,0.3);"></div>',
+                    iconSize: [30, 30]
+                })
+            }).addTo(map);
+            
+            // Ajouter cercle de précision
+            circle = L.circle([lat, lng], {
+                radius: accuracy,
+                color: '#667eea',
+                fillColor: '#667eea',
+                fillOpacity: 0.1
+            }).addTo(map);
+            
+            // Récupérer l'adresse (reverse geocoding)
+            fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=18&addressdetails=1`)
+                .then(response => response.json())
+                .then(data => {
+                    const address = data.display_name || 'Adresse non trouvée';
+                    document.getElementById('address').textContent = address;
+                })
+                .catch(() => {
+                    document.getElementById('address').textContent = 'Erreur de récupération';
+                });
+            
+            loading.classList.remove('active');
+            btn.disabled = false;
+        },
+        // Erreur
+        function(error) {
+            loading.classList.remove('active');
+            btn.disabled = false;
+            
+            let message = 'Erreur de géolocalisation';
+            switch(error.code) {
+                case error.PERMISSION_DENIED:
+                    message = 'Vous avez refusé la géolocalisation';
+                    break;
+                case error.POSITION_UNAVAILABLE:
+                    message = 'Position indisponible';
+                    break;
+                case error.TIMEOUT:
+                    message = 'Délai dépassé';
+                    break;
+            }
+            alert(message);
+        },
+        {
+            enableHighAccuracy: true,
+            timeout: 10000,
+            maximumAge: 0
+        }
+    );
+});
+
+// ===== CONTRÔLES =====
+document.getElementById('zoomIn').addEventListener('click', () => map.zoomIn());
+document.getElementById('zoomOut').addEventListener('click', () => map.zoomOut());
+document.getElementById('fullscreen').addEventListener('click', function() {
+    if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen();
+        this.innerHTML = '<i class="fas fa-compress"></i>';
+    } else {
+        document.exitFullscreen();
+        this.innerHTML = '<i class="fas fa-expand"></i>';
+    }
+});
+</script>
+{% endblock %}

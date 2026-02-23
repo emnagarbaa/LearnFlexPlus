@@ -1,0 +1,360 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Publication #{{ publication.id }}{% endblock %}
+
+{% block stylesheets %}
+<link rel="stylesheet" href="{{ asset('assets/css/styles.css') }}">
+<link rel="stylesheet" href="{{ asset('assets/css/dashboard.css') }}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+    /* Supprimez tous les anciens styles CSS et remplacez-les par ceux-ci */
+    .dashboard-content {
+        padding: 30px;
+    }
+
+    .detail-card {
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        overflow: hidden;
+    }
+    
+    .detail-header {
+        background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+        color: white;
+        padding: 1.5rem;
+    }
+    
+    .detail-body {
+        padding: 2rem;
+    }
+    
+    .info-card {
+        background: #f8f9fa;
+        border-radius: 8px;
+        padding: 1rem;
+        border: 1px solid #e9ecef;
+    }
+    
+    .description-box {
+        background: #f8f9fa;
+        border-radius: 8px;
+        padding: 1.5rem;
+        border: 1px solid #e9ecef;
+    }
+    
+    .stats-card {
+        text-align: center;
+        padding: 1rem;
+        border-radius: 8px;
+        background: white;
+        border: 1px solid #e9ecef;
+    }
+    
+    /* SIDEBAR BLEU COMME COMMUNICATION */
+    .sidebar {
+        background: #1e40af !important;
+        background: linear-gradient(180deg, #1e40af 0%, #1e3a8a 100%) !important;
+    }
+    
+    .sidebar-menu li a {
+        color: white !important;
+    }
+    
+    .sidebar-menu li.active a {
+        background: rgba(255, 255, 255, 0.15) !important;
+        border-left: 3px solid #60a5fa !important;
+    }
+    
+    .sidebar-menu li a:hover {
+        background: rgba(255, 255, 255, 0.1) !important;
+    }
+    
+    .sidebar-header .logo {
+        color: white !important;
+    }
+</style>
+{% endblock %}
+
+{% block body %}
+<div class="dashboard">
+    <!-- Sidebar comme communication -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <div class="logo">
+                <img src="{{ asset('assets/images/logo1.png') }}" alt="Learnflex+ Logo" class="nav-logo">
+                <span>LearnFlex</span><span class="highlight">+</span>
+            </div>
+            <button class="sidebar-toggle">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+        
+        <div class="sidebar-content">
+            <nav class="sidebar-menu">
+                <ul>
+                    <li class="{{ app.request.attributes.get('_route') == 'app_back' ? 'active' : '' }}">
+                        <a href="{{ path('app_back') }}">
+                            <i class="fas fa-tachometer-alt"></i>
+                            <span>Dashboard</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#">
+                            <i class="fas fa-users"></i>
+                            <span>Utilisateurs</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#">
+                            <i class="fas fa-book-open"></i>
+                            <span>Contenu pédagogique</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#">
+                            <i class="fas fa-graduation-cap"></i>
+                            <span>Evaluation</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#">
+                            <i class="fas fa-question-circle"></i>
+                            <span>Questionnaire</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#">
+                            <i class="fas fa-directions"></i>
+                            <span>Orientation</span>
+                        </a>
+                    </li>
+                    
+                    {# MENU FORUM AVEC SOUS-MENU #}
+                    {% set current_route = app.request.attributes.get('_route') %}
+                    {% set is_in_forum = 
+                        current_route starts with 'back_publication' or 
+                        current_route starts with 'back_communication' 
+                    %}
+                    
+                    <li class="has-submenu {% if is_in_forum %}open active{% endif %}">
+                        <a href="#" class="submenu-toggle">
+                            <i class="fas fa-comments"></i>
+                            <span>Forum</span>
+                            <i class="fas fa-chevron-right submenu-arrow"></i>
+                        </a>
+                        <ul class="submenu {% if is_in_forum %}show{% endif %}">
+                            <li class="{{ current_route starts with 'back_publication' ? 'active' : '' }}">
+                                <a href="{{ path('back_publication_index') }}">
+                                    <i class="fas fa-bullhorn"></i>
+                                    <span>Publication</span>
+                                </a>
+                            </li>
+                            <li class="{{ current_route starts with 'back_communication' ? 'active' : '' }}">
+                                <a href="{{ path('back_communication_index') }}">
+                                    <i class="fas fa-video"></i>
+                                    <span>Communication</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+        
+        <div class="sidebar-footer">
+            <a href="#" class="user-profile">
+                <img src="{{ asset('assets/images/placeholder-admin.png') }}" alt="Admin" class="user-img">
+                <div class="user-info">
+                    <h4>Admin User</h4>
+                    <p>Administrateur</p>
+                </div>
+            </a>
+            <a href="#" class="logout">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Déconnexion</span>
+            </a>
+        </div>
+    </aside>
+    
+    <!-- Main Content -->
+    <main class="main-content">
+        <header class="dashboard-header">
+            <div class="header-left">
+                <h1>Détails de la Publication</h1>
+                <p>Informations complètes sur la publication</p>
+            </div>
+            <div class="header-right">
+                <div class="search-bar">
+                    <input type="text" placeholder="Rechercher...">
+                    <button><i class="fas fa-search"></i></button>
+                </div>
+                <button class="notification-btn">
+                    <i class="fas fa-bell"></i>
+                    <span class="badge">3</span>
+                </button>
+            </div>
+        </header>
+        
+        <div class="dashboard-content">
+            <div class="detail-card">
+                <!-- Header -->
+                <div class="detail-header">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <h1 class="h3 mb-2">{{ publication.titre }}</h1>
+                            <p class="mb-0">Publication #{{ publication.id }}</p>
+                        </div>
+                        <div class="d-flex gap-2">
+                            <a href="{{ path('back_publication_edit', {id: publication.id}) }}" class="btn btn-warning">
+                                <i class="fas fa-edit"></i> Modifier
+                            </a>
+                            <a href="{{ path('back_publication_index') }}" class="btn btn-outline-secondary">
+                                <i class="fas fa-arrow-left"></i> Retour à la liste
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Body -->
+                <div class="detail-body">
+                    <!-- Description -->
+                    <div class="mb-4">
+                        <h3 class="h5 mb-3">Description</h3>
+                        <div class="description-box">
+                            {{ publication.description }}
+                        </div>
+                    </div>
+                    
+                    <!-- Informations -->
+                    <div class="row mb-4">
+                        <div class="col-md-3 mb-3">
+                            <div class="info-card h-100">
+                                <div class="text-muted small mb-2">ID</div>
+                                <div class="fw-bold">#{{ publication.id }}</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <div class="info-card h-100">
+                                <div class="text-muted small mb-2">Catégorie</div>
+                                <div class="fw-bold">
+                                    {% if publication.categorie == 'cours' %}
+                                        <span class="badge bg-primary">Cours</span>
+                                    {% elseif publication.categorie == 'question' or publication.categorie == 'question_examen' %}
+                                        <span class="badge bg-danger">Question</span>
+                                    {% else %}
+                                        <span class="badge bg-success">Discussion</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <div class="info-card h-100">
+                                <div class="text-muted small mb-2">Date de création</div>
+                                <div class="fw-bold">{{ publication.dateCreation|date('d/m/Y') }}</div>
+                                <small class="text-muted">{{ publication.dateCreation|date('H:i') }}</small>
+                            </div>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <div class="info-card h-100">
+                                <div class="text-muted small mb-2">Auteur</div>
+                                <div class="fw-bold">
+                                    {{ publication.auteur|default('Anonyme') }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Statistiques -->
+                    <div class="row mb-4">
+                        <div class="col-md-6 mb-3">
+                            <div class="stats-card">
+                                <i class="fas fa-eye text-primary fa-2x mb-2"></i>
+                                <div class="fs-3 fw-bold">{{ publication.nombreVues }}</div>
+                                <div class="text-muted">Vues</div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="stats-card">
+                                <i class="fas fa-heart text-danger fa-2x mb-2"></i>
+                                <div class="fs-3 fw-bold">{{ publication.nombreLikes }}</div>
+                                <div class="text-muted">Likes</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Actions -->
+                    <div class="d-flex justify-content-between mt-4">
+                        <a href="{{ path('back_publication_index') }}" class="btn btn-outline-secondary">
+                            <i class="fas fa-list"></i> Retour à la liste
+                        </a>
+                        <div class="d-flex gap-2">
+                            <a href="{{ path('back_publication_edit', {id: publication.id}) }}" class="btn btn-warning">
+                                <i class="fas fa-edit"></i> Modifier
+                            </a>
+                            <form method="post" action="{{ path('back_publication_delete', {id: publication.id}) }}" 
+                                  onsubmit="return confirm('Supprimer cette publication ?');" class="d-inline">
+                                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ publication.id) }}">
+                                <button type="submit" class="btn btn-danger">
+                                    <i class="fas fa-trash"></i> Supprimer
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+
+{% block javascripts %}
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const sidebarToggle = document.querySelector('.sidebar-toggle');
+    const sidebar = document.querySelector('.sidebar');
+    const mainContent = document.querySelector('.main-content');
+
+    if(sidebarToggle) {
+        sidebarToggle.addEventListener('click', function() {
+            sidebar.classList.toggle('collapsed');
+            mainContent.classList.toggle('expanded');
+        });
+    }
+    
+    // Gestion du sous-menu
+    const submenuToggle = document.querySelector('.submenu-toggle');
+    if(submenuToggle) {
+        submenuToggle.addEventListener('click', function(e) {
+            e.preventDefault();
+            const parent = this.closest('.has-submenu');
+            parent.classList.toggle('open');
+            
+            const submenu = parent.querySelector('.submenu');
+            if(submenu.classList.contains('show')) {
+                submenu.classList.remove('show');
+                submenu.style.maxHeight = '0';
+            } else {
+                submenu.classList.add('show');
+                submenu.style.maxHeight = submenu.scrollHeight + 'px';
+            }
+        });
+    }
+    
+    // Ouvrir automatiquement le sous-menu Forum si on est dans publication
+    if(window.location.pathname.includes('/back/publication')) {
+        const forumMenu = document.querySelector('.has-submenu');
+        if(forumMenu) {
+            forumMenu.classList.add('open', 'active');
+            const submenu = forumMenu.querySelector('.submenu');
+            if(submenu) {
+                submenu.classList.add('show');
+                submenu.style.maxHeight = '200px';
+                submenu.style.display = 'block';
+            }
+        }
+    }
+});
+</script>
+{% endblock %}
+{% endblock %}

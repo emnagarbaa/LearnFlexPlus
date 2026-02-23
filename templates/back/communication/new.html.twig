@@ -1,0 +1,251 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Nouvelle Communication{% endblock %}
+
+{% block body %}
+<div class="container-fluid py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white py-3">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">
+                            <i class="fas fa-plus me-2"></i>
+                            Nouvelle communication
+                        </h5>
+                        <a href="{{ path('back_communication_index') }}" class="btn btn-outline-secondary btn-sm">
+                            <i class="fas fa-arrow-left me-1"></i>Retour
+                        </a>
+                    </div>
+                </div>
+                
+                <!-- AJOUT DE LA NOTE EXPLICATIVE -->
+                <div class="card-body bg-light border-bottom">
+                    <div class="alert alert-info mb-0">
+                        <div class="d-flex">
+                            <div class="flex-shrink-0">
+                                <i class="fas fa-info-circle fa-2x"></i>
+                            </div>
+                            <div class="flex-grow-1 ms-3">
+                                
+                                <p class="mb-2">
+                                    <strong>Les communications que vous créez ici apparaîtront automatiquement dans le chat du forum !</strong>
+                                </p>
+                                <p class="mb-2">
+                                    Les utilisateurs pourront les voir dans : <br>
+                        
+                                </p>
+                                <hr class="my-2">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <strong><i class="fas fa-bullhorn text-primary"></i> Pour une annonce texte :</strong>
+                                        <ul class="mb-0 small">
+                                            <li><span class="badge bg-info">Type : Enregistré</span></li>
+                                            <li><span class="badge bg-secondary">Lien : Optionnel</span></li>
+                                            <li><span class="badge bg-success">État : Terminé</span></li>
+                                        </ul>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <strong><i class="fas fa-video text-danger"></i> Pour un live/visio :</strong>
+                                        <ul class="mb-0 small">
+                                            <li><span class="badge bg-danger">Type : En direct</span></li>
+                                            <li><span class="badge bg-primary">Lien : URL obligatoire</span></li>
+                                            <li><span class="badge bg-warning">État : Planifié ou En cours</span></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="mt-3">
+                                    <a href="{{ path('communication_chat') }}" target="_blank" class="btn btn-sm btn-outline-primary">
+                                        <i class="fas fa-external-link-alt me-1"></i> Voir le chat maintenant
+                                    </a>
+                                    <a href="{{ path('forum_index') }}" target="_blank" class="btn btn-sm btn-outline-secondary">
+                                        <i class="fas fa-comments me-1"></i> Aller au forum
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- FIN DE LA NOTE -->
+                
+                <div class="card-body">
+                    <form method="post" action="{{ path('back_communication_new') }}">
+                        <!-- AJOUT DU TOKEN CSRF -->
+                        <input type="hidden" name="_token" value="{{ csrf_token('communication_new') }}">
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">
+                                    <i class="fas fa-broadcast-tower me-1"></i>
+                                    Type *
+                                </label>
+                                <select name="type" class="form-select" required onchange="updateForm()" id="typeSelect">
+                                    <option value="">Choisir un type</option>
+                                    <option value="live">En direct (Visioconférence)</option>
+                                    <option value="record">Enregistré (Annonce texte)</option>
+                                </select>
+                                <small class="text-muted" id="typeHelp">
+                                    Sélectionnez le type de communication
+                                </small>
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">
+                                    <i class="fas fa-newspaper me-1"></i>
+                                    Publication *
+                                </label>
+                                <select name="publication" class="form-select" required>
+                                    <option value="">Choisir une publication</option>
+                                    {% for publication in publications %}
+                                    <option value="{{ publication.id }}">
+                                        {{ publication.titre|default(publication.title|default('Publication #' ~ publication.id))|slice(0, 50) }}
+                                        {% if publication.titre|default(publication.title|default(''))|length > 50 %}...{% endif %}
+                                    </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">
+                                    <i class="far fa-calendar-alt me-1"></i>
+                                    Date et heure *
+                                </label>
+                                <input type="datetime-local" name="dateHeure" class="form-control" required>
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">
+                                    <i class="far fa-clock me-1"></i>
+                                    Durée (minutes)
+                                </label>
+                                <input type="number" name="duree" class="form-control" min="1" placeholder="Ex: 60 pour 1 heure">
+                                <small class="text-muted">Laisser vide si non applicable</small>
+                            </div>
+                            
+                            <div class="col-md-12 mb-3">
+                                <label class="form-label">
+                                    <i class="fas fa-link me-1"></i>
+                                    Lien <span id="linkRequired" class="text-danger">*</span>
+                                </label>
+                                <input type="url" name="lien" class="form-control" placeholder="https://meet.google.com/... ou https://zoom.us/..." id="lienInput">
+                                <small class="text-muted" id="linkHelp">
+                                    URL de la visioconférence pour les communications en direct
+                                </small>
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">
+                                    <i class="fas fa-tasks me-1"></i>
+                                    État *
+                                </label>
+                                <select name="etat" class="form-select" required id="etatSelect">
+                                    <option value="planifie">Planifié</option>
+                                    <option value="en_cours">En cours</option>
+                                    <option value="termine">Terminé</option>
+                                    <option value="annule">Annulé</option>
+                                </select>
+                            </div>
+                            
+                            <div class="col-12 mb-3">
+                                <label class="form-label">
+                                    <i class="fas fa-align-left me-1"></i>
+                                    Description détaillée *
+                                </label>
+                                <textarea name="descriptionDetaillee" class="form-control" rows="4" 
+                                          placeholder="Description de la communication (sera visible dans le chat des utilisateurs)..." 
+                                          required></textarea>
+                                <small class="text-muted">
+                                    Cette description apparaîtra dans le chat du forum. Soyez clair et concis.
+                                </small>
+                            </div>
+                        </div>
+                        
+                        <div class="d-flex justify-content-between mt-4 pt-3 border-top">
+                            <a href="{{ path('back_communication_index') }}" class="btn btn-outline-secondary">
+                                <i class="fas fa-times me-1"></i> Annuler
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save me-2"></i>
+                                Créer la communication
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Script pour adapter le formulaire selon le type
+function updateForm() {
+    const typeSelect = document.getElementById('typeSelect');
+    const lienInput = document.getElementById('lienInput');
+    const linkRequired = document.getElementById('linkRequired');
+    const linkHelp = document.getElementById('linkHelp');
+    const etatSelect = document.getElementById('etatSelect');
+    const typeHelp = document.getElementById('typeHelp');
+    
+    if (typeSelect.value === 'live') {
+        // Mode "En direct" (visio)
+        lienInput.required = true;
+        linkRequired.style.display = 'inline';
+        linkHelp.textContent = 'URL de la visioconférence obligatoire (Google Meet, Zoom, etc.)';
+        typeHelp.innerHTML = '<span class="text-danger"><i class="fas fa-video"></i> Communication en direct avec lien de visioconférence</span>';
+        
+        // États suggérés pour live
+        etatSelect.innerHTML = `
+            <option value="planifie">Planifié</option>
+            <option value="en_cours" selected>En cours</option>
+            <option value="termine">Terminé</option>
+            <option value="annule">Annulé</option>
+        `;
+        
+    } else if (typeSelect.value === 'record') {
+        // Mode "Enregistré" (annonce texte)
+        lienInput.required = false;
+        linkRequired.style.display = 'none';
+        linkHelp.textContent = 'Optionnel - Lien vers une ressource complémentaire';
+        typeHelp.innerHTML = '<span class="text-info"><i class="fas fa-bullhorn"></i> Annonce texte qui apparaîtra dans le chat</span>';
+        
+        // États suggérés pour record
+        etatSelect.innerHTML = `
+            <option value="planifie">Planifié</option>
+            <option value="en_cours">En cours</option>
+            <option value="termine" selected>Terminé</option>
+            <option value="annule">Annulé</option>
+        `;
+    } else {
+        // Aucun type sélectionné
+        lienInput.required = false;
+        linkRequired.style.display = 'inline';
+        linkHelp.textContent = 'URL de la visioconférence pour les communications en direct';
+        typeHelp.textContent = 'Sélectionnez le type de communication';
+    }
+}
+
+// Initialiser au chargement
+document.addEventListener('DOMContentLoaded', function() {
+    updateForm();
+    
+    // Pré-remplir la date avec maintenant + 1 heure
+    const now = new Date();
+    now.setHours(now.getHours() + 1);
+    const dateInput = document.querySelector('input[name="dateHeure"]');
+    dateInput.value = now.toISOString().slice(0, 16);
+});
+</script>
+
+<style>
+.alert-info {
+    border-left: 4px solid #0dcaf0;
+}
+.badge {
+    font-size: 0.75em;
+}
+.form-label {
+    font-weight: 500;
+    color: #495057;
+}
+</style>
+{% endblock %}

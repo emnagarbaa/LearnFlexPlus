@@ -1,0 +1,163 @@
+
+{% block stylesheets %}
+<link rel="stylesheet" href="{{ asset('assets/css/styles.css') }}">
+<link rel="stylesheet" href="{{ asset('assets/css/dashboard.css') }}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+/* Sous-menu Forum */
+.sidebar-menu .has-submenu {
+    position: relative;
+}
+
+.sidebar-menu .has-submenu > a {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.submenu-arrow {
+    font-size: 0.7rem;
+    transition: transform 0.3s ease;
+    margin-left: auto;
+}
+
+.sidebar-menu .has-submenu:hover .submenu-arrow {
+    transform: rotate(90deg);
+}
+
+/* Sous-menu caché par défaut */
+.sidebar-menu .submenu {
+    display: none;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    background: rgba(0, 0, 0, 0.2);
+}
+
+/* Afficher le sous-menu au survol */
+.sidebar-menu .has-submenu:hover .submenu {
+    display: block;
+}
+
+.sidebar-menu .submenu li {
+    padding: 0;
+}
+
+.sidebar-menu .submenu li a {
+    padding: 12px 20px 12px 55px;
+    display: flex;
+    align-items: center;
+    color: rgba(255, 255, 255, 0.7);
+    text-decoration: none;
+    transition: all 0.3s ease;
+    font-size: 0.9rem;
+}
+
+.sidebar-menu .submenu li a:hover {
+    background: rgba(255, 255, 255, 0.15);
+    color: white;
+    padding-left: 60px;
+}
+
+.sidebar-menu .submenu li a i {
+    margin-right: 10px;
+    font-size: 0.85rem;
+}
+</style>
+{% endblock %}
+<aside class="sidebar">
+    <div class="sidebar-header">
+        <div class="logo">
+            <img src="{{ asset('assets/images/logo1.png') }}" alt="Learnflex+ Logo" class="nav-logo">
+            <span>LearnFlex</span><span class="highlight">+</span>
+        </div>
+        <button class="sidebar-toggle">
+            <i class="fas fa-bars"></i>
+        </button>
+    </div>
+    
+    <div class="sidebar-content">
+        <nav class="sidebar-menu">
+            <ul>
+                <li class="{{ app.request.attributes.get('_route') == 'app_back' ? 'active' : '' }}">
+                    <a href="{{ path('app_back') }}">
+                        <i class="fas fa-tachometer-alt"></i>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li class="{{ app.request.attributes.get('_route') == 'app_users' ? 'active' : '' }}">
+                    <a href="{{ path('app_users') }}">
+                        <i class="fas fa-users"></i>
+                        <span>Utilisateurs</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#">
+                        <i class="fas fa-book-open"></i>
+                        <span>Contenu pédagogique</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#">
+                        <i class="fas fa-graduation-cap"></i>
+                        <span>Evaluation</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#">
+                        <i class="fas fa-question-circle"></i>
+                        <span>Questionnaire</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#">
+                        <i class="fas fa-directions"></i>
+                        <span>Orientation</span>
+                    </a>
+                </li>
+                
+                {# MENU FORUM - CORRIGÉ #}
+                {% set isInForumSection = 
+                    app.request.attributes.get('_route') starts with 'back_publication' 
+                    or app.request.attributes.get('_route') starts with 'back_communication'
+                %}
+                
+                <li class="has-submenu {% if isInForumSection %}open active{% endif %}">
+                    <a href="#" class="forum-toggle">
+                        <i class="fas fa-comments"></i>
+                        <span>Forum</span>
+                        <i class="fas fa-chevron-right submenu-arrow"></i>
+                    </a>
+                    <ul class="submenu {% if isInForumSection %}show{% endif %}">
+                        <li class="{{ app.request.attributes.get('_route') starts with 'back_publication' ? 'active' : '' }}">
+                            <a href="{{ path('back_publication_index') }}">
+                                <i class="fas fa-bullhorn"></i>
+                                <span>Publication</span>
+                            </a>
+                        </li>
+                        <li class="{{ app.request.attributes.get('_route') starts with 'back_communication' ? 'active' : '' }}">
+                            <a href="{{ path('back_communication_index') }}">
+                                <i class="fas fa-video"></i>
+                                <span>Communication</span>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </nav>
+    </div>
+    
+    <div class="sidebar-footer">
+        <a href="#" class="user-profile">
+            <img src="{{ asset('assets/images/placeholder-admin.png') }}" alt="Admin" class="user-img">
+            <div class="user-info">
+                <h4>Admin User</h4>
+                <p>Administrateur</p>
+            </div>
+        </a>
+        <a href="#" class="logout">
+            <i class="fas fa-sign-out-alt"></i>
+            <span>Déconnexion</span>
+        </a>
+    </div>
+</aside>

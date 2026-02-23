@@ -1,0 +1,24 @@
+{# templates/user/edit.html.twig #}
+{% extends 'base.html.twig' %}
+
+{% block title %}Modifier utilisateur{% endblock %}
+
+{% block body %}
+<div class="dashboard-content">
+    <h1>Modifier utilisateur : {{ user.nom }} {{ user.prenom }}</h1>
+
+    {{ form_start(form) }}
+        {{ form_row(form.nom) }}
+        {{ form_row(form.prenom) }}
+        {{ form_row(form.age) }}
+        {{ form_row(form.adresseResidence) }}
+        {{ form_row(form.email) }}
+        {{ form_row(form.telephone) }}
+        {{ form_row(form.password) }}
+        {{ form_row(form.role) }}
+
+        <button class="btn btn-success">Enregistrer</button>
+        <a href="{{ path('user_index') }}" class="btn btn-secondary">Annuler</a>
+    {{ form_end(form) }}
+</div>
+{% endblock %}

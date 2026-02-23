@@ -1,0 +1,356 @@
+{% extends 'front/home.html.twig' %}
+
+{% block title %}{{ publication.titre }} - LearnFlex+{% endblock %}
+
+{% block header %}
+<header class="landing-header">
+    <div class="container">
+        <div class="header-left">
+            <div class="logo">
+                <img src="{{ asset('assets/images/logo1.png') }}" alt="Learnflex+ Logo" class="main-logo">
+                <span class="logo-text">LearnFlex +</span>
+            </div>
+        </div>
+        <nav class="main-nav">
+            <ul>
+                <li><a href="{{ path('app_front') }}">Accueil</a></li>
+                <li class="active"><a href="{{ path('forum_index') }}">Forum</a></li>
+                <li><a href="{{ path('forum_communication_index') }}">Communications</a></li>
+            </ul>
+        </nav>
+        <div class="header-right">
+            <a href="#" class="btn btn-primary">Connexion</a>
+            <button class="mobile-menu-btn">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+    </div>
+</header>
+{% endblock %}
+
+{% block stylesheets %}
+{{ parent() }}
+<style>
+.publication-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 3rem 0;
+    margin-bottom: 2rem;
+}
+
+.publication-card {
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+    padding: 2rem;
+    margin-bottom: 2rem;
+}
+
+.stat-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 12px;
+    margin-right: 1rem;
+    color: white;
+}
+
+.communication-item {
+    border: 2px solid #e9ecef;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+    transition: all 0.3s ease;
+}
+
+.communication-item:hover {
+    border-color: #667eea;
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
+}
+
+.badge-live {
+    background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-weight: 600;
+}
+
+.badge-record {
+    background: linear-gradient(135deg, #4dabf7 0%, #339af0 100%);
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-weight: 600;
+}
+
+/* Styles pour les boutons de vote */
+.vote-btn {
+    transition: all 0.3s ease;
+    margin: 0 5px;
+}
+
+.vote-btn.active-like {
+    background: #dc3545;
+    color: white;
+    border-color: #dc3545;
+}
+
+.vote-btn.active-dislike {
+    background: #6c757d;
+    color: white;
+    border-color: #6c757d;
+}
+
+.vote-count {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin: 0 10px;
+}
+
+.likes-count {
+    color: #dc3545;
+}
+
+.dislikes-count {
+    color: #6c757d;
+}
+
+/* Messages flash */
+.alert {
+    border-radius: 10px;
+    margin-bottom: 1rem;
+    padding: 1rem;
+}
+
+.alert-success {
+    background: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+.alert-danger {
+    background: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+</style>
+{% endblock %}
+
+{% block body %}
+{# Affichage des messages flash #}
+{% for message in app.flashes('success') %}
+    <div class="alert alert-success alert-dismissible fade show m-3" role="alert">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+{% endfor %}
+
+{% for message in app.flashes('error') %}
+    <div class="alert alert-danger alert-dismissible fade show m-3" role="alert">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+{% endfor %}
+
+{# Header de la publication #}
+<div class="publication-header">
+    <div class="container">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb text-white-50">
+                <li class="breadcrumb-item"><a href="{{ path('app_front') }}" class="text-white">Accueil</a></li>
+                <li class="breadcrumb-item"><a href="{{ path('forum_index') }}" class="text-white">Forum</a></li>
+                <li class="breadcrumb-item active text-white">{{ publication.titre }}</li>
+            </ol>
+        </nav>
+        <h1 class="display-5 fw-bold mb-3">{{ publication.titre }}</h1>
+        <div class="d-flex gap-3 flex-wrap">
+            <div class="stat-badge">
+                <i class="fas fa-calendar"></i>
+                <span>{{ publication.dateCreation|date('d/m/Y à H:i') }}</span>
+            </div>
+            <div class="stat-badge">
+                <i class="fas fa-eye"></i>
+                <span>{{ publication.nombreVues }} vues</span>
+            </div>
+            <div class="stat-badge">
+                <i class="fas fa-heart"></i>
+                <span>{{ likeRepository.countLikesForPublication(publication.id) }} likes</span>
+            </div>
+            <div class="stat-badge">
+                <i class="fas fa-thumbs-down"></i>
+                <span>{{ likeRepository.countDislikesForPublication(publication.id) }} dislikes</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container mb-5">
+    <div class="row">
+        <div class="col-lg-8">
+            {# Contenu de la publication #}
+            <div class="publication-card">
+                <div class="d-flex justify-content-between align-items-start mb-4">
+                    <h3 class="text-dark">Description</h3>
+                    <span class="badge bg-info fs-6">{{ publication.categorie }}</span>
+                </div>
+                <p class="lead text-dark">{{ publication.description }}</p>
+            </div>
+
+            {# Communications liées #}
+            {% if communications|length > 0 %}
+            <div class="publication-card">
+                <h3 class="mb-4 text-dark">
+                    <i class="fas fa-video me-2"></i>
+                    Communications associées
+                </h3>
+                
+                {% for communication in communications %}
+                <div class="communication-item">
+                    <div class="d-flex justify-content-between align-items-start mb-3">
+                        <div>
+                            {% if communication.type == 'live' %}
+                                <span class="badge-live">
+                                    <i class="fas fa-circle me-1" style="font-size: 0.6rem;"></i>
+                                    Live
+                                </span>
+                            {% else %}
+                                <span class="badge-record">
+                                    <i class="fas fa-play-circle me-1"></i>
+                                    Enregistré
+                                </span>
+                            {% endif %}
+                        </div>
+                        <div>
+                            {% if communication.etat == 'programmee' %}
+                                <span class="badge bg-info">Programmée</span>
+                            {% elseif communication.etat == 'en_cours' %}
+                                <span class="badge bg-warning">En cours</span>
+                            {% elseif communication.etat == 'terminee' %}
+                                <span class="badge bg-success">Terminée</span>
+                            {% else %}
+                                <span class="badge bg-danger">Annulée</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3 text-dark">
+                        <div class="text-muted mb-2">
+                            <i class="fas fa-calendar-alt me-2"></i>
+                            {{ communication.dateHeure|date('d/m/Y à H:i') }}
+                            {% if communication.duree %}
+                                <span class="ms-3">
+                                    <i class="fas fa-clock me-2"></i>
+                                    {{ communication.duree }} minutes
+                                </span>
+                            {% endif %}
+                        </div>
+                        
+                        {% if communication.descriptionDetaillee %}
+                        <p class="mb-0">{{ communication.descriptionDetaillee }}</p>
+                        {% endif %}
+                    </div>
+                    
+                    {% if communication.lien %}
+                    <a href="{{ communication.lien }}" target="_blank" class="btn btn-primary">
+                        <i class="fas fa-external-link-alt me-2"></i>
+                        Rejoindre la communication
+                    </a>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+        
+        <div class="col-lg-4">
+            {# Sidebar #}
+            <div class="publication-card">
+                <h5 class="mb-3 text-dark">Actions</h5>
+                <div class="d-grid gap-2">
+                    <a href="{{ path('forum_index') }}" class="btn btn-outline-secondary">
+                        <i class="fas fa-arrow-left me-2"></i>
+                        Retour au forum
+                    </a>
+                    <button class="btn btn-outline-primary">
+                        <i class="fas fa-share-alt me-2"></i>
+                        Partager
+                    </button>
+                    
+                    {# SECTION LIKES/DISLIKES AJOUTÉE ICI #}
+                    {% if app.user %}
+                        <div class="d-flex justify-content-between align-items-center mt-3">
+                            <span class="vote-count likes-count">
+                                <i class="fas fa-heart"></i> {{ likeRepository.countLikesForPublication(publication.id) }}
+                            </span>
+                            
+                            <div class="btn-group" role="group">
+                                <a href="{{ path('app_publication_like', {'id': publication.id, 'type': 'like'}) }}" 
+                                   class="btn btn-outline-danger vote-btn {% if userVote and userVote.isLike %}active-like{% endif %}"
+                                   title="J'aime">
+                                    <i class="fas fa-thumbs-up"></i>
+                                </a>
+                                <a href="{{ path('app_publication_like', {'id': publication.id, 'type': 'dislike'}) }}" 
+                                   class="btn btn-outline-secondary vote-btn {% if userVote and not userVote.isLike %}active-dislike{% endif %}"
+                                   title="Je n'aime pas">
+                                    <i class="fas fa-thumbs-down"></i>
+                                </a>
+                            </div>
+                            
+                            <span class="vote-count dislikes-count">
+                                <i class="fas fa-thumbs-down"></i> {{ likeRepository.countDislikesForPublication(publication.id) }}
+                            </span>
+                        </div>
+                        
+                        {# Affichage du vote actuel #}
+                        {% if userVote %}
+                            <div class="mt-2 text-center">
+                                <small class="text-muted">
+                                    Vous avez voté: 
+                                    {% if userVote.isLike %}
+                                        <span class="text-danger">👍 J'aime</span>
+                                    {% else %}
+                                        <span class="text-secondary">👎 Je n'aime pas</span>
+                                    {% endif %}
+                                    (cliquez à nouveau pour annuler)
+                                </small>
+                            </div>
+                        {% endif %}
+                    {% else %}
+                        <div class="alert alert-info mt-3 mb-0">
+                            <i class="fas fa-info-circle me-2"></i>
+                            <a href="{{ path('app_login') }}" class="alert-link">Connectez-vous</a> pour aimer ou ne pas aimer cette publication.
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <div class="publication-card">
+                <h5 class="mb-3 text-dark">Informations</h5>
+                <ul class="list-unstyled text-dark">
+                    <li class="mb-2">
+                        <strong>ID:</strong> #{{ publication.id }}
+                    </li>
+                    <li class="mb-2">
+                        <strong>Catégorie:</strong> {{ publication.categorie }}
+                    </li>
+                    <li class="mb-2">
+                        <strong>Date de création:</strong> {{ publication.dateCreation|date('d/m/Y') }}
+                    </li>
+                    <li class="mb-2">
+                        <strong>Vues:</strong> {{ publication.nombreVues }}
+                    </li>
+                    <li class="mb-2">
+                        <strong>Likes:</strong> <span class="text-danger">{{ likeRepository.countLikesForPublication(publication.id) }}</span>
+                    </li>
+                    <li class="mb-2">
+                        <strong>Dislikes:</strong> <span class="text-secondary">{{ likeRepository.countDislikesForPublication(publication.id) }}</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

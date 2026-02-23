@@ -1,0 +1,294 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Statistiques des Communications{% endblock %}
+
+{% block stylesheets %}
+<link rel="stylesheet" href="{{ asset('assets/css/styles.css') }}">
+<link rel="stylesheet" href="{{ asset('assets/css/dashboard.css') }}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css">
+<style>
+/* Sidebar submenu */
+.sidebar-menu .has-submenu {
+    position: relative;
+}
+
+.sidebar-menu .has-submenu > a {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.submenu-arrow {
+    font-size: 0.7rem;
+    transition: transform 0.3s ease;
+    margin-left: auto;
+}
+
+.sidebar-menu .has-submenu:hover .submenu-arrow {
+    transform: rotate(90deg);
+}
+
+.sidebar-menu .submenu {
+    display: none;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    background: rgba(0, 0, 0, 0.2);
+}
+
+.sidebar-menu .has-submenu:hover .submenu {
+    display: block;
+}
+
+.sidebar-menu .submenu li a {
+    padding: 12px 20px 12px 55px;
+    display: flex;
+    align-items: center;
+    color: rgba(255, 255, 255, 0.7);
+    text-decoration: none;
+    transition: all 0.3s ease;
+    font-size: 0.9rem;
+}
+
+.sidebar-menu .submenu li a:hover {
+    background: rgba(255, 255, 255, 0.15);
+    color: white;
+    padding-left: 60px;
+}
+
+.sidebar-menu .submenu li.active a {
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+}
+
+/* Stat cards */
+.stat-card {
+    background: white;
+    border-radius: 16px;
+    padding: 2rem;
+    text-align: center;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+}
+
+.stat-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+}
+
+.stat-number {
+    font-size: 3rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+.stat-label {
+    color: #666;
+    font-size: 1rem;
+}
+
+.table-stats {
+    background: white;
+    border-radius: 16px;
+    padding: 2rem;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+}
+
+.badge-count {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    font-weight: 700;
+    font-size: 1.1rem;
+}
+</style>
+{% endblock %}
+
+{% block body %}
+<div class="dashboard">
+    {% include 'back/sidebar.html.twig' %}
+    
+    <main class="main-content">
+        <header class="dashboard-header">
+            <div class="header-left">
+                <h1>Statistiques des Communications</h1>
+                <p>Analyse et données sur les communications</p>
+            </div>
+            <div class="header-right">
+                <a href="{{ path('back_communication_index') }}" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left me-2"></i>
+                    Retour
+                </a>
+            </div>
+        </header>
+        
+        <div class="dashboard-content">
+            {# Cards de statistiques globales #}
+            <div class="row g-4 mb-4">
+                <div class="col-md-3">
+                    <div class="stat-card">
+                        <div class="stat-icon" style="color: #667eea;">
+                            <i class="fas fa-comments"></i>
+                        </div>
+                        <div class="stat-number text-dark">{{ total }}</div>
+                        <div class="stat-label">Total</div>
+                    </div>
+                </div>
+                
+                <div class="col-md-3">
+                    <div class="stat-card">
+                        <div class="stat-icon" style="color: #ff6b6b;">
+                            <i class="fas fa-broadcast-tower"></i>
+                        </div>
+                        <div class="stat-number text-dark">{{ liveCount }}</div>
+                        <div class="stat-label">En direct</div>
+                    </div>
+                </div>
+                
+                <div class="col-md-3">
+                    <div class="stat-card">
+                        <div class="stat-icon" style="color: #4dabf7;">
+                            <i class="fas fa-video"></i>
+                        </div>
+                        <div class="stat-number text-dark">{{ recordCount }}</div>
+                        <div class="stat-label">Enregistrées</div>
+                    </div>
+                </div>
+                
+                <div class="col-md-3">
+                    <div class="stat-card">
+                        <div class="stat-icon" style="color: #51cf66;">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <div class="stat-number text-dark">{{ tauxLive }}%</div>
+                        <div class="stat-label">Taux en direct</div>
+                    </div>
+                </div>
+            </div>
+
+            {# Tableau de répartition par état #}
+            <div class="table-stats">
+                <h4 class="mb-4 text-dark">
+                    <i class="fas fa-table me-2"></i>
+                    Répartition par état
+                </h4>
+                
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead style="background-color: #f8f9fa;">
+                            <tr>
+                                <th class="text-dark">Type</th>
+                                <th class="text-center text-dark">Planifié</th>
+                                <th class="text-center text-dark">En cours</th>
+                                <th class="text-center text-dark">Terminé</th>
+                                <th class="text-center text-dark">Annulé</th>
+                                <th class="text-center text-dark">Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="fw-bold text-dark">
+                                    <i class="fas fa-circle text-danger me-2"></i>
+                                    En direct
+                                </td>
+                                <td class="text-center">
+                                    <span class="badge-count bg-warning text-dark">
+                                        {{ repartition.live.programmee }}
+                                    </span>
+                                </td>
+                                <td class="text-center">
+                                    <span class="badge-count bg-success text-white">
+                                        {{ repartition.live.en_cours }}
+                                    </span>
+                                </td>
+                                <td class="text-center">
+                                    <span class="badge-count bg-info text-white">
+                                        {{ repartition.live.terminee }}
+                                    </span>
+                                </td>
+                                <td class="text-center">
+                                    <span class="badge-count bg-danger text-white">
+                                        {{ repartition.live.annulee }}
+                                    </span>
+                                </td>
+                                <td class="text-center">
+                                    <span class="badge-count" style="background: #667eea; color: white;">
+                                        {{ repartition.live.total }}
+                                    </span>
+                                </td>
+                            </tr>
+                            
+                            <tr>
+                                <td class="fw-bold text-dark">
+                                    <i class="fas fa-play-circle text-secondary me-2"></i>
+                                    Enregistré
+                                </td>
+                                <td class="text-center">
+                                    <span class="badge-count bg-warning text-dark">
+                                        {{ repartition.record.programmee }}
+                                    </span>
+                                </td>
+                                <td class="text-center">
+                                    <span class="badge-count bg-success text-white">
+                                        {{ repartition.record.en_cours }}
+                                    </span>
+                                </td>
+                                <td class="text-center">
+                                    <span class="badge-count bg-info text-white">
+                                        {{ repartition.record.terminee }}
+                                    </span>
+                                </td>
+                                <td class="text-center">
+                                    <span class="badge-count bg-danger text-white">
+                                        {{ repartition.record.annulee }}
+                                    </span>
+                                </td>
+                                <td class="text-center">
+                                    <span class="badge-count" style="background: #667eea; color: white;">
+                                        {{ repartition.record.total }}
+                                    </span>
+                                </td>
+                            </tr>
+                            
+                            <tr style="background-color: #f8f9fa; font-weight: bold;">
+                                <td class="text-dark">Total</td>
+                                <td class="text-center text-dark">{{ programmeeCount }}</td>
+                                <td class="text-center text-dark">{{ enCoursCount }}</td>
+                                <td class="text-center text-dark">{{ termineeCount }}</td>
+                                <td class="text-center text-dark">{{ annuleeCount }}</td>
+                                <td class="text-center" style="color: #667eea; font-size: 1.2rem;">
+                                    {{ total }}
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                
+        </div>
+    </main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const sidebarToggle = document.querySelector('.sidebar-toggle');
+    const sidebar = document.querySelector('.sidebar');
+    const mainContent = document.querySelector('.main-content');
+
+    if(sidebarToggle) {
+        sidebarToggle.addEventListener('click', function() {
+            sidebar.classList.toggle('collapsed');
+            mainContent.classList.toggle('expanded');
+        });
+    }
+});
+</script>
+{% endblock %}

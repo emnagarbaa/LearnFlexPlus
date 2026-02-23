@@ -1,0 +1,95 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Modifier Communication #{{ communication.id }}{% endblock %}
+
+{% block body %}
+<div class="container-fluid py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white py-3">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">
+                            <i class="fas fa-edit me-2"></i>
+                            Modifier la communication #{{ communication.id }}
+                        </h5>
+                        <a href="{{ path('back_communication_index') }}" class="btn btn-outline-secondary btn-sm">
+                            <i class="fas fa-arrow-left me-1"></i>Retour
+                        </a>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <form method="post" action="{{ path('back_communication_edit', {'id': communication.id}) }}">
+                        <!-- AJOUTEZ CETTE LIGNE CI-DESSOUS -->
+                        <input type="hidden" name="_token" value="{{ csrf_token('communication_edit_' ~ communication.id) }}">
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Type *</label>
+                                <select name="type" class="form-select" required>
+                                    <option value="live" {% if communication.type == 'live' %}selected{% endif %}>En direct</option>
+                                    <option value="record" {% if communication.type == 'record' %}selected{% endif %}>Enregistré</option>
+                                </select>
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Publication *</label>
+                                <select name="publication" class="form-select" required>
+                                    {% for publication in publications %}
+                                    <option value="{{ publication.id }}" {% if communication.publication.id == publication.id %}selected{% endif %}>
+                                        {{ publication.titre|default(publication.title|default('Publication #' ~ publication.id)) }}
+                                    </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Date et heure *</label>
+                                <input type="datetime-local" name="dateHeure" class="form-control" 
+                                       value="{{ communication.dateHeure|date('Y-m-d\\TH:i') }}" required>
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Durée (minutes)</label>
+                                <input type="number" name="duree" class="form-control" 
+                                       value="{{ communication.duree }}" min="1" placeholder="Durée en minutes">
+                            </div>
+                            
+                            <div class="col-md-12 mb-3">
+                                <label class="form-label">Lien</label>
+                                <input type="url" name="lien" class="form-control" 
+                                       value="{{ communication.lien }}" placeholder="https://...">
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">État *</label>
+                                <select name="etat" class="form-select" required>
+                                    <option value="planifie" {% if communication.etat == 'planifie' %}selected{% endif %}>Planifié</option>
+                                    <option value="en_cours" {% if communication.etat == 'en_cours' %}selected{% endif %}>En cours</option>
+                                    <option value="termine" {% if communication.etat == 'termine' %}selected{% endif %}>Terminé</option>
+                                    <option value="annule" {% if communication.etat == 'annule' %}selected{% endif %}>Annulé</option>
+                                </select>
+                            </div>
+                            
+                            <div class="col-12 mb-3">
+                                <label class="form-label">Description détaillée</label>
+                                <textarea name="descriptionDetaillee" class="form-control" rows="4">{{ communication.descriptionDetaillee }}</textarea>
+                            </div>
+                        </div>
+                        
+                        <div class="d-flex justify-content-between mt-4">
+                            <a href="{{ path('back_communication_index') }}" class="btn btn-outline-secondary">
+                                Annuler
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save me-2"></i>
+                                Modifier
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

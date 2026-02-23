@@ -1,0 +1,981 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Forum - LearnFlex+{% endblock %}
+
+{% block stylesheets %}
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        font-family: 'Inter', sans-serif;
+        background: linear-gradient(135deg, #f5f7fa 0%, #e4e9f2 100%);
+        min-height: 100vh;
+    }
+
+    /* ===== HEADER ===== */
+    .landing-header {
+        background: white;
+        padding: 1rem 0;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+    }
+
+    .landing-header .container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 0 2rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .header-left { display: flex; align-items: center; }
+
+    .logo {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        text-decoration: none;
+    }
+
+    .main-logo { height: 45px; width: auto; }
+
+    .logo-text {
+        font-size: 1.5rem;
+        font-weight: 700;
+        background: linear-gradient(135deg, #2563eb 0%, #7c3aed 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    .main-nav ul {
+        display: flex;
+        list-style: none;
+        gap: 2rem;
+        align-items: center;
+    }
+
+    .main-nav ul li a {
+        color: #64748b;
+        text-decoration: none;
+        font-weight: 500;
+        transition: color 0.3s;
+        position: relative;
+    }
+
+    .main-nav ul li a:hover,
+    .main-nav ul li.active a {
+        color: #2563eb;
+    }
+
+    .main-nav ul li.active a::after {
+        content: '';
+        position: absolute;
+        bottom: -5px;
+        left: 0;
+        width: 100%;
+        height: 2px;
+        background: linear-gradient(135deg, #2563eb 0%, #7c3aed 100%);
+    }
+
+    /* ===== DROPDOWN ===== */
+    .dropdown { position: relative; }
+
+    .dropdown-toggle {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .dropdown-toggle i {
+        font-size: 0.75rem;
+        transition: transform 0.3s;
+    }
+
+    .dropdown:hover .dropdown-toggle i { transform: rotate(180deg); }
+
+    .dropdown-menu {
+        position: absolute;
+        top: 100%;
+        left: 50%;
+        transform: translateX(-50%);
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+        padding: 0.5rem 0;
+        min-width: 220px;
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.3s;
+        margin-top: 1rem;
+        z-index: 1000;
+    }
+
+    .dropdown:hover .dropdown-menu {
+        opacity: 1;
+        visibility: visible;
+        margin-top: 0.5rem;
+    }
+
+    .dropdown-menu li { list-style: none; }
+
+    .dropdown-menu li a {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 0.75rem 1.25rem;
+        color: #475569;
+        text-decoration: none;
+        transition: all 0.2s;
+        font-weight: 500;
+    }
+
+    .dropdown-menu li a:hover {
+        background: linear-gradient(135deg, #e0e7ff 0%, #f3e8ff 100%);
+        color: #2563eb;
+    }
+
+    .dropdown-menu::before {
+        content: '';
+        position: absolute;
+        top: -8px;
+        left: 50%;
+        transform: translateX(-50%);
+        border-left: 8px solid transparent;
+        border-right: 8px solid transparent;
+        border-bottom: 8px solid white;
+    }
+
+    .header-right {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .btn {
+        padding: 0.75rem 1.5rem;
+        border-radius: 50px;
+        text-decoration: none;
+        font-weight: 600;
+        transition: all 0.3s;
+        border: none;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .btn-primary {
+        background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+        color: white;
+    }
+
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 20px rgba(37,99,235,0.3);
+        color: white;
+    }
+
+    .btn-success-custom {
+        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        color: white;
+        padding: 0.75rem 1.5rem;
+        border-radius: 50px;
+        text-decoration: none;
+        font-weight: 600;
+        transition: all 0.3s;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .btn-success-custom:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 20px rgba(16,185,129,0.3);
+        color: white;
+    }
+
+    .btn-outline {
+        background: transparent;
+        color: #2563eb;
+        border: 2px solid #2563eb;
+    }
+
+    .btn-outline:hover {
+        background: #2563eb;
+        color: white;
+    }
+
+    .mobile-menu-btn {
+        display: none;
+        background: none;
+        border: none;
+        font-size: 1.5rem;
+        color: #2563eb;
+        cursor: pointer;
+    }
+
+    /* ===== HERO SECTION ===== */
+    .forum-hero {
+        background: linear-gradient(135deg, #1e3a5f 0%, #2563eb 50%, #7c3aed 100%);
+        color: white;
+        padding: 4rem 0;
+        margin-bottom: 3rem;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .forum-hero::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        right: -10%;
+        width: 600px;
+        height: 600px;
+        background: rgba(255,255,255,0.03);
+        border-radius: 50%;
+    }
+
+    .forum-hero::after {
+        content: '';
+        position: absolute;
+        bottom: -30%;
+        left: -5%;
+        width: 400px;
+        height: 400px;
+        background: rgba(255,255,255,0.05);
+        border-radius: 50%;
+    }
+
+    .forum-hero .container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 0 2rem;
+        position: relative;
+        z-index: 1;
+    }
+
+    .hero-content {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 2rem;
+    }
+
+    .hero-title {
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+    }
+
+    .hero-subtitle {
+        font-size: 1.1rem;
+        opacity: 0.8;
+    }
+
+    .hero-stats {
+        display: flex;
+        gap: 2rem;
+        flex-wrap: wrap;
+    }
+
+    .stat-item {
+        text-align: center;
+    }
+
+    .stat-number {
+        font-size: 2rem;
+        font-weight: 700;
+    }
+
+    .stat-label {
+        font-size: 0.875rem;
+        opacity: 0.7;
+    }
+
+    /* ===== MAIN CONTAINER ===== */
+    .forum-container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 0 2rem 4rem;
+    }
+
+    /* ===== OUTILS RAPIDES ===== */
+    .quick-tools {
+        animation: fadeInUp 0.8s ease;
+    }
+    .tool-card {
+        border: none;
+        border-radius: 20px;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        color: #333;
+        background: white;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+        height: 100%;
+        text-decoration: none;
+        display: block;
+    }
+    .tool-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 20px 30px rgba(0,0,0,0.1);
+    }
+    .tool-icon {
+        color: #2563eb;
+    }
+    .chatbot-card .tool-icon { color: #10b981; }
+    .weather-card .tool-icon { color: #f59e0b; }
+    .map-card .tool-icon { color: #ef4444; }
+    /* Nouvelle couleur pour la traduction */
+    .translate-card .tool-icon { color: #8b5cf6; }
+    .tool-card h3 {
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+        color: #1e293b;
+    }
+    .tool-card p {
+        color: #64748b;
+        margin-bottom: 1rem;
+    }
+    .tool-card .btn {
+        border-radius: 50px;
+        padding: 0.5rem 1.5rem;
+        font-weight: 600;
+        background: linear-gradient(135deg, #2563eb 0%, #7c3aed 100%);
+        border: none;
+        transition: all 0.3s;
+        color: white;
+        display: inline-block;
+    }
+    .tool-card .btn:hover {
+        transform: scale(1.05);
+        box-shadow: 0 10px 20px rgba(37,99,235,0.3);
+    }
+
+    /* ===== FILTERS ===== */
+    .filters-section {
+        background: white;
+        border-radius: 20px;
+        padding: 2rem;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+        margin-bottom: 2rem;
+    }
+
+    .filters-title {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: #1e293b;
+        margin-bottom: 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    .category-filters {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .category-pill {
+        padding: 0.5rem 1.25rem;
+        border-radius: 25px;
+        border: 2px solid #e2e8f0;
+        background: white;
+        color: #64748b;
+        font-weight: 500;
+        font-size: 0.875rem;
+        cursor: pointer;
+        text-decoration: none;
+        transition: all 0.3s;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .category-pill:hover {
+        border-color: #2563eb;
+        color: #2563eb;
+        transform: translateY(-2px);
+    }
+
+    .category-pill.active {
+        background: linear-gradient(135deg, #2563eb 0%, #7c3aed 100%);
+        border-color: transparent;
+        color: white;
+        box-shadow: 0 4px 12px rgba(37,99,235,0.3);
+    }
+
+    /* ===== PUBLICATIONS GRID ===== */
+    .publications-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+        gap: 1.5rem;
+    }
+
+    .publication-card {
+        background: white;
+        border-radius: 20px;
+        padding: 1.75rem;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        border: 2px solid transparent;
+        position: relative;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .publication-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 4px;
+        height: 100%;
+        background: linear-gradient(180deg, #2563eb 0%, #7c3aed 100%);
+        opacity: 0;
+        transition: opacity 0.3s;
+    }
+
+    .publication-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 20px 40px rgba(37,99,235,0.15);
+        border-color: #e0e7ff;
+    }
+
+    .publication-card:hover::before {
+        opacity: 1;
+    }
+
+    .card-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 1rem;
+    }
+
+    .categorie-badge {
+        padding: 0.4rem 1rem;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .categorie-badge.question_cours {
+        background: #dbeafe;
+        color: #1d4ed8;
+    }
+
+    .categorie-badge.question_examen {
+        background: #fce7f3;
+        color: #be185d;
+    }
+
+    .categorie-badge.tutoriel {
+        background: #d1fae5;
+        color: #065f46;
+    }
+
+    .categorie-badge.blog {
+        background: #fef3c7;
+        color: #92400e;
+    }
+
+    .categorie-badge.article {
+        background: #ede9fe;
+        color: #5b21b6;
+    }
+
+    .categorie-badge.reclamation {
+        background: #fee2e2;
+        color: #991b1b;
+    }
+
+    .categorie-badge.demande_d_aide {
+        background: #e0f2fe;
+        color: #075985;
+    }
+
+    .categorie-badge.autre {
+        background: #f1f5f9;
+        color: #475569;
+    }
+
+    .card-date {
+        font-size: 0.8rem;
+        color: #94a3b8;
+        display: flex;
+        align-items: center;
+        gap: 0.3rem;
+    }
+
+    .card-title {
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: #1e293b;
+        margin-bottom: 0.75rem;
+        line-height: 1.4;
+        text-decoration: none;
+        display: block;
+        transition: color 0.3s;
+    }
+
+    .card-title:hover {
+        color: #2563eb;
+    }
+
+    .card-description {
+        color: #64748b;
+        font-size: 0.95rem;
+        line-height: 1.6;
+        margin-bottom: 1.5rem;
+        flex: 1;
+    }
+
+    .card-footer-custom {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding-top: 1rem;
+        border-top: 1px solid #f1f5f9;
+        margin-top: auto;
+    }
+
+    .card-stats {
+        display: flex;
+        gap: 1rem;
+    }
+
+    .card-stat {
+        display: flex;
+        align-items: center;
+        gap: 0.3rem;
+        color: #94a3b8;
+        font-size: 0.875rem;
+    }
+
+    .card-stat i {
+        font-size: 0.875rem;
+    }
+
+    .card-stat .fa-heart {
+        color: #ef4444;
+    }
+
+    .card-stat .fa-thumbs-down {
+        color: #64748b;
+    }
+
+    .btn-voir {
+        background: linear-gradient(135deg, #2563eb 0%, #7c3aed 100%);
+        color: white;
+        padding: 0.5rem 1.25rem;
+        border-radius: 25px;
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 0.875rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        transition: all 0.3s;
+    }
+
+    .btn-voir:hover {
+        transform: translateX(3px);
+        box-shadow: 0 6px 15px rgba(37,99,235,0.3);
+        color: white;
+    }
+
+    /* ===== EMPTY STATE ===== */
+    .empty-state {
+        text-align: center;
+        padding: 5rem 2rem;
+        background: white;
+        border-radius: 20px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+        grid-column: 1 / -1;
+    }
+
+    .empty-icon {
+        font-size: 5rem;
+        margin-bottom: 1.5rem;
+        display: block;
+        opacity: 0.3;
+    }
+
+    .empty-state h3 {
+        font-size: 1.5rem;
+        color: #1e293b;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+    }
+
+    .empty-state p {
+        color: #64748b;
+        margin-bottom: 2rem;
+    }
+
+    /* ===== ANIMATIONS ===== */
+    @keyframes fadeInUp {
+        from { opacity: 0; transform: translateY(30px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes fadeInDown {
+        from { opacity: 0; transform: translateY(-30px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .publications-grid { animation: fadeInUp 0.6s ease; }
+    .forum-hero { animation: fadeInDown 0.6s ease; }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 968px) {
+        .main-nav { display: none; }
+        .mobile-menu-btn { display: block; }
+        .publications-grid { grid-template-columns: 1fr; }
+        .hero-content { flex-direction: column; text-align: center; }
+        .hero-stats { justify-content: center; }
+        .hero-title { font-size: 2rem; }
+    }
+
+    @media (max-width: 768px) {
+        .forum-hero { padding: 3rem 0; }
+        .filters-section { padding: 1.5rem; }
+        .publication-card { padding: 1.25rem; }
+    }
+</style>
+{% endblock %}
+
+{% block body %}
+
+<!-- HEADER -->
+<header class="landing-header">
+    <div class="container">
+        <div class="header-left">
+            <a href="{{ path('app_front') }}" class="logo">
+                <img src="{{ asset('assets/images/logo1.png') }}" alt="LearnFlex+ Logo" class="main-logo">
+                <span class="logo-text">LearnFlex +</span>
+            </a>
+        </div>
+        <nav class="main-nav">
+            <ul>
+                <li><a href="{{ path('app_front') }}">Accueil</a></li>
+                <li><a href="#">Contenus pédagogiques</a></li>
+                <li><a href="#">Evaluation</a></li>
+                <li><a href="#">Questionnaire</a></li>
+                <li><a href="#">Orientation</a></li>
+                <li class="dropdown active">
+                    <a href="{{ path('forum_index') }}" class="dropdown-toggle">
+                        Forum
+                        <i class="fas fa-chevron-down"></i>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li>
+                            <a href="{{ path('forum_index') }}">
+                                <i class="fas fa-comments"></i>
+                                Discussions
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ path('communication_chat') }}">
+                                <i class="fas fa-message"></i>
+                                Chat en direct
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ path('forum_communication_index') }}">
+                                <i class="fas fa-bell"></i>
+                                Communications
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </nav>
+        <div class="header-right">
+            {# Dashboard button now optional, you can even remove it if logo is enough #}
+            {% if app.user and ('ROLE_ADMIN' in app.user.roles or 'ROLE_ENSEIGNANT' in app.user.roles) %}
+                <a href="{{ path('dashboard') }}" class="btn btn-outline dashboard-btn">Dashboard</a>
+            {% endif %}
+
+            {# Logout for logged-in users #}
+            {% if app.user %}
+                <form action="{{ path('app_logout') }}" method="post" style="display:inline;">
+                    <button type="submit" class="btn btn-primary logout-btn">Déconnexion</button>
+                </form>
+            {% else %}
+                <a href="{{ path('app_login') }}" class="btn btn-primary">Connexion</a>
+            {% endif %}
+
+            <button class="mobile-menu-btn">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+    </div>
+</header>
+
+<!-- HERO SECTION -->
+<section class="forum-hero">
+    <div class="container">
+        <div class="hero-content">
+            <div>
+                <h1 class="hero-title">
+                    <i class="fas fa-comments me-3"></i>
+                    Forum de discussions
+                </h1>
+                <p class="hero-subtitle">
+                    Posez vos questions, partagez vos connaissances et échangez avec la communauté
+                </p>
+            </div>
+            <div class="hero-stats">
+                <div class="stat-item">
+                    <div class="stat-number">{{ publications|length }}</div>
+                    <div class="stat-label">Publications</div>
+                </div>
+                {# Statistique totale des likes #}
+                <div class="stat-item">
+                    <div class="stat-number">
+                        {% set totalLikes = 0 %}
+                        {% for publication in publications %}
+                            {% set totalLikes = totalLikes + likeRepository.countLikesForPublication(publication.id) %}
+                        {% endfor %}
+                        {{ totalLikes }}
+                    </div>
+                    <div class="stat-label">Likes</div>
+                </div>
+                {# Statistique totale des dislikes #}
+                <div class="stat-item">
+                    <div class="stat-number">
+                        {% set totalDislikes = 0 %}
+                        {% for publication in publications %}
+                            {% set totalDislikes = totalDislikes + likeRepository.countDislikesForPublication(publication.id) %}
+                        {% endfor %}
+                        {{ totalDislikes }}
+                    </div>
+                    <div class="stat-label">Dislikes</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- OUTILS RAPIDES -->
+<div class="quick-tools container my-5">
+    <h2 class="text-center mb-4">Nos outils</h2>
+    <div class="row g-4">
+        <div class="col-md-3">
+            <a href="{{ path('app_chatbot') }}" class="text-decoration-none">
+                <div class="card tool-card chatbot-card text-center p-4">
+                    <div class="tool-icon mb-3">
+                        <i class="fas fa-robot fa-3x"></i>
+                    </div>
+                    <h3>Chatbot</h3>
+                    <p>Posez vos questions à notre assistant intelligent</p>
+                    <span class="btn btn-primary mt-2">Discuter</span>
+                </div>
+            </a>
+        </div>
+        <div class="col-md-3">
+            <a href="{{ path('app_weather') }}" class="text-decoration-none">
+                <div class="card tool-card weather-card text-center p-4">
+                    <div class="tool-icon mb-3">
+                        <i class="fas fa-cloud-sun fa-3x"></i>
+                    </div>
+                    <h3>Météo</h3>
+                    <p>Consultez la météo en temps réel</p>
+                    <span class="btn btn-primary mt-2">Voir la météo</span>
+                </div>
+            </a>
+        </div>
+        <div class="col-md-3">
+            <a href="{{ path('app_map') }}" class="text-decoration-none">
+                <div class="card tool-card map-card text-center p-4">
+                    <div class="tool-icon mb-3">
+                        <i class="fas fa-map-marked-alt fa-3x"></i>
+                    </div>
+                    <h3>Carte</h3>
+                    <p>Explorez notre carte interactive</p>
+                    <span class="btn btn-primary mt-2">Ouvrir la carte</span>
+                </div>
+            </a>
+        </div>
+        <div class="col-md-3">
+            <a href="{{ path('app_translate') }}" class="text-decoration-none">
+                <div class="card tool-card translate-card text-center p-4">
+                    <div class="tool-icon mb-3">
+                        <i class="fas fa-language fa-3x"></i>
+                    </div>
+                    <h3>Traduction</h3>
+                    <p>Traduisez vos textes instantanément</p>
+                    <span class="btn btn-primary mt-2">Traduire</span>
+                </div>
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- MAIN CONTENT -->
+<div class="forum-container">
+    
+    <!-- FILTERS -->
+    <div class="filters-section">
+        <div class="filters-title">
+            <i class="fas fa-filter" style="color: #2563eb;"></i>
+            Filtrer par catégorie
+        </div>
+        <div class="category-filters">
+            <a href="{{ path('forum_index') }}" 
+               class="category-pill {{ app.request.query.get('categorie') == '' or app.request.query.get('categorie') is null ? 'active' : '' }}">
+                <i class="fas fa-th-large"></i>
+                Toutes
+            </a>
+            <a href="{{ path('forum_index', {categorie: 'question_cours'}) }}" 
+               class="category-pill {{ app.request.query.get('categorie') == 'question_cours' ? 'active' : '' }}">
+                <i class="fas fa-book"></i>
+                Cours
+            </a>
+            <a href="{{ path('forum_index', {categorie: 'question_examen'}) }}" 
+               class="category-pill {{ app.request.query.get('categorie') == 'question_examen' ? 'active' : '' }}">
+                <i class="fas fa-graduation-cap"></i>
+                Examens
+            </a>
+            <a href="{{ path('forum_index', {categorie: 'tutoriel'}) }}" 
+               class="category-pill {{ app.request.query.get('categorie') == 'tutoriel' ? 'active' : '' }}">
+                <i class="fas fa-play-circle"></i>
+                Tutoriels
+            </a>
+            <a href="{{ path('forum_index', {categorie: 'blog'}) }}" 
+               class="category-pill {{ app.request.query.get('categorie') == 'blog' ? 'active' : '' }}">
+                <i class="fas fa-pen"></i>
+                Blog
+            </a>
+            <a href="{{ path('forum_index', {categorie: 'article'}) }}" 
+               class="category-pill {{ app.request.query.get('categorie') == 'article' ? 'active' : '' }}">
+                <i class="fas fa-newspaper"></i>
+                Articles
+            </a>
+            <a href="{{ path('forum_index', {categorie: 'reclamation'}) }}" 
+               class="category-pill {{ app.request.query.get('categorie') == 'reclamation' ? 'active' : '' }}">
+                <i class="fas fa-exclamation-circle"></i>
+                Réclamations
+            </a>
+            <a href="{{ path('forum_index', {categorie: 'demande_d_aide'}) }}" 
+               class="category-pill {{ app.request.query.get('categorie') == 'demande_d_aide' ? 'active' : '' }}">
+                <i class="fas fa-hands-helping"></i>
+                Demandes d'aide
+            </a>
+            <a href="{{ path('forum_index', {categorie: 'autre'}) }}" 
+               class="category-pill {{ app.request.query.get('categorie') == 'autre' ? 'active' : '' }}">
+                <i class="fas fa-ellipsis-h"></i>
+                Autre
+            </a>
+        </div>
+
+        <div class="d-flex justify-content-end">
+            <a href="{{ path('forum_publication_new') }}" class="btn-success-custom">
+                <i class="fas fa-plus-circle"></i>
+                Nouvelle publication
+            </a>
+        </div>
+    </div>
+
+    <!-- PUBLICATIONS GRID -->
+    <div class="publications-grid">
+        {% if publications|length > 0 %}
+            {% for publication in publications %}
+                <article class="publication-card">
+                    <div class="card-top">
+                        <span class="categorie-badge {{ publication.categorie }}">
+                            {% if publication.categorie == 'question_cours' %}
+                                <i class="fas fa-book me-1"></i> Cours
+                            {% elseif publication.categorie == 'question_examen' %}
+                                <i class="fas fa-graduation-cap me-1"></i> Examen
+                            {% elseif publication.categorie == 'tutoriel' %}
+                                <i class="fas fa-play-circle me-1"></i> Tutoriel
+                            {% elseif publication.categorie == 'blog' %}
+                                <i class="fas fa-pen me-1"></i> Blog
+                            {% elseif publication.categorie == 'article' %}
+                                <i class="fas fa-newspaper me-1"></i> Article
+                            {% elseif publication.categorie == 'reclamation' %}
+                                <i class="fas fa-exclamation-circle me-1"></i> Réclamation
+                            {% elseif publication.categorie == 'demande_d_aide' %}
+                                <i class="fas fa-hands-helping me-1"></i> Aide
+                            {% else %}
+                                <i class="fas fa-tag me-1"></i> Autre
+                            {% endif %}
+                        </span>
+                        <span class="card-date">
+                            <i class="far fa-calendar-alt"></i>
+                            {{ publication.dateCreation|date('d/m/Y') }}
+                        </span>
+                    </div>
+
+                    <a href="{{ path('forum_publication_show', {id: publication.id}) }}" class="card-title">
+                        {{ publication.titre|slice(0, 60) }}
+                        {% if publication.titre|length > 60 %}...{% endif %}
+                    </a>
+
+                    <p class="card-description">
+                        {{ publication.description|slice(0, 120) }}
+                        {% if publication.description|length > 120 %}...{% endif %}
+                    </p>
+
+                    <div class="card-footer-custom">
+                        <div class="card-stats">
+                            <span class="card-stat" title="Vues">
+                                <i class="fas fa-eye"></i>
+                                {{ publication.nombreVues }}
+                            </span>
+                            <span class="card-stat" title="Likes">
+                                <i class="fas fa-heart"></i>
+                                {{ likeRepository.countLikesForPublication(publication.id) }}
+                            </span>
+                            <span class="card-stat" title="Dislikes">
+                                <i class="fas fa-thumbs-down"></i>
+                                {{ likeRepository.countDislikesForPublication(publication.id) }}
+                            </span>
+                        </div>
+                        <a href="{{ path('forum_publication_show', {id: publication.id}) }}" class="btn-voir">
+                            Voir
+                            <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </article>
+            {% endfor %}
+        {% else %}
+            <div class="empty-state">
+                <span class="empty-icon">💬</span>
+                <h3>Aucune publication pour le moment</h3>
+                <p>Soyez le premier à créer une discussion !</p>
+                <a href="{{ path('forum_publication_new') }}" class="btn-success-custom">
+                    <i class="fas fa-plus-circle"></i>
+                    Créer la première publication
+                </a>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+{% endblock %}
+
+{% block javascripts %}
+<script>
+document.querySelector('.mobile-menu-btn')?.addEventListener('click', function() {
+    document.querySelector('.main-nav').classList.toggle('active');
+});
+</script>
+{% endblock %}

@@ -1,0 +1,461 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Gestion du Forum{% endblock %}
+
+{% block stylesheets %}
+{{ parent() }}
+<link rel="stylesheet" href="{{ asset('assets/css/styles.css') }}">
+<link rel="stylesheet" href="{{ asset('assets/css/dashboard.css') }}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css">
+
+<style>
+/* ===== FIX BADGE NOTIFICATION ROUGE ===== */
+.notification-btn { display: none !important; }
+
+/* ===== DASHBOARD CONTENT ===== */
+.dashboard-content {
+    padding: 30px;
+}
+
+/* ===== CARD ===== */
+.card {
+    border: none;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+    border-radius: 12px;
+    margin-bottom: 1.5rem;
+}
+
+.card-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-radius: 12px 12px 0 0 !important;
+    padding: 1rem 1.5rem;
+    border: none;
+}
+
+.card-header h5 { margin: 0; font-weight: 600; }
+
+/* ===== FORM ===== */
+.form-control, .form-select {
+    border: 2px solid #e2e8f0;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    padding: 0.5rem 0.75rem;
+    color: #1e293b;
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.15);
+    color: #1e293b;
+}
+
+.form-label {
+    font-weight: 600;
+    color: #374151;
+    font-size: 0.875rem;
+    margin-bottom: 0.4rem;
+}
+
+/* ===== SORT BUTTONS ===== */
+.sort-btn {
+    padding: 0.4rem 0.9rem;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.3s;
+    border: 2px solid #667eea;
+    color: #667eea;
+    background: white;
+}
+
+.sort-btn:hover, .sort-btn.active {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-color: transparent;
+    transform: translateY(-1px);
+}
+
+/* ===== TABLE ===== */
+.table thead th {
+    background: #f8fafc;
+    color: #64748b;
+    font-weight: 600;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-bottom: 2px solid #e2e8f0;
+    padding: 0.875rem 1rem;
+    white-space: nowrap;
+}
+
+.table tbody td {
+    padding: 0.875rem 1rem;
+    vertical-align: middle;
+    color: #1e293b;
+    border-bottom: 1px solid #f1f5f9;
+    font-size: 0.95rem;
+}
+
+.table tbody tr:hover td {
+    background: #f8fafc;
+}
+
+.table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+/* ===== BADGES FIXES ===== */
+.cat-badge {
+    display: inline-block;
+    padding: 0.35rem 0.8rem;
+    border-radius: 20px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    white-space: nowrap;
+    position: static !important;
+    line-height: 1.4;
+}
+
+.cat-question_cours   { background: #dbeafe; color: #1d4ed8; }
+.cat-question_examen  { background: #fce7f3; color: #be185d; }
+.cat-tutoriel         { background: #d1fae5; color: #065f46; }
+.cat-blog             { background: #fef3c7; color: #92400e; }
+.cat-article          { background: #ede9fe; color: #5b21b6; }
+.cat-reclamation      { background: #fee2e2; color: #991b1b; }
+.cat-demande_d_aide   { background: #e0f2fe; color: #075985; }
+.cat-aide             { background: #e0f2fe; color: #075985; }
+.cat-autre            { background: #f1f5f9; color: #475569; }
+
+.count-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 36px;
+    height: 26px;
+    border-radius: 13px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    padding: 0 0.5rem;
+    position: static !important;
+}
+
+.count-badge.views { background: #dbeafe; color: #1d4ed8; }
+.count-badge.likes { background: #d1fae5; color: #065f46; }
+
+/* ===== ACTION BUTTONS ===== */
+.action-btn {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
+    transition: all 0.3s;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+}
+
+.action-btn:hover { transform: translateY(-2px); }
+.action-btn.view   { background: #dbeafe; color: #1d4ed8; }
+.action-btn.edit   { background: #fef3c7; color: #92400e; }
+.action-btn.delete { background: #fee2e2; color: #991b1b; }
+
+.action-btn.view:hover   { background: #1d4ed8; color: white; }
+.action-btn.edit:hover   { background: #92400e; color: white; }
+.action-btn.delete:hover { background: #991b1b; color: white; }
+
+/* ===== RESULTS COUNT ===== */
+.results-count {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 0.4rem 1rem;
+    border-radius: 20px;
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+/* ===== EMPTY STATE ===== */
+.empty-state {
+    text-align: center;
+    padding: 3rem;
+    color: #94a3b8;
+}
+
+.empty-state i {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    display: block;
+    opacity: 0.4;
+}
+</style>
+{% endblock %}
+
+{% block body %}
+<div class="dashboard">
+
+    {% include 'back/sidebar.html.twig' %}
+
+    <main class="main-content">
+        <header class="dashboard-header">
+            <div class="header-left">
+                <h1>Gestion du Forum</h1>
+                <p>Gérer les publications et réclamations des étudiants</p>
+            </div>
+            <div class="header-right">
+                <div class="search-bar">
+                    <input type="text" placeholder="Rechercher...">
+                    <button><i class="fas fa-search"></i></button>
+                </div>
+                {# ✅ BADGE SUPPRIMÉ #}
+            </div>
+        </header>
+
+        <div class="dashboard-content">
+
+            {# TITRE + BOUTONS #}
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2 class="h4 mb-0 text-dark fw-bold">
+                    <i class="fas fa-bullhorn me-2" style="color: #667eea;"></i>
+                    Publications
+                </h2>
+                <div class="d-flex gap-2">
+                    <a href="{{ path('back_publication_stats') }}" class="btn btn-sm" 
+                       style="background: linear-gradient(135deg, #4dabf7 0%, #339af0 100%); color: white; border-radius: 20px; padding: 0.5rem 1.25rem;">
+                        <i class="fas fa-chart-bar me-1"></i> Statistiques
+                    </a>
+                    <a href="{{ path('back_publication_new') }}" class="btn btn-sm"
+                       style="background: linear-gradient(135deg, #51cf66 0%, #40c057 100%); color: white; border-radius: 20px; padding: 0.5rem 1.25rem;">
+                        <i class="fas fa-plus-circle me-1"></i> Nouvelle Publication
+                    </a>
+                </div>
+            </div>
+
+            {# FLASH MESSAGES #}
+            {% for message in app.flashes('success') %}
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    <i class="fas fa-check-circle me-2"></i>{{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            {% endfor %}
+
+            {# FORMULAIRE DE RECHERCHE #}
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-search me-2"></i>Recherche avancée
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <form method="get" action="{{ path('back_publication_index') }}" id="searchForm">
+                        <div class="row g-3">
+                            <div class="col-md-2">
+                                <label class="form-label">ID</label>
+                                <input type="number" class="form-control" name="id" 
+                                       placeholder="ID" value="{{ searchParams.id ?? '' }}">
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">Titre</label>
+                                <input type="text" class="form-control" name="titre" 
+                                       placeholder="Rechercher..." value="{{ searchParams.titre ?? '' }}">
+                            </div>
+                            <div class="col-md-2">
+                                <label class="form-label">Catégorie</label>
+                                <select class="form-select" name="categorie">
+                                    <option value="">-- Toutes --</option>
+                                    <option value="question_cours"  {{ searchParams.categorie == 'question_cours'  ? 'selected' : '' }}>Question cours</option>
+                                    <option value="question_examen" {{ searchParams.categorie == 'question_examen' ? 'selected' : '' }}>Question examen</option>
+                                    <option value="tutoriel"        {{ searchParams.categorie == 'tutoriel'        ? 'selected' : '' }}>Tutoriel</option>
+                                    <option value="blog"            {{ searchParams.categorie == 'blog'            ? 'selected' : '' }}>Blog</option>
+                                    <option value="article"         {{ searchParams.categorie == 'article'         ? 'selected' : '' }}>Article</option>
+                                    <option value="reclamation"     {{ searchParams.categorie == 'reclamation'     ? 'selected' : '' }}>Réclamation</option>
+                                    <option value="demande_d_aide"  {{ searchParams.categorie == 'demande_d_aide'  ? 'selected' : '' }}>Demande d'aide</option>
+                                    <option value="aide"            {{ searchParams.categorie == 'aide'            ? 'selected' : '' }}>Aide</option>
+                                    <option value="autre"           {{ searchParams.categorie == 'autre'           ? 'selected' : '' }}>Autre</option>
+                                </select>
+                            </div>
+                            <div class="col-md-2">
+                                <label class="form-label">Date début</label>
+                                <input type="date" class="form-control" name="dateDebut" 
+                                       value="{{ searchParams.dateDebut ?? '' }}">
+                            </div>
+                            <div class="col-md-2">
+                                <label class="form-label">Date fin</label>
+                                <input type="date" class="form-control" name="dateFin" 
+                                       value="{{ searchParams.dateFin ?? '' }}">
+                            </div>
+                            <div class="col-md-1 d-flex align-items-end">
+                                <button type="submit" class="btn w-100"
+                                        style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border-radius: 8px;">
+                                    <i class="fas fa-search"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="d-flex gap-2 mt-3">
+                            <a href="{{ path('back_publication_index') }}" class="btn btn-sm btn-outline-secondary" style="border-radius: 20px;">
+                                <i class="fas fa-redo me-1"></i> Réinitialiser
+                            </a>
+                            <button type="button" id="exportPdfBtn" class="btn btn-sm btn-outline-danger" style="border-radius: 20px;">
+                                <i class="fas fa-file-pdf me-1"></i> Exporter PDF
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            {# TRI #}
+            <div class="card">
+                <div class="card-body py-2">
+                    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+                        <div class="d-flex align-items-center gap-2 flex-wrap">
+                            <span class="fw-600 text-dark" style="font-weight:600;">
+                                <i class="fas fa-sort me-1" style="color:#667eea;"></i> Trier par :
+                            </span>
+                            <a href="{{ path('back_publication_index', searchParams|merge({sortBy: 'dateCreation', sortOrder: 'DESC'})) }}" 
+                               class="sort-btn {{ searchParams.sortBy == 'dateCreation' ? 'active' : '' }}">
+                                <i class="fas fa-calendar me-1"></i>Date
+                            </a>
+                            <a href="{{ path('back_publication_index', searchParams|merge({sortBy: 'nombreVues', sortOrder: 'DESC'})) }}" 
+                               class="sort-btn {{ searchParams.sortBy == 'nombreVues' ? 'active' : '' }}">
+                                <i class="fas fa-eye me-1"></i>Vues
+                            </a>
+                            <a href="{{ path('back_publication_index', searchParams|merge({sortBy: 'nombreLikes', sortOrder: 'DESC'})) }}" 
+                               class="sort-btn {{ searchParams.sortBy == 'nombreLikes' ? 'active' : '' }}">
+                                <i class="fas fa-heart me-1"></i>Likes
+                            </a>
+                            <a href="{{ path('back_publication_index', searchParams|merge({sortBy: 'titre', sortOrder: 'ASC'})) }}" 
+                               class="sort-btn {{ searchParams.sortBy == 'titre' ? 'active' : '' }}">
+                                <i class="fas fa-font me-1"></i>Titre
+                            </a>
+                        </div>
+                        <span class="results-count">
+                            <i class="fas fa-list me-1"></i>
+                            {{ publications|length }} résultat(s)
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            {# TABLEAU #}
+            <div class="card">
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Titre</th>
+                                    <th>Catégorie</th>
+                                    <th>Date</th>
+                                    <th>Vues</th>
+                                    <th>Likes</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for publication in publications %}
+                                <tr>
+                                    <td>
+                                        <span style="color:#667eea; font-weight:700;">#{{ publication.id }}</span>
+                                    </td>
+                                    <td>
+                                        <span class="text-dark fw-500">
+                                            {{ publication.titre|length > 50 ? publication.titre|slice(0,50) ~ '...' : publication.titre }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <span class="cat-badge cat-{{ publication.categorie }}">
+                                            {{ publication.categorie|replace({'_': ' '})|title }}
+                                        </span>
+                                    </td>
+                                    <td class="text-muted">
+                                        <i class="far fa-calendar-alt me-1"></i>
+                                        {{ publication.dateCreation|date('d/m/Y') }}
+                                    </td>
+                                    <td>
+                                        <span class="count-badge views">
+                                            <i class="fas fa-eye me-1" style="font-size:0.7rem;"></i>
+                                            {{ publication.nombreVues }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <span class="count-badge likes">
+                                            <i class="fas fa-heart me-1" style="font-size:0.7rem;"></i>
+                                            {{ publication.nombreLikes }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <div class="d-flex gap-1">
+                                            <a href="{{ path('back_publication_show', {id: publication.id}) }}" 
+                                               class="action-btn view" title="Voir">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+                                            <a href="{{ path('back_publication_edit', {id: publication.id}) }}" 
+                                               class="action-btn edit" title="Modifier">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                            <form method="post" action="{{ path('back_publication_delete', {id: publication.id}) }}" 
+                                                  style="display:inline-block;" 
+                                                  onsubmit="return confirm('Supprimer cette publication ?');">
+                                                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ publication.id) }}">
+                                                <button class="action-btn delete" title="Supprimer">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% else %}
+                                <tr>
+                                    <td colspan="7">
+                                        <div class="empty-state">
+                                            <i class="fas fa-inbox"></i>
+                                            <p class="mb-0 fw-600">Aucune publication trouvée</p>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+</div>
+{% endblock %}
+
+{% block javascripts %}
+{{ parent() }}
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Sidebar Toggle
+    const sidebarToggle = document.querySelector('.sidebar-toggle');
+    const sidebar       = document.querySelector('.sidebar');
+    const mainContent   = document.querySelector('.main-content');
+
+    if(sidebarToggle) {
+        sidebarToggle.addEventListener('click', function() {
+            sidebar.classList.toggle('collapsed');
+            mainContent.classList.toggle('expanded');
+        });
+    }
+
+    // Export PDF
+    const exportPdfBtn = document.getElementById('exportPdfBtn');
+    if(exportPdfBtn) {
+        exportPdfBtn.addEventListener('click', function() {
+            const form   = document.getElementById('searchForm');
+            const params = new URLSearchParams(new FormData(form));
+            window.location.href = '{{ path('back_publication_export_pdf') }}?' + params.toString();
+        });
+    }
+});
+</script>
+{% endblock %}

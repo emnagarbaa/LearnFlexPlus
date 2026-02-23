@@ -1,0 +1,112 @@
+{% extends 'front/home.html.twig' %}
+
+{% block title %}Nouvelle communication - LearnFlex+{% endblock %}
+
+{% block header %}
+<header class="landing-header">
+    <div class="container">
+        <div class="header-left">
+            <div class="logo">
+                <img src="{{ asset('assets/images/logo1.png') }}" alt="Learnflexplus Logo" class="main-logo">
+                <span class="logo-text">LearnFlex +</span>
+            </div>
+        </div>
+        <nav class="main-nav">
+            <ul>
+                <li><a href="{{ path('app_front') }}">Accueil</a></li>
+                <li><a href="{{ path('forum_index') }}">Forum</a></li>
+                <li class="active"><a href="{{ path('forum_communication_index') }}">Communications</a></li>
+            </ul>
+        </nav>
+          <div class="header-right">
+            {# Dashboard button now optional, you can even remove it if logo is enough #}
+            {% if app.user and ('ROLE_ADMIN' in app.user.roles or 'ROLE_ENSEIGNANT' in app.user.roles) %}
+                <a href="{{ path('dashboard') }}" class="btn btn-outline dashboard-btn">Dashboard</a>
+            {% endif %}
+
+            {# Logout for logged-in users #}
+            {% if app.user %}
+                <form action="{{ path('app_logout') }}" method="post" style="display:inline;">
+                    <button type="submit" class="btn btn-primary logout-btn">Déconnexion</button>
+                </form>
+            {% else %}
+                <a href="{{ path('app_login') }}" class="btn btn-primary">Connexion</a>
+            {% endif %}
+
+            <button class="mobile-menu-btn">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+    </div>
+</header>
+{% endblock %}
+
+{% block body %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h1 class="h3 mb-0"><i class="fas fa-bullhorn"></i> Nouvelle communication</h1>
+                </div>
+                <div class="card-body">
+                    {{ form_start(form) }}
+                    
+                    <div class="mb-3">
+                        {{ form_label(form.type) }}
+                        {{ form_widget(form.type, {'attr': {'class': 'form-control'}}) }}
+                    </div>
+                    
+                    <div class="mb-3">
+                        {{ form_label(form.lien) }}
+                        {{ form_widget(form.lien, {'attr': {'class': 'form-control', 'placeholder': 'https://meet.google.com/xxx-yyyy-zzz'}}) }}
+                        <small class="form-text text-muted">Lien Zoom, Google Meet, Teams, etc.</small>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            {{ form_label(form.dateHeure) }}
+                            {{ form_widget(form.dateHeure, {'attr': {'class': 'form-control'}}) }}
+                        </div>
+                        <div class="col-md-6">
+                            {{ form_label(form.duree) }}
+                            <div class="input-group">
+                                {{ form_widget(form.duree, {'attr': {'class': 'form-control'}}) }}
+                                <span class="input-group-text">minutes</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        {{ form_label(form.etat) }}
+                        {{ form_widget(form.etat, {'attr': {'class': 'form-control'}}) }}
+                    </div>
+                    
+                    <div class="mb-3">
+                        {{ form_label(form.descriptionDetaillee) }}
+                        {{ form_widget(form.descriptionDetaillee, {'attr': {'class': 'form-control', 'rows': 6, 'placeholder': 'Décrivez cette communication...'}}) }}
+                    </div>
+                    
+                    <div class="mb-3">
+                        {{ form_label(form.publication) }}
+                        {{ form_widget(form.publication, {'attr': {'class': 'form-control'}}) }}
+                        <small class="form-text text-muted">Optionnel : lier à une publication existante</small>
+                    </div>
+                    
+                    <div class="d-flex justify-content-between">
+                        <a href="{{ path('forum_communication_index') }}" 
+                           class="btn btn-outline-secondary">
+                            <i class="fas fa-times"></i> Annuler
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save"></i> Créer la communication
+                        </button>
+                    </div>
+                    
+                    {{ form_end(form) }}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

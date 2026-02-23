@@ -1,0 +1,372 @@
+{% extends 'front/home.html.twig' %}
+
+{% block title %}Communications - LearnFlex+{% endblock %}
+
+{% block header %}
+<header class="landing-header">
+    <div class="container">
+        <div class="header-left">
+            <a href="{{ path('app_front') }}" class="logo">
+                <img src="{{ asset('assets/images/logo1.png') }}" alt="LearnFlex+ Logo" class="main-logo">
+                <span class="logo-text">LearnFlex +</span>
+            </a>
+        </div>
+        <nav class="main-nav">
+            <ul>
+                <li><a href="{{ path('app_front') }}">Accueil</a></li>
+                <li><a href="#">Contenus pédagogiques</a></li>
+                <li><a href="#">Evaluation</a></li>
+                <li><a href="#">Questionnaire</a></li>
+                <li><a href="#">Orientation</a></li>
+                <li class="dropdown active">
+                    <a href="{{ path('forum_index') }}" class="dropdown-toggle">
+                        Forum
+                        <i class="fas fa-chevron-down"></i>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li>
+                            <a href="{{ path('forum_index') }}">
+                                <i class="fas fa-comments"></i>
+                                Discussions
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ path('communication_chat') }}">
+                                <i class="fas fa-message"></i>
+                                Chat en direct
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ path('forum_communication_index') }}">
+                                <i class="fas fa-bell"></i>
+                                Communications
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </nav>
+        <div class="header-right">
+            {% if app.user and ('ROLE_ADMIN' in app.user.roles or 'ROLE_ENSEIGNANT' in app.user.roles) %}
+                <a href="{{ path('dashboard') }}" class="btn btn-outline dashboard-btn">Dashboard</a>
+            {% endif %}
+
+            {% if app.user %}
+                <form action="{{ path('app_logout') }}" method="post" style="display:inline;">
+                    <button type="submit" class="btn btn-primary logout-btn">Déconnexion</button>
+                </form>
+            {% else %}
+                <a href="{{ path('app_login') }}" class="btn btn-primary">Connexion</a>
+            {% endif %}
+
+            <button class="mobile-menu-btn">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+    </div>
+</header>
+{% endblock %}
+
+{% block stylesheets %}
+{{ parent() }}
+<style>
+    /* Styles spécifiques à la page communications */
+    .page-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 3rem 0;
+        margin-bottom: 2rem;
+    }
+
+    .communication-card {
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+        padding: 2rem;
+        margin-bottom: 1.5rem;
+        transition: all 0.3s ease;
+    }
+
+    .communication-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+    }
+
+    .badge-live {
+        background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
+        color: white;
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        font-weight: 600;
+    }
+
+    .badge-record {
+        background: linear-gradient(135deg, #4dabf7 0%, #339af0 100%);
+        color: white;
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        font-weight: 600;
+    }
+
+    .badge-programmee {
+        background: linear-gradient(135deg, #20c997 0%, #0fb981 100%);
+        color: white;
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        font-weight: 600;
+    }
+
+    @keyframes pulse {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.5; }
+    }
+
+    /* Styles pour les outils */
+    .quick-tools {
+        animation: fadeInUp 0.8s ease;
+        margin-top: 3rem;
+    }
+    .tool-card {
+        border: none;
+        border-radius: 20px;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        color: #333;
+        background: white;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+        height: 100%;
+        text-decoration: none;
+        display: block;
+    }
+    .tool-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 20px 30px rgba(0,0,0,0.1);
+    }
+    .tool-icon {
+        color: #2563eb;
+    }
+    .chatbot-card .tool-icon { color: #10b981; }
+    .weather-card .tool-icon { color: #f59e0b; }
+    .map-card .tool-icon { color: #ef4444; }
+    .translate-card .tool-icon { color: #8b5cf6; }
+    .tool-card h3 {
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+        color: #1e293b;
+    }
+    .tool-card p {
+        color: #64748b;
+        margin-bottom: 1rem;
+    }
+    .tool-card .btn {
+        border-radius: 50px;
+        padding: 0.5rem 1.5rem;
+        font-weight: 600;
+        background: linear-gradient(135deg, #2563eb 0%, #7c3aed 100%);
+        border: none;
+        transition: all 0.3s;
+        color: white;
+        display: inline-block;
+    }
+    .tool-card .btn:hover {
+        transform: scale(1.05);
+        box-shadow: 0 10px 20px rgba(37,99,235,0.3);
+    }
+
+    @keyframes fadeInUp {
+        from { opacity: 0; transform: translateY(30px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+</style>
+{% endblock %}
+
+{% block body %}
+<!-- PAGE HEADER -->
+<div class="page-header">
+    <div class="container">
+        <nav aria-label="breadcrumb">
+          
+        </nav>
+        <h1 class="display-5 fw-bold">Communications</h1>
+        <p class="lead">Sessions live et enregistrées pour interagir avec la communauté</p>
+    </div>
+</div>
+
+<!-- LISTE DES COMMUNICATIONS -->
+<div class="container mb-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="text-dark">Toutes les communications</h2>
+        <a href="{{ path('forum_communication_new') }}" class="btn btn-success">
+            <i class="fas fa-plus-circle me-2"></i>
+            Nouvelle Communication
+        </a>
+    </div>
+
+    {% for message in app.flashes('success') %}
+        <div class="alert alert-success alert-dismissible fade show">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    {% endfor %}
+
+    <div class="row">
+        {% for communication in communications %}
+        <div class="col-lg-6">
+            <div class="communication-card">
+                <div class="d-flex justify-content-between align-items-start mb-3">
+                    <div>
+                        {% if communication.type == 'live' %}
+                            <span class="badge-live">
+                                <i class="fas fa-circle me-1" style="font-size: 0.6rem; animation: pulse 1.5s infinite;"></i>
+                                Live
+                            </span>
+                        {% else %}
+                            <span class="badge-record">
+                                <i class="fas fa-play-circle me-1"></i>
+                                Enregistré
+                            </span>
+                        {% endif %}
+                    </div>
+                    <div>
+                        {% if communication.etat == 'programmee' %}
+                            <span class="badge-programmee">
+                                <i class="fas fa-calendar-check me-1"></i>
+                                Programmée
+                            </span>
+                        {% elseif communication.etat == 'en_cours' %}
+                            <span class="badge bg-warning text-dark">
+                                <i class="fas fa-hourglass-half me-1"></i>
+                                En cours
+                            </span>
+                        {% elseif communication.etat == 'terminee' %}
+                            <span class="badge bg-success">
+                                <i class="fas fa-check-circle me-1"></i>
+                                Terminée
+                            </span>
+                        {% else %}
+                            <span class="badge bg-danger">
+                                <i class="fas fa-times-circle me-1"></i>
+                                Annulée
+                            </span>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <div class="text-dark mb-2">
+                        <i class="fas fa-calendar-alt me-2 text-primary"></i>
+                        <strong>{{ communication.dateHeure|date('d/m/Y à H:i') }}</strong>
+                    </div>
+                    
+                    {% if communication.duree %}
+                    <div class="text-muted mb-2">
+                        <i class="fas fa-clock me-2"></i>
+                        Durée : {{ communication.duree }} minutes
+                    </div>
+                    {% endif %}
+
+                    {% if communication.getPublication() %}
+                    <div class="text-muted mb-2">
+                        <i class="fas fa-link me-2"></i>
+                        Publication : 
+                        <a href="{{ path('forum_publication_show', {id: communication.getPublication().id}) }}" class="text-decoration-none">
+                            {{ communication.getPublication().titre }}
+                        </a>
+                    </div>
+                    {% endif %}
+                    
+                    {% if communication.descriptionDetaillee %}
+                    <p class="text-dark mt-3">{{ communication.descriptionDetaillee }}</p>
+                    {% endif %}
+                </div>
+
+                <div class="d-flex gap-2">
+                    {% if communication.lien %}
+                    <a href="{{ communication.lien }}" target="_blank" class="btn btn-primary">
+                        <i class="fas fa-external-link-alt me-2"></i>
+                        Rejoindre
+                    </a>
+                    {% endif %}
+                    <a href="{{ path('forum_communication_show', {id: communication.id}) }}" class="btn btn-outline-info">
+                        <i class="fas fa-eye me-2"></i>
+                        Détails
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <div class="col-12">
+            <div class="text-center py-5">
+                <i class="fas fa-video fa-4x text-muted mb-4"></i>
+                <h3 class="text-muted">Aucune communication disponible</h3>
+                <p class="text-muted">Les communications apparaîtront ici</p>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- OUTILS RAPIDES -->
+<div class="quick-tools container my-5">
+    <h2 class="text-center mb-4">Nos outils</h2>
+    <div class="row g-4">
+        <div class="col-md-3">
+            <a href="{{ path('app_chatbot') }}" class="text-decoration-none">
+                <div class="card tool-card chatbot-card text-center p-4">
+                    <div class="tool-icon mb-3">
+                        <i class="fas fa-robot fa-3x"></i>
+                    </div>
+                    <h3>Chatbot</h3>
+                    <p>Posez vos questions à notre assistant intelligent</p>
+                    <span class="btn btn-primary mt-2">Discuter</span>
+                </div>
+            </a>
+        </div>
+        <div class="col-md-3">
+            <a href="{{ path('app_weather') }}" class="text-decoration-none">
+                <div class="card tool-card weather-card text-center p-4">
+                    <div class="tool-icon mb-3">
+                        <i class="fas fa-cloud-sun fa-3x"></i>
+                    </div>
+                    <h3>Météo</h3>
+                    <p>Consultez la météo en temps réel</p>
+                    <span class="btn btn-primary mt-2">Voir la météo</span>
+                </div>
+            </a>
+        </div>
+        <div class="col-md-3">
+            <a href="{{ path('app_map') }}" class="text-decoration-none">
+                <div class="card tool-card map-card text-center p-4">
+                    <div class="tool-icon mb-3">
+                        <i class="fas fa-map-marked-alt fa-3x"></i>
+                    </div>
+                    <h3>Carte</h3>
+                    <p>Explorez notre carte interactive</p>
+                    <span class="btn btn-primary mt-2">Ouvrir la carte</span>
+                </div>
+            </a>
+        </div>
+        <div class="col-md-3">
+            <a href="{{ path('app_translate') }}" class="text-decoration-none">
+                <div class="card tool-card translate-card text-center p-4">
+                    <div class="tool-icon mb-3">
+                        <i class="fas fa-language fa-3x"></i>
+                    </div>
+                    <h3>Traduction</h3>
+                    <p>Traduisez vos textes instantanément</p>
+                    <span class="btn btn-primary mt-2">Traduire</span>
+                </div>
+            </a>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block javascripts %}
+{{ parent() }}
+<script>
+document.querySelector('.mobile-menu-btn')?.addEventListener('click', function() {
+    document.querySelector('.main-nav').classList.toggle('active');
+});
+</script>
+{% endblock %}

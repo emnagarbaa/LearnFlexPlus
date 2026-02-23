@@ -1,0 +1,577 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Nouvelle Publication{% endblock %}
+
+{% block stylesheets %}
+<link rel="stylesheet" href="{{ asset('assets/css/styles.css') }}">
+<link rel="stylesheet" href="{{ asset('assets/css/dashboard.css') }}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css">
+<style>
+
+/* ===== NOTIFICATION BADGE SUPPRIMÉ ===== */
+.notification-btn { display: none !important; }
+
+/* ===== SIDEBAR SUBMENU ===== */
+.sidebar-menu .has-submenu {
+    position: relative;
+}
+
+.sidebar-menu .has-submenu > a {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.submenu-arrow {
+    font-size: 0.7rem;
+    transition: transform 0.3s ease;
+    margin-left: auto;
+}
+
+.sidebar-menu .has-submenu:hover .submenu-arrow {
+    transform: rotate(90deg);
+}
+
+.sidebar-menu .submenu {
+    display: none;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    background: rgba(0, 0, 0, 0.2);
+}
+
+.sidebar-menu .has-submenu:hover .submenu {
+    display: block;
+}
+
+.sidebar-menu .submenu li {
+    padding: 0;
+}
+
+.sidebar-menu .submenu li a {
+    padding: 12px 20px 12px 55px;
+    display: flex;
+    align-items: center;
+    color: rgba(255, 255, 255, 0.7);
+    text-decoration: none;
+    transition: all 0.3s ease;
+    font-size: 0.9rem;
+}
+
+.sidebar-menu .submenu li a:hover {
+    background: rgba(255, 255, 255, 0.15);
+    color: white;
+    padding-left: 60px;
+}
+
+.sidebar-menu .submenu li a i {
+    margin-right: 10px;
+    font-size: 0.85rem;
+}
+
+.sidebar-menu .submenu li.active a {
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+}
+
+/* ===== FORM CONTAINER ===== */
+.form-container {
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+/* ===== HERO CARD ===== */
+.hero-card {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 20px;
+    padding: 2.5rem;
+    color: white;
+    margin-bottom: 2rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.hero-card::before {
+    content: '';
+    position: absolute;
+    top: -40%;
+    right: -10%;
+    width: 300px; height: 300px;
+    background: rgba(255,255,255,0.05);
+    border-radius: 50%;
+}
+
+.hero-card::after {
+    content: '';
+    position: absolute;
+    bottom: -50%;
+    left: -5%;
+    width: 250px; height: 250px;
+    background: rgba(255,255,255,0.05);
+    border-radius: 50%;
+}
+
+.hero-card h2 {
+    font-size: 1.75rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    position: relative; z-index: 1;
+}
+
+.hero-card p {
+    opacity: 0.85;
+    margin: 0;
+    position: relative; z-index: 1;
+}
+
+/* ===== SECTION CARD ===== */
+.section-card {
+    background: white;
+    border-radius: 20px;
+    padding: 2rem;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.07);
+    margin-bottom: 1.5rem;
+    border: none;
+}
+
+.section-title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #1e293b;
+    margin-bottom: 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 2px solid #f1f5f9;
+}
+
+.section-title i {
+    width: 32px; height: 32px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 8px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 0.85rem;
+}
+
+/* ===== FORM INPUTS ===== */
+.form-label {
+    font-weight: 600;
+    color: #374151;
+    font-size: 0.9rem;
+    margin-bottom: 0.5rem;
+}
+
+.form-control, .form-select {
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 0.75rem 1rem;
+    font-size: 0.95rem;
+    color: #1e293b;
+    transition: all 0.3s;
+    background: #fafafa;
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: #667eea;
+    box-shadow: 0 0 0 4px rgba(102,126,234,0.12);
+    background: white;
+    color: #1e293b;
+    outline: none;
+}
+
+textarea.form-control {
+    min-height: 140px;
+    resize: vertical;
+}
+
+/* ===== CATEGORY CARDS ===== */
+.categories-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 1rem;
+}
+
+.category-card {
+    border: 2px solid #e9ecef;
+    border-radius: 16px;
+    padding: 1.5rem 1rem;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background: white;
+    position: relative;
+    overflow: hidden;
+}
+
+.category-card::before {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0;
+    width: 100%; height: 3px;
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.category-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.12);
+    border-color: #667eea;
+}
+
+.category-card:hover::before { opacity: 1; }
+
+.category-card.selected {
+    border-color: #667eea;
+    background: linear-gradient(135deg, #f0f4ff 0%, #f5f0ff 100%);
+    box-shadow: 0 8px 25px rgba(102,126,234,0.25);
+    transform: translateY(-3px);
+}
+
+.category-card.selected::before { opacity: 1; }
+
+.category-card.selected .check-icon {
+    opacity: 1;
+    transform: scale(1);
+}
+
+.check-icon {
+    position: absolute;
+    top: 8px; right: 8px;
+    width: 22px; height: 22px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    color: white; font-size: 0.65rem;
+    opacity: 0;
+    transform: scale(0);
+    transition: all 0.3s;
+}
+
+.cat-icon {
+    width: 56px; height: 56px;
+    border-radius: 14px;
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 0.75rem;
+    font-size: 1.4rem;
+}
+
+.cat-name {
+    font-weight: 700;
+    font-size: 0.85rem;
+    color: #1e293b;
+    margin-bottom: 0.25rem;
+}
+
+.cat-desc {
+    font-size: 0.75rem;
+    color: #94a3b8;
+    line-height: 1.3;
+}
+
+.cat-card-cours       .cat-icon { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; }
+.cat-card-cours       .category-card::before { background: linear-gradient(135deg, #667eea, #764ba2); }
+.cat-card-examen      .cat-icon { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; }
+.cat-card-examen      .category-card::before { background: linear-gradient(135deg, #f093fb, #f5576c); }
+.cat-card-tutoriel    .cat-icon { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: white; }
+.cat-card-tutoriel    .category-card::before { background: linear-gradient(135deg, #4facfe, #00f2fe); }
+.cat-card-blog        .cat-icon { background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); color: white; }
+.cat-card-blog        .category-card::before { background: linear-gradient(135deg, #43e97b, #38f9d7); }
+.cat-card-article     .cat-icon { background: linear-gradient(135deg, #fa709a 0%, #fee140 100%); color: white; }
+.cat-card-article     .category-card::before { background: linear-gradient(135deg, #fa709a, #fee140); }
+.cat-card-reclamation .cat-icon { background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%); color: white; }
+.cat-card-reclamation .category-card::before { background: linear-gradient(135deg, #ff6b6b, #ee5a6f); }
+.cat-card-aide        .cat-icon { background: linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%); color: white; }
+.cat-card-aide        .category-card::before { background: linear-gradient(135deg, #a18cd1, #fbc2eb); }
+.cat-card-autre       .cat-icon { background: linear-gradient(135deg, #96fbc4 0%, #f9f586 100%); color: #1e293b; }
+.cat-card-autre       .category-card::before { background: linear-gradient(135deg, #96fbc4, #f9f586); }
+
+/* ===== SUBMIT BUTTONS ===== */
+.btn-submit {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    padding: 0.875rem 2.5rem;
+    border-radius: 12px;
+    font-weight: 700;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+}
+
+.btn-submit:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 25px rgba(102,126,234,0.4);
+    color: white;
+}
+
+.btn-cancel {
+    background: #f1f5f9;
+    color: #64748b;
+    border: none;
+    padding: 0.875rem 2rem;
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 1rem;
+    text-decoration: none;
+    transition: all 0.3s;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+}
+
+.btn-cancel:hover {
+    background: #e2e8f0;
+    color: #374151;
+    transform: translateY(-2px);
+}
+
+/* ===== CHAR COUNTER ===== */
+.char-counter {
+    font-size: 0.8rem;
+    color: #94a3b8;
+    text-align: right;
+    margin-top: 0.3rem;
+}
+
+.char-counter.warning { color: #f59e0b; }
+.char-counter.danger  { color: #ef4444; }
+
+</style>
+{% endblock %}
+
+{% block body %}
+<div class="dashboard">
+
+    {# ✅ SIDEBAR INCLUSE COMME LE DASHBOARD #}
+    {% include 'back/sidebar.html.twig' %}
+
+    <main class="main-content">
+        <header class="dashboard-header">
+            <div class="header-left">
+                <h1>Nouvelle Publication</h1>
+                <p>Créer une nouvelle publication dans le forum</p>
+            </div>
+            <div class="header-right">
+                <a href="{{ path('back_publication_index') }}" class="btn btn-secondary btn-sm">
+                    <i class="fas fa-arrow-left me-1"></i> Retour
+                </a>
+            </div>
+        </header>
+
+        <div class="dashboard-content">
+            <div class="form-container">
+
+                {# ===== HERO CARD ===== #}
+                <div class="hero-card">
+                    <div class="d-flex align-items-center gap-3">
+                        <div style="width:60px;height:60px;background:rgba(255,255,255,0.2);border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:1.75rem;">
+                            📝
+                        </div>
+                        <div>
+                            <h2>Créer une nouvelle publication</h2>
+                            <p>Remplissez les informations ci-dessous pour publier dans le forum</p>
+                        </div>
+                    </div>
+                </div>
+
+                {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
+
+                {# ===== TITRE ===== #}
+                <div class="section-card">
+                    <div class="section-title">
+                        <i class="fas fa-heading"></i>
+                        Titre de la publication
+                    </div>
+                    <div>
+                        {{ form_label(form.titre, 'Titre', {'label_attr': {'class': 'form-label'}}) }}
+                        {{ form_widget(form.titre, {'attr': {
+                            'class': 'form-control',
+                            'placeholder': 'Donnez un titre clair et descriptif...',
+                            'id': 'titre-input',
+                            'maxlength': '200'
+                        }}) }}
+                        <div class="char-counter" id="titre-counter">0 / 200 caractères</div>
+                        {{ form_errors(form.titre) }}
+                    </div>
+                </div>
+
+                {# ===== DESCRIPTION ===== #}
+                <div class="section-card">
+                    <div class="section-title">
+                        <i class="fas fa-align-left"></i>
+                        Description
+                    </div>
+                    <div>
+                        {{ form_label(form.description, 'Description', {'label_attr': {'class': 'form-label'}}) }}
+                        {{ form_widget(form.description, {'attr': {
+                            'class': 'form-control',
+                            'placeholder': 'Décrivez votre publication en détail...',
+                            'id': 'desc-input',
+                            'rows': '5',
+                            'maxlength': '2000'
+                        }}) }}
+                        <div class="char-counter" id="desc-counter">0 / 2000 caractères</div>
+                        {{ form_errors(form.description) }}
+                    </div>
+                </div>
+
+                {# ===== CATÉGORIE ===== #}
+                <div class="section-card">
+                    <div class="section-title">
+                        <i class="fas fa-tag"></i>
+                        Catégorie
+                    </div>
+                    <p class="text-muted small mb-3">Sélectionnez la catégorie qui correspond le mieux à votre publication</p>
+
+                    <div class="categories-grid">
+                        <div class="cat-card-cours" onclick="selectCategory('question_cours', this)">
+                            <div class="category-card">
+                                <span class="check-icon"><i class="fas fa-check"></i></span>
+                                <div class="cat-icon"><i class="fas fa-graduation-cap"></i></div>
+                                <div class="cat-name">Cours</div>
+                                <div class="cat-desc">Partage de connaissances</div>
+                            </div>
+                        </div>
+                        <div class="cat-card-examen" onclick="selectCategory('question_examen', this)">
+                            <div class="category-card">
+                                <span class="check-icon"><i class="fas fa-check"></i></span>
+                                <div class="cat-icon"><i class="fas fa-file-alt"></i></div>
+                                <div class="cat-name">Examen</div>
+                                <div class="cat-desc">Questions d'examen</div>
+                            </div>
+                        </div>
+                        <div class="cat-card-tutoriel" onclick="selectCategory('tutoriel', this)">
+                            <div class="category-card">
+                                <span class="check-icon"><i class="fas fa-check"></i></span>
+                                <div class="cat-icon"><i class="fas fa-play-circle"></i></div>
+                                <div class="cat-name">Tutoriel</div>
+                                <div class="cat-desc">Guide pas à pas</div>
+                            </div>
+                        </div>
+                        <div class="cat-card-blog" onclick="selectCategory('blog', this)">
+                            <div class="category-card">
+                                <span class="check-icon"><i class="fas fa-check"></i></span>
+                                <div class="cat-icon"><i class="fas fa-pen-nib"></i></div>
+                                <div class="cat-name">Blog</div>
+                                <div class="cat-desc">Articles personnels</div>
+                            </div>
+                        </div>
+                        <div class="cat-card-article" onclick="selectCategory('article', this)">
+                            <div class="category-card">
+                                <span class="check-icon"><i class="fas fa-check"></i></span>
+                                <div class="cat-icon"><i class="fas fa-newspaper"></i></div>
+                                <div class="cat-name">Article</div>
+                                <div class="cat-desc">Articles informatifs</div>
+                            </div>
+                        </div>
+                        <div class="cat-card-reclamation" onclick="selectCategory('reclamation', this)">
+                            <div class="category-card">
+                                <span class="check-icon"><i class="fas fa-check"></i></span>
+                                <div class="cat-icon"><i class="fas fa-exclamation-circle"></i></div>
+                                <div class="cat-name">Réclamation</div>
+                                <div class="cat-desc">Signalement de problème</div>
+                            </div>
+                        </div>
+                        <div class="cat-card-aide" onclick="selectCategory('demande_d_aide', this)">
+                            <div class="category-card">
+                                <span class="check-icon"><i class="fas fa-check"></i></span>
+                                <div class="cat-icon"><i class="fas fa-hands-helping"></i></div>
+                                <div class="cat-name">Aide</div>
+                                <div class="cat-desc">Demande de soutien</div>
+                            </div>
+                        </div>
+                        <div class="cat-card-autre" onclick="selectCategory('autre', this)">
+                            <div class="category-card">
+                                <span class="check-icon"><i class="fas fa-check"></i></span>
+                                <div class="cat-icon"><i class="fas fa-ellipsis-h"></i></div>
+                                <div class="cat-name">Autre</div>
+                                <div class="cat-desc">Autre sujet</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="display:none;">
+                        {{ form_widget(form.categorie, {'attr': {'id': 'categorie-select'}}) }}
+                    </div>
+                    {{ form_errors(form.categorie) }}
+                </div>
+
+                {# ===== BOUTONS ===== #}
+                <div class="section-card">
+                    <div class="d-flex gap-3 align-items-center flex-wrap">
+                        <button type="submit" class="btn-submit">
+                            <i class="fas fa-paper-plane"></i>
+                            Publier maintenant
+                        </button>
+                        <a href="{{ path('back_publication_index') }}" class="btn-cancel">
+                            <i class="fas fa-times"></i>
+                            Annuler
+                        </a>
+                        <span class="text-muted small ms-auto">
+                            <i class="fas fa-info-circle me-1"></i>
+                            Tous les champs sont obligatoires
+                        </span>
+                    </div>
+                </div>
+
+                {{ form_end(form) }}
+            </div>
+        </div>
+    </main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const sidebarToggle = document.querySelector('.sidebar-toggle');
+    if(sidebarToggle) {
+        sidebarToggle.addEventListener('click', function() {
+            document.querySelector('.sidebar').classList.toggle('collapsed');
+            document.querySelector('.main-content').classList.toggle('expanded');
+        });
+    }
+
+    // Compteur Titre
+    const titreInput = document.getElementById('titre-input');
+    const titreCounter = document.getElementById('titre-counter');
+    if(titreInput) {
+        titreInput.addEventListener('input', function() {
+            const len = this.value.length;
+            const max = 200;
+            titreCounter.textContent = len + ' / ' + max + ' caractères';
+            titreCounter.className = 'char-counter';
+            if(len > max * 0.8) titreCounter.classList.add('warning');
+            if(len > max * 0.95) { titreCounter.classList.remove('warning'); titreCounter.classList.add('danger'); }
+        });
+    }
+
+    // Compteur Description
+    const descInput = document.getElementById('desc-input');
+    const descCounter = document.getElementById('desc-counter');
+    if(descInput) {
+        descInput.addEventListener('input', function() {
+            const len = this.value.length;
+            const max = 2000;
+            descCounter.textContent = len + ' / ' + max + ' caractères';
+            descCounter.className = 'char-counter';
+            if(len > max * 0.8) descCounter.classList.add('warning');
+            if(len > max * 0.95) { descCounter.classList.remove('warning'); descCounter.classList.add('danger'); }
+        });
+    }
+});
+
+function selectCategory(value, wrapper) {
+    document.querySelectorAll('.category-card').forEach(c => c.classList.remove('selected'));
+    wrapper.querySelector('.category-card').classList.add('selected');
+    document.getElementById('categorie-select').value = value;
+}
+</script>
+{% endblock %}
