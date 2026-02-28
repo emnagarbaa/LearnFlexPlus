@@ -14,7 +14,8 @@ Améliorer le suivi pédagogique grâce à des indicateurs de performance
 
 Centraliser tous les outils d’apprentissage dans une seule plateforme
 
-🚀 Fonctionnalités principales 👤 Gestion des utilisateurs
+🚀 Fonctionnalités principales
+👤 Gestion des utilisateurs
 
 Inscription et authentification sécurisées
 
@@ -48,4 +49,10 @@ Adaptation du contenu selon le niveau de l’apprenant
 
 Suivi individualisé et recommandations pédagogiques
 
-🛠️ Technologies utilisées Couche Technologies Backend Symfony 6.4 Frontend Twig, HTML, CSS, JavaScript Base de données MySQL / Oracle ORM Doctrine Gestion de versions Git & GitHub
+🛠️ Technologies utilisées
+Couche	Technologies
+Backend	Symfony 6.4
+Frontend	Twig, HTML, CSS, JavaScript
+Base de données	MySQL / Oracle
+ORM	Doctrine
+Gestion de versions	Git & GitHub

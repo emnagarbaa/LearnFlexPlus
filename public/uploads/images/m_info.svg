@@ -1,0 +1,9 @@
+<svg width="400" height="250" viewBox="0 0 400 250" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="400" height="250" fill="#f8fafc"/>
+  <rect x="100" y="60" width="200" height="130" rx="10" fill="#1e293b"/>
+  <rect x="115" y="75" width="170" height="85" rx="4" fill="#334155"/>
+  <text x="125" y="105" font-family="monospace" font-size="12" fill="#10b981">&gt; _run code</text>
+  <rect x="180" y="190" width="40" height="15" fill="#94a3b8"/>
+  <rect x="160" y="205" width="80" height="5" fill="#64748b"/>
+  <text x="50%" y="240" text-anchor="middle" font-family="Arial" font-size="24" font-weight="bold" fill="#0f172a">INFORMATIQUE</text>
+</svg>

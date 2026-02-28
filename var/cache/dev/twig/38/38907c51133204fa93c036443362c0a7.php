@@ -1,0 +1,1434 @@
+<?php
+
+use Twig\Environment;
+use Twig\Error\LoaderError;
+use Twig\Error\RuntimeError;
+use Twig\Extension\CoreExtension;
+use Twig\Extension\SandboxExtension;
+use Twig\Markup;
+use Twig\Sandbox\SecurityError;
+use Twig\Sandbox\SecurityNotAllowedTagError;
+use Twig\Sandbox\SecurityNotAllowedFilterError;
+use Twig\Sandbox\SecurityNotAllowedFunctionError;
+use Twig\Source;
+use Twig\Template;
+use Twig\TemplateWrapper;
+
+/* back/index.html.twig */
+class __TwigTemplate_f55dd95c378ab7a4b5529e3715539dcb extends Template
+{
+    private Source $source;
+    /**
+     * @var array<string, Template>
+     */
+    private array $macros = [];
+
+    public function __construct(Environment $env)
+    {
+        parent::__construct($env);
+
+        $this->source = $this->getSourceContext();
+
+        $this->blocks = [
+            'title' => [$this, 'block_title'],
+            'stylesheets' => [$this, 'block_stylesheets'],
+            'body' => [$this, 'block_body'],
+            'dashboard_content' => [$this, 'block_dashboard_content'],
+            'javascripts' => [$this, 'block_javascripts'],
+        ];
+    }
+
+    protected function doGetParent(array $context): bool|string|Template|TemplateWrapper
+    {
+        // line 1
+        return "base.html.twig";
+    }
+
+    protected function doDisplay(array $context, array $blocks = []): iterable
+    {
+        $macros = $this->macros;
+        $__internal_5a27a8ba21ca79b61932376b2fa922d2 = $this->extensions["Symfony\\Bundle\\WebProfilerBundle\\Twig\\WebProfilerExtension"];
+        $__internal_5a27a8ba21ca79b61932376b2fa922d2->enter($__internal_5a27a8ba21ca79b61932376b2fa922d2_prof = new \Twig\Profiler\Profile($this->getTemplateName(), "template", "back/index.html.twig"));
+
+        $__internal_6f47bbe9983af81f1e7450e9a3e3768f = $this->extensions["Symfony\\Bridge\\Twig\\Extension\\ProfilerExtension"];
+        $__internal_6f47bbe9983af81f1e7450e9a3e3768f->enter($__internal_6f47bbe9983af81f1e7450e9a3e3768f_prof = new \Twig\Profiler\Profile($this->getTemplateName(), "template", "back/index.html.twig"));
+
+        $this->parent = $this->load("base.html.twig", 1);
+        yield from $this->parent->unwrap()->yield($context, array_merge($this->blocks, $blocks));
+        
+        $__internal_5a27a8ba21ca79b61932376b2fa922d2->leave($__internal_5a27a8ba21ca79b61932376b2fa922d2_prof);
+
+        
+        $__internal_6f47bbe9983af81f1e7450e9a3e3768f->leave($__internal_6f47bbe9983af81f1e7450e9a3e3768f_prof);
+
+    }
+
+    // line 3
+    /**
+     * @return iterable<null|scalar|\Stringable>
+     */
+    public function block_title(array $context, array $blocks = []): iterable
+    {
+        $macros = $this->macros;
+        $__internal_5a27a8ba21ca79b61932376b2fa922d2 = $this->extensions["Symfony\\Bundle\\WebProfilerBundle\\Twig\\WebProfilerExtension"];
+        $__internal_5a27a8ba21ca79b61932376b2fa922d2->enter($__internal_5a27a8ba21ca79b61932376b2fa922d2_prof = new \Twig\Profiler\Profile($this->getTemplateName(), "block", "title"));
+
+        $__internal_6f47bbe9983af81f1e7450e9a3e3768f = $this->extensions["Symfony\\Bridge\\Twig\\Extension\\ProfilerExtension"];
+        $__internal_6f47bbe9983af81f1e7450e9a3e3768f->enter($__internal_6f47bbe9983af81f1e7450e9a3e3768f_prof = new \Twig\Profiler\Profile($this->getTemplateName(), "block", "title"));
+
+        yield "Dashboard";
+        
+        $__internal_6f47bbe9983af81f1e7450e9a3e3768f->leave($__internal_6f47bbe9983af81f1e7450e9a3e3768f_prof);
+
+        
+        $__internal_5a27a8ba21ca79b61932376b2fa922d2->leave($__internal_5a27a8ba21ca79b61932376b2fa922d2_prof);
+
+        yield from [];
+    }
+
+    // line 5
+    /**
+     * @return iterable<null|scalar|\Stringable>
+     */
+    public function block_stylesheets(array $context, array $blocks = []): iterable
+    {
+        $macros = $this->macros;
+        $__internal_5a27a8ba21ca79b61932376b2fa922d2 = $this->extensions["Symfony\\Bundle\\WebProfilerBundle\\Twig\\WebProfilerExtension"];
+        $__internal_5a27a8ba21ca79b61932376b2fa922d2->enter($__internal_5a27a8ba21ca79b61932376b2fa922d2_prof = new \Twig\Profiler\Profile($this->getTemplateName(), "block", "stylesheets"));
+
+        $__internal_6f47bbe9983af81f1e7450e9a3e3768f = $this->extensions["Symfony\\Bridge\\Twig\\Extension\\ProfilerExtension"];
+        $__internal_6f47bbe9983af81f1e7450e9a3e3768f->enter($__internal_6f47bbe9983af81f1e7450e9a3e3768f_prof = new \Twig\Profiler\Profile($this->getTemplateName(), "block", "stylesheets"));
+
+        // line 6
+        yield "<link rel=\"stylesheet\" href=\"";
+        yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape($this->extensions['Symfony\Bridge\Twig\Extension\AssetExtension']->getAssetUrl("assets/css/styles.css"), "html", null, true);
+        yield "\">
+<link rel=\"stylesheet\" href=\"";
+        // line 7
+        yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape($this->extensions['Symfony\Bridge\Twig\Extension\AssetExtension']->getAssetUrl("assets/css/dashboard.css"), "html", null, true);
+        yield "\">
+<link rel=\"stylesheet\" href=\"https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css\">
+";
+        
+        $__internal_6f47bbe9983af81f1e7450e9a3e3768f->leave($__internal_6f47bbe9983af81f1e7450e9a3e3768f_prof);
+
+        
+        $__internal_5a27a8ba21ca79b61932376b2fa922d2->leave($__internal_5a27a8ba21ca79b61932376b2fa922d2_prof);
+
+        yield from [];
+    }
+
+    // line 11
+    /**
+     * @return iterable<null|scalar|\Stringable>
+     */
+    public function block_body(array $context, array $blocks = []): iterable
+    {
+        $macros = $this->macros;
+        $__internal_5a27a8ba21ca79b61932376b2fa922d2 = $this->extensions["Symfony\\Bundle\\WebProfilerBundle\\Twig\\WebProfilerExtension"];
+        $__internal_5a27a8ba21ca79b61932376b2fa922d2->enter($__internal_5a27a8ba21ca79b61932376b2fa922d2_prof = new \Twig\Profiler\Profile($this->getTemplateName(), "block", "body"));
+
+        $__internal_6f47bbe9983af81f1e7450e9a3e3768f = $this->extensions["Symfony\\Bridge\\Twig\\Extension\\ProfilerExtension"];
+        $__internal_6f47bbe9983af81f1e7450e9a3e3768f->enter($__internal_6f47bbe9983af81f1e7450e9a3e3768f_prof = new \Twig\Profiler\Profile($this->getTemplateName(), "block", "body"));
+
+        // line 12
+        yield " <div class=\"dashboard\">
+    <aside class=\"sidebar\">
+      <div class=\"sidebar-header\">
+        <div class=\"logo\">
+          <img src=\"";
+        // line 16
+        yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape($this->extensions['Symfony\Bridge\Twig\Extension\AssetExtension']->getAssetUrl("assets/images/logo1.png"), "html", null, true);
+        yield "\" alt=\"Learnflex+ Logo\" class=\"nav-logo\">
+          <span>LearnFlex</span><span class=\"highlight\">+</span>
+        </div>
+        <button class=\"sidebar-toggle\">
+          <i class=\"fas fa-bars\"></i>
+        </button>
+      </div>
+      
+      <div class=\"sidebar-content\">
+        <nav class=\"sidebar-menu\">
+          <ul>
+            <li class=\"active\">
+              <a href=\"";
+        // line 28
+        yield $this->extensions['Symfony\Bridge\Twig\Extension\RoutingExtension']->getPath("app_back");
+        yield "\">
+                <i class=\"fas fa-tachometer-alt\"></i>
+                <span>Dashboard</span>
+              </a>
+            </li>
+            <li>
+              <a href=\"";
+        // line 34
+        yield $this->extensions['Symfony\Bridge\Twig\Extension\RoutingExtension']->getPath("app_users");
+        yield "\">
+                <i class=\"fas fa-users\"></i>
+                <span>Utilisateurs</span>
+              </a>
+            </li>
+            <li>
+              <a href=\"";
+        // line 40
+        yield $this->extensions['Symfony\Bridge\Twig\Extension\RoutingExtension']->getPath("app_back_cours_index");
+        yield "\">
+                <i class=\"fas fa-book-open\"></i>
+                <span>Cours</span>
+              </a>
+            </li>
+            <li>
+              <a href=\"";
+        // line 46
+        yield $this->extensions['Symfony\Bridge\Twig\Extension\RoutingExtension']->getPath("app_back_matiere_index");
+        yield "\">
+                <i class=\"fas fa-book\"></i>
+                <span>Matières</span>
+              </a>
+            </li>
+            <li>
+              <a href=\"#\">
+                <i class=\"fas fa-graduation-cap\"></i>
+                <span>Evaluation</span>
+              </a>
+            </li>
+            <li>
+              <a href=\"#\">
+                <i class=\"fas fa-question-circle\"></i>
+                <span>Questionnaire</span>
+              </a>
+            </li>
+            <li>
+              <a href=\"#\">
+                <i class=\"fas fa-directions\"></i>
+                <span>Orientation</span>
+              </a>
+            </li>
+            <li>
+              <a href=\"#\">
+                <i class=\"fas fa-comments\"></i>
+                <span>Forum</span>
+              </a>
+            </li>
+          </ul>
+        </nav>
+      </div>
+      
+      <div class=\"sidebar-footer\">
+        <a href=\"#\" class=\"user-profile\">
+          <img src=\"";
+        // line 81
+        yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape($this->extensions['Symfony\Bridge\Twig\Extension\AssetExtension']->getAssetUrl("assets/images/placeholder-admin.png"), "html", null, true);
+        yield "\" alt=\"Admin\" class=\"user-img\">
+          <div class=\"user-info\">
+            <h4>Admin User</h4>
+            <p>Administrateur</p>
+          </div>
+        </a>
+        <a href=\"";
+        // line 87
+        yield $this->extensions['Symfony\Bridge\Twig\Extension\RoutingExtension']->getPath("app_logout");
+        yield "\" class=\"logout\">
+          <i class=\"fas fa-sign-out-alt\"></i>
+          <span>Déconnexion</span>
+        </a>
+      </div>
+    </aside>
+    
+    <main class=\"main-content\">
+      <header class=\"dashboard-header\">
+        <div class=\"header-left\">
+          <h1>Dashboard</h1>
+    <p>Bienvenue sur la plateforme d’apprentissage LearnFlex+</p>
+        </div>
+        <div class=\"header-right\">
+          <div class=\"search-bar\">
+            <input type=\"text\" placeholder=\"Rechercher...\">
+            <button><i class=\"fas fa-search\"></i></button>
+          </div>
+          <button class=\"notification-btn\">
+            <i class=\"fas fa-bell\"></i>
+            <span class=\"badge\">3</span>
+          </button>
+        </div>
+      </header>
+      
+      ";
+        // line 112
+        yield from $this->unwrap()->yieldBlock('dashboard_content', $context, $blocks);
+        // line 538
+        yield "    </main>
+  </div>
+";
+        
+        $__internal_6f47bbe9983af81f1e7450e9a3e3768f->leave($__internal_6f47bbe9983af81f1e7450e9a3e3768f_prof);
+
+        
+        $__internal_5a27a8ba21ca79b61932376b2fa922d2->leave($__internal_5a27a8ba21ca79b61932376b2fa922d2_prof);
+
+        yield from [];
+    }
+
+    // line 112
+    /**
+     * @return iterable<null|scalar|\Stringable>
+     */
+    public function block_dashboard_content(array $context, array $blocks = []): iterable
+    {
+        $macros = $this->macros;
+        $__internal_5a27a8ba21ca79b61932376b2fa922d2 = $this->extensions["Symfony\\Bundle\\WebProfilerBundle\\Twig\\WebProfilerExtension"];
+        $__internal_5a27a8ba21ca79b61932376b2fa922d2->enter($__internal_5a27a8ba21ca79b61932376b2fa922d2_prof = new \Twig\Profiler\Profile($this->getTemplateName(), "block", "dashboard_content"));
+
+        $__internal_6f47bbe9983af81f1e7450e9a3e3768f = $this->extensions["Symfony\\Bridge\\Twig\\Extension\\ProfilerExtension"];
+        $__internal_6f47bbe9983af81f1e7450e9a3e3768f->enter($__internal_6f47bbe9983af81f1e7450e9a3e3768f_prof = new \Twig\Profiler\Profile($this->getTemplateName(), "block", "dashboard_content"));
+
+        // line 113
+        yield "      <div class=\"dashboard-content\">
+        <!-- Stats Cards -->
+        <div class=\"stats-cards\">
+          <div class=\"stat-card\">
+            <div class=\"stat-icon users\">
+              <i class=\"fas fa-users\"></i>
+            </div>
+            <div class=\"stat-details\">
+              <h3>1,423</h3>
+              <p>Utilisateurs</p>
+              <div class=\"stat-progress\">
+                <i class=\"fas fa-arrow-up\"></i>
+                <span>+12.5%</span>
+              </div>
+            </div>
+          </div>
+          
+          <div class=\"stat-card\">
+            <div class=\"stat-icon rides\">
+              <i class=\"fas fa-book\"></i>
+            </div>
+            <div class=\"stat-details\">
+              <h3>856</h3>
+              <p>Cours disponibles</p>
+              <div class=\"stat-progress\">
+                <i class=\"fas fa-arrow-up\"></i>
+                <span>+8.2%</span>
+              </div>
+            </div>
+          </div>
+          
+          <div class=\"stat-card\">
+            <div class=\"stat-icon parcels\">
+              <i class=\"fas fa-laptop-code\"></i>
+            </div>
+            <div class=\"stat-details\">
+              <h3>128</h3>
+              <p>Evaluation</p>
+              <div class=\"stat-progress negative\">
+                <i class=\"fas fa-arrow-down\"></i>
+                <span>-3.1%</span>
+              </div>
+            </div>
+          </div>
+          
+          <div class=\"stat-card\">
+            <div class=\"stat-icon complaints\">
+              <i class=\"fas fa-question-circle\"></i>
+            </div>
+            <div class=\"stat-details\">
+              <h3>24</h3>
+              <p>Quiz actifs</p>
+              <div class=\"stat-progress\">
+                <i class=\"fas fa-arrow-up\"></i>
+                <span>+5.7%</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Charts Section -->
+        <div class=\"charts-section\">
+          <div class=\"chart-container\">
+            <div class=\"chart-header\">
+              <h3>Progression des apprenants</h3>
+              <div class=\"chart-actions\">
+                <select>
+                  <option>Dernier mois</option>
+                  <option>Derniers 3 mois</option>
+                  <option>Derniers 6 mois</option>
+                  <option>Dernière année</option>
+                </select>
+              </div>
+            </div>
+            <div class=\"chart\">
+              <canvas id=\"monthlyStats\"></canvas>
+            </div>
+          </div>
+          
+          <div class=\"chart-container\">
+            <div class=\"chart-header\">
+              <h3>Répartition du contenu pédagogique</h3>
+              <div class=\"chart-actions\">
+                <select>
+                  <option>Tous</option>
+                  <option>Cours</option>
+                  <option>Matière</option>
+                  <option>Evaluation</option>
+                </select>
+              </div>
+            </div>
+            <div class=\"chart\">
+              <canvas id=\"servicesDistribution\"></canvas>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Reports Section -->
+        <div class=\"reports-section\">
+          <div class=\"reports-header\">
+            <h3>Rapports pédagogiques</h3>
+            <button class=\"btn primary\">
+              <i class=\"fas fa-plus\"></i> Nouveau rapport
+            </button>
+          </div>
+          
+          <div class=\"reports-tabs\">
+            <button class=\"report-tab active\" data-report=\"financial\">Performance académique</button>
+            <button class=\"report-tab\" data-report=\"operations\">Activité pédagogique</button>
+            <button class=\"report-tab\" data-report=\"users\">Utilisateurs</button>
+          </div>
+          
+          <div class=\"report-content active\" id=\"financial-report\">
+            <div class=\"report-summary\">
+              <div class=\"summary-item\">
+                <div class=\"value\">12,500 TND</div>
+                <div class=\"label\">Taux de réussite</div>
+              </div>
+              <div class=\"summary-item\">
+                <div class=\"value\">8,200 TND</div>
+                <div class=\"label\">Taux d’échec</div>
+              </div>
+              <div class=\"summary-item\">
+                <div class=\"value\">4,300 TND</div>
+                <div class=\"label\">Moyenne générale</div>
+              </div>
+              <div class=\"summary-item\">
+                <div class=\"value\">34.4%</div>
+                <div class=\"label\">Taux de complétion</div>
+              </div>
+            </div>
+            
+            <table class=\"report-table\">
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Cours</th>
+                  <th>Apprenant</th>
+                  <th>Note</th>
+                  <th>Résultat</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>15/04/2023</td>
+                  <td>Cours en ligne</td>
+                  <td>Ahmed Ben Ali</td>
+                  <td>25.00 TND</td>
+                  <td><span class=\"status delivered\">Validé</span></td>
+                </tr>
+                <tr>
+                  <td>14/04/2023</td>
+                  <td>Quiz</td>
+                  <td>Leila Mansour</td>
+                  <td>18.50 TND</td>
+                  <td><span class=\"status delivered\">Réussi</span></td>
+                </tr>
+                <tr>
+                  <td>13/04/2023</td>
+                  <td>Examen</td>
+                  <td>Mohamed Khelifi</td>
+                  <td>12.00 TND</td>
+                  <td><span class=\"status delivered\">Admis</span></td>
+                </tr>
+              </tbody>
+            </table>
+            
+            <div class=\"report-actions\">
+              <button class=\"btn-outline\"><i class=\"fas fa-download\"></i> Télécharger PDF</button>
+              <button class=\"btn-outline\"><i class=\"fas fa-file-excel\"></i> Exporter Excel</button>
+              <button class=\"btn-outline\"><i class=\"fas fa-print\"></i> Imprimer</button>
+              <button class=\"btn-outline\"><i class=\"fas fa-envelope\"></i> Envoyer par email</button>
+            </div>
+          </div>
+          
+          <div class=\"report-content\" id=\"operations-report\">
+            <div class=\"report-summary\">
+              <div class=\"summary-item\">
+                <div class=\"value\">856</div>
+                <div class=\"label\">Cours publiés</div>
+              </div>
+              <div class=\"summary-item\">
+                <div class=\"value\">128</div>
+                <div class=\"label\">Quiz créés</div>
+              </div>
+              <div class=\"summary-item\">
+                <div class=\"value\">24</div>
+                <div class=\"label\">Examens</div>
+              </div>
+              <div class=\"summary-item\">
+                <div class=\"value\">92%</div>
+                <div class=\"label\">Taux de réussite</div>
+              </div>
+            </div>
+            
+            <table class=\"report-table\">
+              <thead>
+                <tr>
+                  <th>Service</th>
+                  <th>Nombre</th>
+                  <th>Croissance</th>
+                  <th>Taux de complétion</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Cours</td>
+                  <td>856</td>
+                  <td>+8.2%</td>
+                  <td>95%</td>
+                </tr>
+                <tr>
+                  <td>Quiz</td>
+                  <td>128</td>
+                  <td>-3.1%</td>
+                  <td>87%</td>
+                </tr>
+                <tr>
+                  <td>Examens</td>
+                  <td>24</td>
+                  <td>+12.5%</td>
+                  <td>98%</td>
+                </tr>
+              </tbody>
+            </table>
+            
+            <div class=\"report-actions\">
+              <button class=\"btn-outline\"><i class=\"fas fa-download\"></i> Télécharger PDF</button>
+              <button class=\"btn-outline\"><i class=\"fas fa-file-excel\"></i> Exporter Excel</button>
+              <button class=\"btn-outline\"><i class=\"fas fa-print\"></i> Imprimer</button>
+            </div>
+          </div>
+          
+          <div class=\"report-content\" id=\"users-report\">
+            <div class=\"report-summary\">
+              <div class=\"summary-item\">
+                <div class=\"value\">1,423</div>
+                <div class=\"label\">Total Utilisateurs</div>
+              </div>
+              <div class=\"summary-item\">
+                <div class=\"value\">180</div>
+                <div class=\"label\">Nouveaux</div>
+              </div>
+              <div class=\"summary-item\">
+                <div class=\"value\">65%</div>
+                <div class=\"label\">Actifs</div>
+              </div>
+              <div class=\"summary-item\">
+                <div class=\"value\">4.2</div>
+                <div class=\"label\">Note moyenne</div>
+              </div>
+            </div>
+            
+            <table class=\"report-table\">
+              <thead>
+                <tr>
+                  <th>Type</th>
+                  <th>Nombre</th>
+                  <th>Croissance</th>
+                  <th>Taux d'activité</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Étudiants</td>
+                  <td>1,245</td>
+                  <td>+15.2%</td>
+                  <td>62%</td>
+                </tr>
+                <tr>
+                  <td>Enseignants</td>
+                  <td>156</td>
+                  <td>+8.7%</td>
+                  <td>85%</td>
+                </tr>
+                <tr>
+                  <td>Administrateurs</td>
+                  <td>22</td>
+                  <td>+4.5%</td>
+                  <td>95%</td>
+                </tr>
+              </tbody>
+            </table>
+            
+            <div class=\"report-actions\">
+              <button class=\"btn-outline\"><i class=\"fas fa-download\"></i> Télécharger PDF</button>
+              <button class=\"btn-outline\"><i class=\"fas fa-file-excel\"></i> Exporter Excel</button>
+              <button class=\"btn-outline\"><i class=\"fas fa-print\"></i> Imprimer</button>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Recent Activity -->
+        <div class=\"recent-activity\">
+          <div class=\"section-header\">
+            <h3>Activité récente</h3>
+            <a href=\"#\" class=\"view-all\">Voir tout</a>
+          </div>
+          
+          <div class=\"activity-list\">
+            <div class=\"activity-item\">
+              <div class=\"activity-icon\">
+                <i class=\"fas fa-user-plus\"></i>
+              </div>
+              <div class=\"activity-details\">
+                <h4>Nouvel utilisateur inscrit</h4>
+                <p>Ahmed Ben Ali a créé un compte.</p>
+                <span class=\"activity-time\">Il y a 2 heures</span>
+              </div>
+            </div>
+            
+            <div class=\"activity-item\">
+              <div class=\"activity-icon\">
+                <i class=\"fas fa-car-side\"></i>
+              </div>
+              <div class=\"activity-details\">
+                <h4>Nouveau cours publié</h4>
+                <p>Leila Mansour a publié le cours « Bases de Symfony ».</p>
+                <span class=\"activity-time\">Il y a 3 heures</span>
+              </div>
+            </div>
+            
+            <div class=\"activity-item\">
+              <div class=\"activity-icon\">
+                <i class=\"fas fa-box\"></i>
+              </div>
+              <div class=\"activity-details\">
+                <h4>Quiz complété</h4>
+                <p>Mohamed Khelifi a terminé le quiz de proba. </p>
+                <span class=\"activity-time\">Il y a 5 heures</span>
+              </div>
+            </div>
+            
+            <div class=\"activity-item\">
+              <div class=\"activity-icon\">
+                <i class=\"fas fa-exclamation-circle\"></i>
+              </div>
+              <div class=\"activity-details\">
+                <h4>Examen soumis</h4>
+                <p>Nadia Mansouri a soumis l’examen de mathématiques.</p>
+                <span class=\"activity-time\">Il y a 6 heures</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Recent Parcels -->
+        <div class=\"recent-parcels\">
+          <div class=\"section-header\">
+            <h3>Évaluations récentes</h3>
+            <a href=\"#\" class=\"view-all\">Voir tout</a>
+          </div>
+          
+          <div class=\"parcels-table-container\">
+            <table class=\"parcels-table\">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Cours</th>
+                  <th>Etudiants</th>
+                  <th>Type</th>
+                  <th>Date</th>
+                  <th>Statut</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>P001</td>
+                  <td>Programmation PHP</td>
+                  <td>Sami Trabelsi</td>
+                  <td>Quiz</td>
+                  <td>20/04/2023</td>
+                  <td><span class=\"status in-transit\">Réussi<</span></td>
+                  <td class=\"actions\">
+                    <button class=\"action-btn view\"><i class=\"fas fa-eye\"></i></button>
+                    <button class=\"action-btn edit\"><i class=\"fas fa-edit\"></i></button>
+                    <button class=\"action-btn delete\"><i class=\"fas fa-trash\"></i></button>
+                  </td>
+                </tr>
+                <tr>
+                  <td>P002</td>
+                  <td>Leila Mansour</td>
+                  <td>Karim Belhaj</td>
+                  <td>Quiz</td>
+                  <td>19/04/2023</td>
+                  <td><span class=\"status delivered\">Réussi</span></td>
+                  <td class=\"actions\">
+                    <button class=\"action-btn view\"><i class=\"fas fa-eye\"></i></button>
+                    <button class=\"action-btn edit\"><i class=\"fas fa-edit\"></i></button>
+                    <button class=\"action-btn delete\"><i class=\"fas fa-trash\"></i></button>
+                  </td>
+                </tr>
+                <tr>
+                  <td>P003</td>
+                  <td>Mohamed Khelifi</td>
+                  <td>Nadia Mansouri</td>
+                  <td>Examen</td>
+                  <td>20/04/2023</td>
+                  <td><span class=\"status pending\">Validé</span></td>
+                  <td class=\"actions\">
+                    <button class=\"action-btn view\"><i class=\"fas fa-eye\"></i></button>
+                    <button class=\"action-btn edit\"><i class=\"fas fa-edit\"></i></button>
+                    <button class=\"action-btn delete\"><i class=\"fas fa-trash\"></i></button>
+                  </td>
+                </tr>
+                <tr>
+                  <td>P004</td>
+                  <td>Youssef Mejri</td>
+                  <td>Fatma Riahi</td>
+                  <td>cours</td>
+                  <td>18/04/2023</td>
+                  <td><span class=\"status cancelled\">Annulé</span></td>
+                  <td class=\"actions\">
+                    <button class=\"action-btn view\"><i class=\"fas fa-eye\"></i></button>
+                    <button class=\"action-btn edit\"><i class=\"fas fa-edit\"></i></button>
+                    <button class=\"action-btn delete\"><i class=\"fas fa-trash\"></i></button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      ";
+        
+        $__internal_6f47bbe9983af81f1e7450e9a3e3768f->leave($__internal_6f47bbe9983af81f1e7450e9a3e3768f_prof);
+
+        
+        $__internal_5a27a8ba21ca79b61932376b2fa922d2->leave($__internal_5a27a8ba21ca79b61932376b2fa922d2_prof);
+
+        yield from [];
+    }
+
+    // line 541
+    /**
+     * @return iterable<null|scalar|\Stringable>
+     */
+    public function block_javascripts(array $context, array $blocks = []): iterable
+    {
+        $macros = $this->macros;
+        $__internal_5a27a8ba21ca79b61932376b2fa922d2 = $this->extensions["Symfony\\Bundle\\WebProfilerBundle\\Twig\\WebProfilerExtension"];
+        $__internal_5a27a8ba21ca79b61932376b2fa922d2->enter($__internal_5a27a8ba21ca79b61932376b2fa922d2_prof = new \Twig\Profiler\Profile($this->getTemplateName(), "block", "javascripts"));
+
+        $__internal_6f47bbe9983af81f1e7450e9a3e3768f = $this->extensions["Symfony\\Bridge\\Twig\\Extension\\ProfilerExtension"];
+        $__internal_6f47bbe9983af81f1e7450e9a3e3768f->enter($__internal_6f47bbe9983af81f1e7450e9a3e3768f_prof = new \Twig\Profiler\Profile($this->getTemplateName(), "block", "javascripts"));
+
+        // line 542
+        yield "<script src=\"https://cdn.jsdelivr.net/npm/chart.js\"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Sidebar Toggle
+    const sidebarToggle = document.querySelector('.sidebar-toggle');
+    const sidebar = document.querySelector('.sidebar');
+    const mainContent = document.querySelector('.main-content');
+
+    if(sidebarToggle) {
+        sidebarToggle.addEventListener('click', function() {
+            sidebar.classList.toggle('collapsed');
+            mainContent.classList.toggle('expanded');
+        });
+    }
+
+    // Report Tabs
+    const reportTabs = document.querySelectorAll('.report-tab');
+    const reportContents = document.querySelectorAll('.report-content');
+
+    reportTabs.forEach(tab => {
+        tab.addEventListener('click', function() {
+            reportTabs.forEach(t => t.classList.remove('active'));
+            reportContents.forEach(c => c.classList.remove('active'));
+
+            this.classList.add('active');
+            const reportType = this.getAttribute('data-report');
+            const activeContent = document.getElementById(`\${reportType}-report`);
+            if(activeContent) activeContent.classList.add('active');
+        });
+    });
+
+    // Charts
+    const monthlyStatsCanvas = document.getElementById('monthlyStats');
+    if(monthlyStatsCanvas) {
+        const monthlyStatsCtx = monthlyStatsCanvas.getContext('2d');
+        new Chart(monthlyStatsCtx, {
+            type: 'line',
+            data: {
+                labels: ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin', 'Juil'],
+                datasets: [
+                    { label: 'Étudiants inscrits', data: [650, 730, 810, 890, 950, 1020, 1150], borderColor: '#17a2b8', backgroundColor: 'rgba(23, 162, 184, 0.1)', fill: true, tension: 0.4 },
+                    { label: 'Cours suivis', data: [320, 380, 420, 480, 520, 580, 650], borderColor: '#28a745', backgroundColor: 'rgba(40, 167, 69, 0.1)', fill: true, tension: 0.4 },
+                    { label: 'Quiz complétés', data: [85, 95, 105, 115, 125, 120, 128], borderColor: '#ffc107', backgroundColor: 'rgba(255, 193, 7, 0.1)', fill: true, tension: 0.4 }
+                ]
+            },
+            options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true } } }
+        });
+    }
+
+    const servicesDistributionCanvas = document.getElementById('servicesDistribution');
+    if(servicesDistributionCanvas) {
+        const servicesDistributionCtx = servicesDistributionCanvas.getContext('2d');
+        new Chart(servicesDistributionCtx, {
+            type: 'doughnut',
+            data: { labels: ['Cours', 'Quiz', 'Examens'], datasets: [{ data: [35, 45, 20], backgroundColor: ['#1f4f65', '#97c3a2', '#d7dd83'], hoverOffset: 4 }] },
+            options: { responsive: true, maintainAspectRatio: false }
+        });
+    }
+});
+</script>
+";
+        
+        $__internal_6f47bbe9983af81f1e7450e9a3e3768f->leave($__internal_6f47bbe9983af81f1e7450e9a3e3768f_prof);
+
+        
+        $__internal_5a27a8ba21ca79b61932376b2fa922d2->leave($__internal_5a27a8ba21ca79b61932376b2fa922d2_prof);
+
+        yield from [];
+    }
+
+    /**
+     * @codeCoverageIgnore
+     */
+    public function getTemplateName(): string
+    {
+        return "back/index.html.twig";
+    }
+
+    /**
+     * @codeCoverageIgnore
+     */
+    public function isTraitable(): bool
+    {
+        return false;
+    }
+
+    /**
+     * @codeCoverageIgnore
+     */
+    public function getDebugInfo(): array
+    {
+        return array (  734 => 542,  721 => 541,  286 => 113,  273 => 112,  260 => 538,  258 => 112,  230 => 87,  221 => 81,  183 => 46,  174 => 40,  165 => 34,  156 => 28,  141 => 16,  135 => 12,  122 => 11,  108 => 7,  103 => 6,  90 => 5,  67 => 3,  44 => 1,);
+    }
+
+    public function getSourceContext(): Source
+    {
+        return new Source("{% extends 'base.html.twig' %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block stylesheets %}
+<link rel=\"stylesheet\" href=\"{{ asset('assets/css/styles.css') }}\">
+<link rel=\"stylesheet\" href=\"{{ asset('assets/css/dashboard.css') }}\">
+<link rel=\"stylesheet\" href=\"https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css\">
+{% endblock %}
+
+{% block body %}
+ <div class=\"dashboard\">
+    <aside class=\"sidebar\">
+      <div class=\"sidebar-header\">
+        <div class=\"logo\">
+          <img src=\"{{ asset('assets/images/logo1.png') }}\" alt=\"Learnflex+ Logo\" class=\"nav-logo\">
+          <span>LearnFlex</span><span class=\"highlight\">+</span>
+        </div>
+        <button class=\"sidebar-toggle\">
+          <i class=\"fas fa-bars\"></i>
+        </button>
+      </div>
+      
+      <div class=\"sidebar-content\">
+        <nav class=\"sidebar-menu\">
+          <ul>
+            <li class=\"active\">
+              <a href=\"{{ path('app_back') }}\">
+                <i class=\"fas fa-tachometer-alt\"></i>
+                <span>Dashboard</span>
+              </a>
+            </li>
+            <li>
+              <a href=\"{{ path('app_users') }}\">
+                <i class=\"fas fa-users\"></i>
+                <span>Utilisateurs</span>
+              </a>
+            </li>
+            <li>
+              <a href=\"{{ path('app_back_cours_index') }}\">
+                <i class=\"fas fa-book-open\"></i>
+                <span>Cours</span>
+              </a>
+            </li>
+            <li>
+              <a href=\"{{ path('app_back_matiere_index') }}\">
+                <i class=\"fas fa-book\"></i>
+                <span>Matières</span>
+              </a>
+            </li>
+            <li>
+              <a href=\"#\">
+                <i class=\"fas fa-graduation-cap\"></i>
+                <span>Evaluation</span>
+              </a>
+            </li>
+            <li>
+              <a href=\"#\">
+                <i class=\"fas fa-question-circle\"></i>
+                <span>Questionnaire</span>
+              </a>
+            </li>
+            <li>
+              <a href=\"#\">
+                <i class=\"fas fa-directions\"></i>
+                <span>Orientation</span>
+              </a>
+            </li>
+            <li>
+              <a href=\"#\">
+                <i class=\"fas fa-comments\"></i>
+                <span>Forum</span>
+              </a>
+            </li>
+          </ul>
+        </nav>
+      </div>
+      
+      <div class=\"sidebar-footer\">
+        <a href=\"#\" class=\"user-profile\">
+          <img src=\"{{ asset('assets/images/placeholder-admin.png') }}\" alt=\"Admin\" class=\"user-img\">
+          <div class=\"user-info\">
+            <h4>Admin User</h4>
+            <p>Administrateur</p>
+          </div>
+        </a>
+        <a href=\"{{ path('app_logout') }}\" class=\"logout\">
+          <i class=\"fas fa-sign-out-alt\"></i>
+          <span>Déconnexion</span>
+        </a>
+      </div>
+    </aside>
+    
+    <main class=\"main-content\">
+      <header class=\"dashboard-header\">
+        <div class=\"header-left\">
+          <h1>Dashboard</h1>
+    <p>Bienvenue sur la plateforme d’apprentissage LearnFlex+</p>
+        </div>
+        <div class=\"header-right\">
+          <div class=\"search-bar\">
+            <input type=\"text\" placeholder=\"Rechercher...\">
+            <button><i class=\"fas fa-search\"></i></button>
+          </div>
+          <button class=\"notification-btn\">
+            <i class=\"fas fa-bell\"></i>
+            <span class=\"badge\">3</span>
+          </button>
+        </div>
+      </header>
+      
+      {% block dashboard_content %}
+      <div class=\"dashboard-content\">
+        <!-- Stats Cards -->
+        <div class=\"stats-cards\">
+          <div class=\"stat-card\">
+            <div class=\"stat-icon users\">
+              <i class=\"fas fa-users\"></i>
+            </div>
+            <div class=\"stat-details\">
+              <h3>1,423</h3>
+              <p>Utilisateurs</p>
+              <div class=\"stat-progress\">
+                <i class=\"fas fa-arrow-up\"></i>
+                <span>+12.5%</span>
+              </div>
+            </div>
+          </div>
+          
+          <div class=\"stat-card\">
+            <div class=\"stat-icon rides\">
+              <i class=\"fas fa-book\"></i>
+            </div>
+            <div class=\"stat-details\">
+              <h3>856</h3>
+              <p>Cours disponibles</p>
+              <div class=\"stat-progress\">
+                <i class=\"fas fa-arrow-up\"></i>
+                <span>+8.2%</span>
+              </div>
+            </div>
+          </div>
+          
+          <div class=\"stat-card\">
+            <div class=\"stat-icon parcels\">
+              <i class=\"fas fa-laptop-code\"></i>
+            </div>
+            <div class=\"stat-details\">
+              <h3>128</h3>
+              <p>Evaluation</p>
+              <div class=\"stat-progress negative\">
+                <i class=\"fas fa-arrow-down\"></i>
+                <span>-3.1%</span>
+              </div>
+            </div>
+          </div>
+          
+          <div class=\"stat-card\">
+            <div class=\"stat-icon complaints\">
+              <i class=\"fas fa-question-circle\"></i>
+            </div>
+            <div class=\"stat-details\">
+              <h3>24</h3>
+              <p>Quiz actifs</p>
+              <div class=\"stat-progress\">
+                <i class=\"fas fa-arrow-up\"></i>
+                <span>+5.7%</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Charts Section -->
+        <div class=\"charts-section\">
+          <div class=\"chart-container\">
+            <div class=\"chart-header\">
+              <h3>Progression des apprenants</h3>
+              <div class=\"chart-actions\">
+                <select>
+                  <option>Dernier mois</option>
+                  <option>Derniers 3 mois</option>
+                  <option>Derniers 6 mois</option>
+                  <option>Dernière année</option>
+                </select>
+              </div>
+            </div>
+            <div class=\"chart\">
+              <canvas id=\"monthlyStats\"></canvas>
+            </div>
+          </div>
+          
+          <div class=\"chart-container\">
+            <div class=\"chart-header\">
+              <h3>Répartition du contenu pédagogique</h3>
+              <div class=\"chart-actions\">
+                <select>
+                  <option>Tous</option>
+                  <option>Cours</option>
+                  <option>Matière</option>
+                  <option>Evaluation</option>
+                </select>
+              </div>
+            </div>
+            <div class=\"chart\">
+              <canvas id=\"servicesDistribution\"></canvas>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Reports Section -->
+        <div class=\"reports-section\">
+          <div class=\"reports-header\">
+            <h3>Rapports pédagogiques</h3>
+            <button class=\"btn primary\">
+              <i class=\"fas fa-plus\"></i> Nouveau rapport
+            </button>
+          </div>
+          
+          <div class=\"reports-tabs\">
+            <button class=\"report-tab active\" data-report=\"financial\">Performance académique</button>
+            <button class=\"report-tab\" data-report=\"operations\">Activité pédagogique</button>
+            <button class=\"report-tab\" data-report=\"users\">Utilisateurs</button>
+          </div>
+          
+          <div class=\"report-content active\" id=\"financial-report\">
+            <div class=\"report-summary\">
+              <div class=\"summary-item\">
+                <div class=\"value\">12,500 TND</div>
+                <div class=\"label\">Taux de réussite</div>
+              </div>
+              <div class=\"summary-item\">
+                <div class=\"value\">8,200 TND</div>
+                <div class=\"label\">Taux d’échec</div>
+              </div>
+              <div class=\"summary-item\">
+                <div class=\"value\">4,300 TND</div>
+                <div class=\"label\">Moyenne générale</div>
+              </div>
+              <div class=\"summary-item\">
+                <div class=\"value\">34.4%</div>
+                <div class=\"label\">Taux de complétion</div>
+              </div>
+            </div>
+            
+            <table class=\"report-table\">
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Cours</th>
+                  <th>Apprenant</th>
+                  <th>Note</th>
+                  <th>Résultat</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>15/04/2023</td>
+                  <td>Cours en ligne</td>
+                  <td>Ahmed Ben Ali</td>
+                  <td>25.00 TND</td>
+                  <td><span class=\"status delivered\">Validé</span></td>
+                </tr>
+                <tr>
+                  <td>14/04/2023</td>
+                  <td>Quiz</td>
+                  <td>Leila Mansour</td>
+                  <td>18.50 TND</td>
+                  <td><span class=\"status delivered\">Réussi</span></td>
+                </tr>
+                <tr>
+                  <td>13/04/2023</td>
+                  <td>Examen</td>
+                  <td>Mohamed Khelifi</td>
+                  <td>12.00 TND</td>
+                  <td><span class=\"status delivered\">Admis</span></td>
+                </tr>
+              </tbody>
+            </table>
+            
+            <div class=\"report-actions\">
+              <button class=\"btn-outline\"><i class=\"fas fa-download\"></i> Télécharger PDF</button>
+              <button class=\"btn-outline\"><i class=\"fas fa-file-excel\"></i> Exporter Excel</button>
+              <button class=\"btn-outline\"><i class=\"fas fa-print\"></i> Imprimer</button>
+              <button class=\"btn-outline\"><i class=\"fas fa-envelope\"></i> Envoyer par email</button>
+            </div>
+          </div>
+          
+          <div class=\"report-content\" id=\"operations-report\">
+            <div class=\"report-summary\">
+              <div class=\"summary-item\">
+                <div class=\"value\">856</div>
+                <div class=\"label\">Cours publiés</div>
+              </div>
+              <div class=\"summary-item\">
+                <div class=\"value\">128</div>
+                <div class=\"label\">Quiz créés</div>
+              </div>
+              <div class=\"summary-item\">
+                <div class=\"value\">24</div>
+                <div class=\"label\">Examens</div>
+              </div>
+              <div class=\"summary-item\">
+                <div class=\"value\">92%</div>
+                <div class=\"label\">Taux de réussite</div>
+              </div>
+            </div>
+            
+            <table class=\"report-table\">
+              <thead>
+                <tr>
+                  <th>Service</th>
+                  <th>Nombre</th>
+                  <th>Croissance</th>
+                  <th>Taux de complétion</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Cours</td>
+                  <td>856</td>
+                  <td>+8.2%</td>
+                  <td>95%</td>
+                </tr>
+                <tr>
+                  <td>Quiz</td>
+                  <td>128</td>
+                  <td>-3.1%</td>
+                  <td>87%</td>
+                </tr>
+                <tr>
+                  <td>Examens</td>
+                  <td>24</td>
+                  <td>+12.5%</td>
+                  <td>98%</td>
+                </tr>
+              </tbody>
+            </table>
+            
+            <div class=\"report-actions\">
+              <button class=\"btn-outline\"><i class=\"fas fa-download\"></i> Télécharger PDF</button>
+              <button class=\"btn-outline\"><i class=\"fas fa-file-excel\"></i> Exporter Excel</button>
+              <button class=\"btn-outline\"><i class=\"fas fa-print\"></i> Imprimer</button>
+            </div>
+          </div>
+          
+          <div class=\"report-content\" id=\"users-report\">
+            <div class=\"report-summary\">
+              <div class=\"summary-item\">
+                <div class=\"value\">1,423</div>
+                <div class=\"label\">Total Utilisateurs</div>
+              </div>
+              <div class=\"summary-item\">
+                <div class=\"value\">180</div>
+                <div class=\"label\">Nouveaux</div>
+              </div>
+              <div class=\"summary-item\">
+                <div class=\"value\">65%</div>
+                <div class=\"label\">Actifs</div>
+              </div>
+              <div class=\"summary-item\">
+                <div class=\"value\">4.2</div>
+                <div class=\"label\">Note moyenne</div>
+              </div>
+            </div>
+            
+            <table class=\"report-table\">
+              <thead>
+                <tr>
+                  <th>Type</th>
+                  <th>Nombre</th>
+                  <th>Croissance</th>
+                  <th>Taux d'activité</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Étudiants</td>
+                  <td>1,245</td>
+                  <td>+15.2%</td>
+                  <td>62%</td>
+                </tr>
+                <tr>
+                  <td>Enseignants</td>
+                  <td>156</td>
+                  <td>+8.7%</td>
+                  <td>85%</td>
+                </tr>
+                <tr>
+                  <td>Administrateurs</td>
+                  <td>22</td>
+                  <td>+4.5%</td>
+                  <td>95%</td>
+                </tr>
+              </tbody>
+            </table>
+            
+            <div class=\"report-actions\">
+              <button class=\"btn-outline\"><i class=\"fas fa-download\"></i> Télécharger PDF</button>
+              <button class=\"btn-outline\"><i class=\"fas fa-file-excel\"></i> Exporter Excel</button>
+              <button class=\"btn-outline\"><i class=\"fas fa-print\"></i> Imprimer</button>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Recent Activity -->
+        <div class=\"recent-activity\">
+          <div class=\"section-header\">
+            <h3>Activité récente</h3>
+            <a href=\"#\" class=\"view-all\">Voir tout</a>
+          </div>
+          
+          <div class=\"activity-list\">
+            <div class=\"activity-item\">
+              <div class=\"activity-icon\">
+                <i class=\"fas fa-user-plus\"></i>
+              </div>
+              <div class=\"activity-details\">
+                <h4>Nouvel utilisateur inscrit</h4>
+                <p>Ahmed Ben Ali a créé un compte.</p>
+                <span class=\"activity-time\">Il y a 2 heures</span>
+              </div>
+            </div>
+            
+            <div class=\"activity-item\">
+              <div class=\"activity-icon\">
+                <i class=\"fas fa-car-side\"></i>
+              </div>
+              <div class=\"activity-details\">
+                <h4>Nouveau cours publié</h4>
+                <p>Leila Mansour a publié le cours « Bases de Symfony ».</p>
+                <span class=\"activity-time\">Il y a 3 heures</span>
+              </div>
+            </div>
+            
+            <div class=\"activity-item\">
+              <div class=\"activity-icon\">
+                <i class=\"fas fa-box\"></i>
+              </div>
+              <div class=\"activity-details\">
+                <h4>Quiz complété</h4>
+                <p>Mohamed Khelifi a terminé le quiz de proba. </p>
+                <span class=\"activity-time\">Il y a 5 heures</span>
+              </div>
+            </div>
+            
+            <div class=\"activity-item\">
+              <div class=\"activity-icon\">
+                <i class=\"fas fa-exclamation-circle\"></i>
+              </div>
+              <div class=\"activity-details\">
+                <h4>Examen soumis</h4>
+                <p>Nadia Mansouri a soumis l’examen de mathématiques.</p>
+                <span class=\"activity-time\">Il y a 6 heures</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Recent Parcels -->
+        <div class=\"recent-parcels\">
+          <div class=\"section-header\">
+            <h3>Évaluations récentes</h3>
+            <a href=\"#\" class=\"view-all\">Voir tout</a>
+          </div>
+          
+          <div class=\"parcels-table-container\">
+            <table class=\"parcels-table\">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Cours</th>
+                  <th>Etudiants</th>
+                  <th>Type</th>
+                  <th>Date</th>
+                  <th>Statut</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>P001</td>
+                  <td>Programmation PHP</td>
+                  <td>Sami Trabelsi</td>
+                  <td>Quiz</td>
+                  <td>20/04/2023</td>
+                  <td><span class=\"status in-transit\">Réussi<</span></td>
+                  <td class=\"actions\">
+                    <button class=\"action-btn view\"><i class=\"fas fa-eye\"></i></button>
+                    <button class=\"action-btn edit\"><i class=\"fas fa-edit\"></i></button>
+                    <button class=\"action-btn delete\"><i class=\"fas fa-trash\"></i></button>
+                  </td>
+                </tr>
+                <tr>
+                  <td>P002</td>
+                  <td>Leila Mansour</td>
+                  <td>Karim Belhaj</td>
+                  <td>Quiz</td>
+                  <td>19/04/2023</td>
+                  <td><span class=\"status delivered\">Réussi</span></td>
+                  <td class=\"actions\">
+                    <button class=\"action-btn view\"><i class=\"fas fa-eye\"></i></button>
+                    <button class=\"action-btn edit\"><i class=\"fas fa-edit\"></i></button>
+                    <button class=\"action-btn delete\"><i class=\"fas fa-trash\"></i></button>
+                  </td>
+                </tr>
+                <tr>
+                  <td>P003</td>
+                  <td>Mohamed Khelifi</td>
+                  <td>Nadia Mansouri</td>
+                  <td>Examen</td>
+                  <td>20/04/2023</td>
+                  <td><span class=\"status pending\">Validé</span></td>
+                  <td class=\"actions\">
+                    <button class=\"action-btn view\"><i class=\"fas fa-eye\"></i></button>
+                    <button class=\"action-btn edit\"><i class=\"fas fa-edit\"></i></button>
+                    <button class=\"action-btn delete\"><i class=\"fas fa-trash\"></i></button>
+                  </td>
+                </tr>
+                <tr>
+                  <td>P004</td>
+                  <td>Youssef Mejri</td>
+                  <td>Fatma Riahi</td>
+                  <td>cours</td>
+                  <td>18/04/2023</td>
+                  <td><span class=\"status cancelled\">Annulé</span></td>
+                  <td class=\"actions\">
+                    <button class=\"action-btn view\"><i class=\"fas fa-eye\"></i></button>
+                    <button class=\"action-btn edit\"><i class=\"fas fa-edit\"></i></button>
+                    <button class=\"action-btn delete\"><i class=\"fas fa-trash\"></i></button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      {% endblock %}
+    </main>
+  </div>
+{% endblock %}
+{% block javascripts %}
+<script src=\"https://cdn.jsdelivr.net/npm/chart.js\"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Sidebar Toggle
+    const sidebarToggle = document.querySelector('.sidebar-toggle');
+    const sidebar = document.querySelector('.sidebar');
+    const mainContent = document.querySelector('.main-content');
+
+    if(sidebarToggle) {
+        sidebarToggle.addEventListener('click', function() {
+            sidebar.classList.toggle('collapsed');
+            mainContent.classList.toggle('expanded');
+        });
+    }
+
+    // Report Tabs
+    const reportTabs = document.querySelectorAll('.report-tab');
+    const reportContents = document.querySelectorAll('.report-content');
+
+    reportTabs.forEach(tab => {
+        tab.addEventListener('click', function() {
+            reportTabs.forEach(t => t.classList.remove('active'));
+            reportContents.forEach(c => c.classList.remove('active'));
+
+            this.classList.add('active');
+            const reportType = this.getAttribute('data-report');
+            const activeContent = document.getElementById(`\${reportType}-report`);
+            if(activeContent) activeContent.classList.add('active');
+        });
+    });
+
+    // Charts
+    const monthlyStatsCanvas = document.getElementById('monthlyStats');
+    if(monthlyStatsCanvas) {
+        const monthlyStatsCtx = monthlyStatsCanvas.getContext('2d');
+        new Chart(monthlyStatsCtx, {
+            type: 'line',
+            data: {
+                labels: ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin', 'Juil'],
+                datasets: [
+                    { label: 'Étudiants inscrits', data: [650, 730, 810, 890, 950, 1020, 1150], borderColor: '#17a2b8', backgroundColor: 'rgba(23, 162, 184, 0.1)', fill: true, tension: 0.4 },
+                    { label: 'Cours suivis', data: [320, 380, 420, 480, 520, 580, 650], borderColor: '#28a745', backgroundColor: 'rgba(40, 167, 69, 0.1)', fill: true, tension: 0.4 },
+                    { label: 'Quiz complétés', data: [85, 95, 105, 115, 125, 120, 128], borderColor: '#ffc107', backgroundColor: 'rgba(255, 193, 7, 0.1)', fill: true, tension: 0.4 }
+                ]
+            },
+            options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true } } }
+        });
+    }
+
+    const servicesDistributionCanvas = document.getElementById('servicesDistribution');
+    if(servicesDistributionCanvas) {
+        const servicesDistributionCtx = servicesDistributionCanvas.getContext('2d');
+        new Chart(servicesDistributionCtx, {
+            type: 'doughnut',
+            data: { labels: ['Cours', 'Quiz', 'Examens'], datasets: [{ data: [35, 45, 20], backgroundColor: ['#1f4f65', '#97c3a2', '#d7dd83'], hoverOffset: 4 }] },
+            options: { responsive: true, maintainAspectRatio: false }
+        });
+    }
+});
+</script>
+{% endblock %}
+", "back/index.html.twig", "C:\\Users\\hassa\\Downloads\\LearnFlex-\\LearnFlex-\\templates\\back\\index.html.twig");
+    }
+}

@@ -1,0 +1,159 @@
+{% extends 'back/index.html.twig' %}
+
+{% block title %}Liste des Matières{% endblock %}
+
+{% block dashboard_content %}
+<div class="recent-parcels">
+    <div class="section-header">
+        <h3>Gestion des Matières</h3>
+        <a href="{{ path('app_back_matiere_new') }}" class="btn primary">
+            <i class="fas fa-plus"></i> Ajouter une Matière
+        </a>
+    </div>
+
+    <!-- Stats and Charts Section -->
+    <div class="charts-section" style="margin-bottom: 30px;">
+        <div class="stat-card" style="padding: 20px; display: flex; align-items: center; gap: 20px;">
+            <div class="stat-icon rides" style="background: #f0fdf4; color: #10b981; width: 60px; height: 60px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem;">
+                <i class="fas fa-book"></i>
+            </div>
+            <div>
+                <h3 style="font-size: 1.8rem; margin: 0;">{{ matieres|length }}</h3>
+                <p style="margin: 0; color: #64748b;">Total Matières</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Charts Grid: Two charts side by side -->
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 30px;">
+        <div class="chart-container" style="background: white; padding: 25px; border-radius: 16px; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05);">
+            <h4 style="margin-bottom: 20px; color: var(--secondary);">Répartition par Section</h4>
+            <div style="height: 300px;">
+                <canvas id="sectionChart"></canvas>
+            </div>
+        </div>
+
+        <div class="chart-container" style="background: white; padding: 25px; border-radius: 16px; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05);">
+            <h4 style="margin-bottom: 20px; color: var(--secondary);">Distribution par Niveau</h4>
+            <div style="height: 300px;">
+                <canvas id="niveauChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Section Pie Chart
+            const ctx1 = document.getElementById('sectionChart').getContext('2d');
+            new Chart(ctx1, {
+                type: 'pie',
+                data: {
+                    labels: {{ section_labels|json_encode|raw }},
+                    datasets: [{
+                        data: {{ section_data|json_encode|raw }},
+                        backgroundColor: [
+                            '#1f4f65', '#97c3a2', '#d7dd83', '#f97316', '#3b82f6', '#8b5cf6'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'bottom' }
+                    }
+                }
+            });
+
+            // Niveau Bar Chart
+            const ctx2 = document.getElementById('niveauChart').getContext('2d');
+            new Chart(ctx2, {
+                type: 'bar',
+                data: {
+                    labels: {{ niveau_labels|json_encode|raw }},
+                    datasets: [{
+                        label: 'Nombre de matières',
+                        data: {{ niveau_data|json_encode|raw }},
+                        backgroundColor: '#97c3a2',
+                        borderRadius: 8,
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    scales: {
+                        x: {
+                            beginAtZero: true,
+                            grid: { display: false }
+                        },
+                        y: {
+                            grid: { display: false }
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+
+    <div class="parcels-table-container">
+        <style>
+            .parcels-table th, .parcels-table td {
+                vertical-align: middle !important;
+                padding: 12px 15px;
+            }
+        </style>
+        <table class="parcels-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th style="text-align: center;">Image</th>
+                    <th>Nom</th>
+                    <th>Code</th>
+                    <th>Section</th>
+                    <th>Niveau</th>
+                    <th style="text-align: center;">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for matiere in pagination %}
+                <tr>
+                    <td>{{ matiere.id }}</td>
+                    <td style="text-align: center;">
+                        {% if matiere.image %}
+                            <img src="{{ asset('uploads/images/' ~ matiere.image) }}" alt="{{ matiere.nomMatiere }}" style="width: 50px; height: 50px; object-fit: cover; border-radius: 4px;">
+                        {% else %}
+                            <i class="fas fa-image" style="font-size: 24px; color: #ccc;"></i>
+                        {% endif %}
+                    </td>
+                    <td>{{ matiere.nomMatiere }}</td>
+                    <td>{{ matiere.codeMatiere }}</td>
+                    <td>{{ matiere.section }}</td>
+                    <td>{{ matiere.niveau }}</td>
+                    <td class="actions">
+                        <a href="{{ path('app_back_matiere_edit', {'id': matiere.id}) }}" class="action-btn edit">
+                            <i class="fas fa-edit"></i>
+                        </a>
+                        {{ include('back/matiere/_delete_form.html.twig') }}
+                    </td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="7">Aucun enregistrement trouvé</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+
+        <div class="navigation" style="margin-top: 20px; display: flex; justify-content: center;">
+            {{ knp_pagination_render(pagination) }}
+        </div>
+    </div>
+</div>
+{% endblock %}
